@@ -1,0 +1,26 @@
+import { Routes } from '@angular/router';
+import { Documentation } from './documentation/documentation';
+import { Crud } from './crud/crud';
+import { Empty } from './empty/empty';
+import { Orders } from './orders/orders';
+import { CRM } from './CRM/crm';
+import { Inventory } from './inventory/inventory';
+import { SalesInvoicesComponent } from './sales-invoices/sales-invoices';
+import { PurchaseOrdersComponent } from './Purchase-Invoices/Purchase-Invoices';
+import { JournalEntriesComponent } from './journal-entries/journal-entries';
+import { TrialBalanceComponent } from './trial-balance/trial-balance';
+import { ProfitLossComponent } from './profit-loss/profit-loss';
+export default [
+    { path: 'documentation', component: Documentation },
+    { path: 'crud', component: Crud },
+    { path: 'orders', component: Orders },
+    { path: 'CRM', component: CRM },
+    { path: 'inventory', component: Inventory },
+    { path: 'sales-invoices', component: SalesInvoicesComponent },
+      { path: 'purchase-invoices', component: PurchaseOrdersComponent },
+      { path: 'journal-entries', component: JournalEntriesComponent },
+        { path: 'trial-balance', component: TrialBalanceComponent },
+         { path: 'profit-loss', component: ProfitLossComponent },
+     { path: 'empty', component: Empty },
+    { path: '**', redirectTo: '/notfound' }
+] as Routes;
