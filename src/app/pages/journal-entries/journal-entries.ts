@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-journal-entries',
@@ -20,7 +21,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     DialogModule,
     InputTextModule,
     ConfirmDialogModule,
-    ToastModule
+    ToastModule,
+    DatePickerModule
   ],
   providers: [ConfirmationService, MessageService],
   template: `
@@ -51,61 +53,87 @@ import { ConfirmationService, MessageService } from 'primeng/api';
         <td>{{journal.totalDebit | currency}}</td>
         <td>{{journal.totalCredit | currency}}</td>
         <td class="flex gap-2">
-          <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info" (click)="editJournal(journal)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteJournal(i)"></button>
-          <button pButton icon="pi pi-print" class="p-button-rounded p-button-warning" (click)="printEntry(journal)"></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info" (click)="editJournal(journal)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger" (click)="deleteJournal(i)"></button>
+          <button pButton icon="pi pi-print" class="p-button-warning" (click)="printEntry(journal)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 
   <!-- Dialog for Add/Edit Entry -->
-  <p-dialog header="{{isEdit ? 'Edit Entry' : 'New Entry'}}" [(visible)]="displayDialog" [modal]="true" [style]="{width:'70vw'}" [closable]="false">
+<p-dialog 
+    header="{{isEdit ? 'Edit Entry' : 'New Entry'}}"
+    [(visible)]="displayDialog" 
+    [modal]="true" 
+    [style]="{width:'70vw'}" 
+    [closable]="false">
 
-    <div class="grid gap-4 mb-4">
-      <div class="col-6">
-        <label class="font-semibold">Date</label>
-        <input type="date" [(ngModel)]="currentJournal.date" class="p-inputtext w-full border rounded p-2">
-      </div>
+  <!-- Date Picker -->
+  <div class="grid gap-4 mb-4">
+    <div class="col-6">
+      <label class="block mb-1 font-semibold text-gray-700">Date</label>
+      <p-datepicker
+        [(ngModel)]="currentJournal.date"
+        [showIcon]="true"
+        [showButtonBar]="true"
+        placeholder="Select Date"
+        inputId="journalDate"
+        class="p-inputtext w-full p-2">
+      </p-datepicker>
     </div>
 
-    <button pButton label="Add Line" icon="pi pi-plus" class="p-button-secondary mb-2" (click)="addJournalLine()"></button>
-    <p-table [value]="currentJournal.entries">
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Account</th>
-          <th>Description</th>
-          <th>Debit</th>
-          <th>Credit</th>
-          <th>Cost Center</th>
-          <th>Action</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-line let-i="rowIndex">
-        <tr>
-          <td><input type="text" [(ngModel)]="line.account" class="p-inputtext w-full" (keydown)="openAccountSearch($event,i)"></td>
-          <td><input type="text" [(ngModel)]="line.description" class="p-inputtext w-full"></td>
-          <td><input type="number" min="0" [(ngModel)]="line.debit" (input)="calculateCurrentTotals()" class="p-inputtext w-full"></td>
-          <td><input type="number" min="0" [(ngModel)]="line.credit" (input)="calculateCurrentTotals()" class="p-inputtext w-full"></td>
-          <td><input type="text" [(ngModel)]="line.costCenter" class="p-inputtext w-full" (keydown)="openCostCenterSearch($event,i)"></td>
-          <td>
-            <button pButton icon="pi pi-times" class="p-button-rounded p-button-danger" (click)="removeJournalLine(i)"></button>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-
-    <div class="text-right font-bold mt-2">
-      Total Debit: {{currentJournal.totalDebit | currency}} | Total Credit: {{currentJournal.totalCredit | currency}}
+    <div class="col-6 flex items-end">
+      <button 
+        pButton 
+        label="Add Line" 
+        icon="pi pi-plus" 
+        class="p-button-secondary w-full" 
+        (click)="addJournalLine()">
+      </button>   
     </div>
+  </div>
 
-    <div class="mt-4 text-right flex gap-2 justify-end">
-      <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
-      <button pButton label="Print Entry" icon="pi pi-print" class="p-button-warning" (click)="printEntry(currentJournal)"></button>
-      <button pButton label="Save" icon="pi pi-check" class="p-button-success" (click)="saveJournal()"></button>
-    </div>
+  <!-- Journal Lines Table -->
+  <p-table [value]="currentJournal.entries" class="mb-4">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Account</th>
+        <th>Description</th>
+        <th>Debit</th>
+        <th>Credit</th>
+        <th>Cost Center</th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-line let-i="rowIndex">
+      <tr>
+        <td><input type="text" [(ngModel)]="line.account" class="p-inputtext w-full" (keydown)="openAccountSearch($event,i)"></td>
+        <td><input type="text" [(ngModel)]="line.description" class="p-inputtext w-full"></td>
+        <td><input type="number" min="0" [(ngModel)]="line.debit" (input)="calculateCurrentTotals()" class="p-inputtext w-full"></td>
+        <td><input type="number" min="0" [(ngModel)]="line.credit" (input)="calculateCurrentTotals()" class="p-inputtext w-full"></td>
+        <td><input type="text" [(ngModel)]="line.costCenter" class="p-inputtext w-full" (keydown)="openCostCenterSearch($event,i)"></td>
+        <td>
+          <button pButton icon="pi pi-times" class="p-button-danger" (click)="removeJournalLine(i)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 
-  </p-dialog>
+  <!-- Totals -->
+  <div class="text-right font-bold mt-2">
+    Total Debit: {{currentJournal.totalDebit | currency}} | Total Credit: {{currentJournal.totalCredit | currency}}
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="mt-4 text-right flex gap-2 justify-end">
+    <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
+    <button pButton label="Print Entry" icon="pi pi-print" class="p-button-warning" (click)="printEntry(currentJournal)"></button>
+    <button pButton label="Save" icon="pi pi-check" class="p-button-success" (click)="saveJournal()"></button>
+  </div>
+
+</p-dialog>
+
 
   <!-- Dialog for Account Selection -->
   <p-dialog header="Select Account" [(visible)]="accountDialog" [modal]="true" [style]="{width:'30vw'}" [closable]="true">

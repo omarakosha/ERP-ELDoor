@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-trial-balance',
@@ -17,10 +17,10 @@ import { MessageService, ConfirmationService } from 'primeng/api';
     FormsModule,
     TableModule,
     ButtonModule,
-    InputTextModule,
     DialogModule,
     ToastModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    MultiSelectModule
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -29,11 +29,37 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 
   <h2 class="text-3xl font-bold mb-6">Trial Balance</h2>
 
-  <div class="flex gap-4 mb-4">
-    <input type="text" pInputText placeholder="Search by Account" [(ngModel)]="searchAccount" (input)="applyFilter()">
-    <input type="text" pInputText placeholder="Filter by Cost Center" [(ngModel)]="searchCostCenter" (input)="applyFilter()">
-    <button pButton label="Export to Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
-  </div>
+ <div class="flex flex-wrap gap-4 mb-4 items-center">
+
+  <!-- MultiSelect for Accounts -->
+  <p-multiselect 
+    [options]="accountsOptions" 
+    [(ngModel)]="selectedAccounts" 
+    optionLabel="name" 
+    placeholder="Select Accounts" 
+    display="chip" 
+    [filter]="true" 
+    [maxSelectedLabels]="3"
+    (onChange)="applyFilter()">
+  </p-multiselect>
+
+  <!-- MultiSelect for Cost Centers -->
+  <p-multiselect 
+    [options]="costCentersOptions" 
+    [(ngModel)]="selectedCostCenters" 
+    optionLabel="name" 
+    placeholder="Select Cost Centers" 
+    display="chip" 
+    [filter]="true" 
+    [maxSelectedLabels]="3"
+    (onChange)="applyFilter()">
+  </p-multiselect>
+
+  <!-- Clear Filters Button -->
+  <button pButton label="Clear Filters" icon="pi pi-times" class="p-button-secondary" (click)="clearFilters()"></button>
+
+  <button pButton label="Export to Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
+</div>
 
   <p-table [value]="filteredData" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'">
     <ng-template pTemplate="header">
@@ -50,12 +76,13 @@ import { MessageService, ConfirmationService } from 'primeng/api';
         <td>{{row.debit | currency}}</td>
         <td>{{row.credit | currency}}</td>
         <td>
-          <button pButton icon="pi pi-eye" class="p-button-rounded p-button-info" (click)="viewDetails(row)"></button>
+          <button pButton icon="pi pi-eye" class="p-button-info" (click)="viewDetails(row)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 
+  <!-- Dialog for Account Details -->
   <p-dialog header="Account Details" [(visible)]="detailsDialog" [style]="{width:'60vw'}">
     <p-table [value]="currentDetails">
       <ng-template pTemplate="header">
@@ -83,19 +110,29 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 })
 export class TrialBalanceComponent {
   trialData = [
-    {account: 'Cash', debit: 1200, credit: 0, entries:[
+    {account: 'Cash', debit: 1200, credit: 0, costCenter: 'Main', entries:[
       {date:'2025-09-20', description:'Opening', debit:1200, credit:0, costCenter:'Main'}
     ]},
-    {account: 'Bank', debit: 500, credit: 0, entries:[
+    {account: 'Bank', debit: 500, credit: 0, costCenter: 'Branch1', entries:[
       {date:'2025-09-21', description:'Deposit', debit:500, credit:0, costCenter:'Branch1'}
     ]},
-    {account: 'Sales', debit:0, credit:1500, entries:[
+    {account: 'Sales', debit:0, credit:1500, costCenter: 'Main', entries:[
       {date:'2025-09-22', description:'Invoice #1001', debit:0, credit:1500, costCenter:'Main'}
     ]}
   ];
 
-  searchAccount = '';
-  searchCostCenter = '';
+  // MultiSelect options
+  accountsOptions = [
+    {name: 'Cash'}, {name: 'Bank'}, {name: 'Sales'}, {name: 'Purchases'}, {name: 'Expenses'}
+  ];
+  costCentersOptions = [
+    {name: 'Main'}, {name: 'Branch1'}, {name: 'Branch2'}, {name: 'ProjectX'}
+  ];
+
+  // MultiSelect selected values
+  selectedAccounts: any[] = [];
+  selectedCostCenters: any[] = [];
+
   filteredData = [...this.trialData];
 
   detailsDialog = false;
@@ -105,10 +142,16 @@ export class TrialBalanceComponent {
 
   applyFilter(){
     this.filteredData = this.trialData.filter(row=>{
-      const matchesAccount = row.account.toLowerCase().includes(this.searchAccount.toLowerCase());
-      const matchesCenter = row.entries.some(e=>e.costCenter.toLowerCase().includes(this.searchCostCenter.toLowerCase()));
-      return matchesAccount && matchesCenter;
+      const accountMatch = this.selectedAccounts.length ? this.selectedAccounts.some(a=>a.name === row.account) : true;
+      const centerMatch = this.selectedCostCenters.length ? this.selectedCostCenters.some(c=>c.name === row.costCenter) : true;
+      return accountMatch && centerMatch;
     });
+  }
+
+  clearFilters(){
+    this.selectedAccounts = [];
+    this.selectedCostCenters = [];
+    this.filteredData = [...this.trialData];
   }
 
   viewDetails(row:any){

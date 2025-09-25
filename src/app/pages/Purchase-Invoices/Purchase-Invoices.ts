@@ -64,9 +64,9 @@ interface PurchaseOrder {
         <td>{{po.total | currency:'SAR'}}</td>
         <td><span [ngClass]="statusClass(po.status)">{{po.status}}</span></td>
         <td class="flex gap-2">
-          <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info" (click)="editPO(po)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="confirmDelete(po)"></button>
-          <button pButton icon="pi pi-print" class="p-button-rounded p-button-warning" (click)="printPO(po)"></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info" (click)="editPO(po)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger" (click)="confirmDelete(po)"></button>
+          <button pButton icon="pi pi-print" class="p-button-warning" (click)="printPO(po)"></button>
         </td>
       </tr>
     </ng-template>

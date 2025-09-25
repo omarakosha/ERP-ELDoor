@@ -56,9 +56,9 @@ import { ConfirmationService, MessageService } from 'primeng/api';
           </span>
         </td>
         <td class="flex gap-2">
-  <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info" (click)="editInvoice(invoice)"></button>
-  <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="confirmDelete(invoice)"></button>
-  <button pButton icon="pi pi-print" class="p-button-rounded p-button-warning" (click)="printInvoice(invoice)" pTooltip="Print this invoice"></button>
+  <button pButton icon="pi pi-pencil" class="p-button-info" (click)="editInvoice(invoice)"></button>
+  <button pButton icon="pi pi-trash" class="p-button-danger" (click)="confirmDelete(invoice)"></button>
+  <button pButton icon="pi pi-print" class="p-button-warning" (click)="printInvoice(invoice)" pTooltip="Print this invoice"></button>
 </td>
 
       </tr>
@@ -105,7 +105,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
             <td><input type="number" min="0" [(ngModel)]="item.price" (input)="calculateTotal()" class="p-inputtext w-full border rounded p-1"></td>
             <td>{{item.quantity * item.price | currency}}</td>
             <td>
-              <button pButton icon="pi pi-times" class="p-button-rounded p-button-danger" (click)="removeItem(i)"></button>
+              <button pButton icon="pi pi-times" class="p-button-danger" (click)="removeItem(i)"></button>
+              
             </td>
           </tr>
         </ng-template>

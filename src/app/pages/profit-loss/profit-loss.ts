@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { DatePickerModule } from 'primeng/datepicker';
 
 interface ProfitLossEntry {
   account: string;
@@ -23,7 +24,8 @@ interface ProfitLossEntry {
     InputTextModule,
     TableModule,
     ButtonModule,
-    ToastModule
+    ToastModule,
+    DatePickerModule
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -34,12 +36,24 @@ interface ProfitLossEntry {
   <h2 class="text-3xl font-bold mb-6">Profit & Loss Statement - الربح والخسارة</h2>
 
   <div class="flex gap-4 mb-4">
-    <input type="date" [(ngModel)]="startDate" placeholder="Start Date" class="p-inputtext border rounded p-2">
-    <input type="date" [(ngModel)]="endDate" placeholder="End Date" class="p-inputtext border rounded p-2">
-    <button pButton label="Filter" icon="pi pi-filter" class="p-button-info" (click)="applyFilter()"></button>
-    <button pButton label="Reset" icon="pi pi-refresh" class="p-button-secondary" (click)="resetFilter()"></button>
-    <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
-  </div>
+  <p-datepicker
+      [(ngModel)]="startDate"
+      [showIcon]="true"
+      [showButtonBar]="true"
+      placeholder="Start Date">
+  </p-datepicker>
+
+  <p-datepicker
+      [(ngModel)]="endDate"
+      [showIcon]="true"
+      [showButtonBar]="true"
+      placeholder="End Date">
+  </p-datepicker>
+
+  <button pButton label="Reset" icon="pi pi-refresh" class="p-button-secondary" (click)="resetFilter()"></button>
+  <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
+</div>
+
 
   <p-table [value]="filteredData" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'">
     <ng-template pTemplate="header">
