@@ -20,38 +20,37 @@ export class AppMenu {
 
     ngOnInit() {
         this.model = [
-            {
-                label: 'Home',
-                items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
-            },
-            {
-                items: [{ label: 'Products', icon: 'pi pi-fw pi-book', routerLink: ['/pages/crud'] }]
-            },
-            {
-                items: [{ label: 'Orders', icon: 'pi pi-fw pi-book', routerLink: ['/pages/orders'] }]
-            },
-            {
-                items: [{ label: 'CRM', icon: 'pi pi-fw pi-book', routerLink: ['/pages/CRM'] }]
-            },
-            {
-                items: [{ label: 'Inventory', icon: 'pi pi-fw pi-book', routerLink: ['/pages/inventory'] }]
-            },
-            {
-                items: [{ label: 'Sales', icon: 'pi pi-fw pi-book', routerLink: ['/pages/sales-invoices'] }]
-            },
-             {
-                items: [{ label: 'Purchase', icon: 'pi pi-fw pi-book', routerLink: ['/pages/purchase-invoices'] }]
-            },
-             {
-                items: [{ label: 'JournalEntries', icon: 'pi pi-fw pi-book', routerLink: ['/pages/journal-entries'] }]
-            },
-            {
-                items: [{ label: 'Trial Balance', icon: 'pi pi-fw pi-book', routerLink: ['/pages/trial-balance'] }]
-            },
-            {
-                items: [{ label: 'profit-loss', icon: 'pi pi-fw pi-book', routerLink: ['/pages/profit-loss'] }]
-            },
-
+           {
+    label: 'Home',
+    items: [{ label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/'] }]
+},
+{
+    items: [{ label: 'Products', icon: 'pi pi-shopping-bag', routerLink: ['/pages/crud'] }]
+},
+{
+    items: [{ label: 'Orders', icon: 'pi pi-shopping-cart', routerLink: ['/pages/orders'] }]
+},
+{
+    items: [{ label: 'CRM', icon: 'pi pi-users', routerLink: ['/pages/CRM'] }]
+},
+{
+    items: [{ label: 'Inventory', icon: 'pi pi-box', routerLink: ['/pages/inventory'] }]
+},
+{
+    items: [{ label: 'Sales', icon: 'pi pi-wallet', routerLink: ['/pages/sales-invoices'] }]
+},
+{
+    items: [{ label: 'Purchase', icon: 'pi pi-cart-plus', routerLink: ['/pages/purchase-invoices'] }]
+},
+{
+    items: [{ label: 'JournalEntries', icon: 'pi pi-book', routerLink: ['/pages/journal-entries'] }]
+},
+{
+    items: [{ label: 'Trial Balance', icon: 'pi pi-chart-bar', routerLink: ['/pages/trial-balance'] }]
+},
+{
+    items: [{ label: 'Profit & Loss', icon: 'pi pi-chart-line', routerLink: ['/pages/profit-loss'] }]
+},
 
 
             {
