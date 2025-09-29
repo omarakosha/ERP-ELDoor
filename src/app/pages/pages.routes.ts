@@ -12,17 +12,17 @@ import { TrialBalanceComponent } from './trial-balance/trial-balance';
 import { ProfitLossComponent } from './profit-loss/profit-loss';
 import { AccountsManager } from './accounts-manager/accounts-manager';
 export default [
-    { path: 'documentation', component: Documentation },
-    { path: 'crud', component: Crud },
-    { path: 'orders', component: Orders },
-    { path: 'CRM', component: CRM },
-    { path: 'inventory', component: Inventory },
-    { path: 'sales-invoices', component: SalesInvoicesComponent },
-      { path: 'purchase-invoices', component: PurchaseOrdersComponent },
-      { path: 'journal-entries', component: JournalEntriesComponent },
-        { path: 'trial-balance', component: TrialBalanceComponent },
-         { path: 'profit-loss', component: ProfitLossComponent },
-          { path: 'accounts-manager', component: AccountsManager },
-     { path: 'empty', component: Empty },
-    { path: '**', redirectTo: '/notfound' }
+  { path: 'documentation', component: Documentation },
+  { path: 'crud', component: Crud },
+  { path: 'orders', component: Orders },
+  { path: 'CRM', component: CRM },
+  { path: 'inventory', component: Inventory },
+  { path: 'sales-invoices', component: SalesInvoicesComponent },
+  { path: 'purchase-invoices', component: PurchaseOrdersComponent },
+  { path: 'Journal Entries', component: JournalEntriesComponent },
+  { path: 'Trial Balance', component: TrialBalanceComponent },
+  { path: 'profit-loss', component: ProfitLossComponent },
+  { path: 'Accounts', component: AccountsManager },
+  { path: 'empty', component: Empty },
+  { path: '**', redirectTo: '/notfound' }
 ] as Routes;
