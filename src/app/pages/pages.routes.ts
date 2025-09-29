@@ -10,6 +10,7 @@ import { PurchaseOrdersComponent } from './Purchase-Invoices/Purchase-Invoices';
 import { JournalEntriesComponent } from './journal-entries/journal-entries';
 import { TrialBalanceComponent } from './trial-balance/trial-balance';
 import { ProfitLossComponent } from './profit-loss/profit-loss';
+import { AccountsManager } from './accounts-manager/accounts-manager';
 export default [
     { path: 'documentation', component: Documentation },
     { path: 'crud', component: Crud },
@@ -21,6 +22,7 @@ export default [
       { path: 'journal-entries', component: JournalEntriesComponent },
         { path: 'trial-balance', component: TrialBalanceComponent },
          { path: 'profit-loss', component: ProfitLossComponent },
+          { path: 'accounts-manager', component: AccountsManager },
      { path: 'empty', component: Empty },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;
