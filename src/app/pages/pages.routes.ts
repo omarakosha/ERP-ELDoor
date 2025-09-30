@@ -19,10 +19,10 @@ export default [
   { path: 'inventory', component: Inventory },
   { path: 'sales-invoices', component: SalesInvoicesComponent },
   { path: 'purchase-invoices', component: PurchaseOrdersComponent },
-  { path: 'Journal Entries', component: JournalEntriesComponent },
-  { path: 'Trial Balance', component: TrialBalanceComponent },
+  { path: 'journal-entries', component: JournalEntriesComponent },
+  { path: 'trial-balance', component: TrialBalanceComponent },
   { path: 'profit-loss', component: ProfitLossComponent },
-  { path: 'Accounts', component: AccountsManager },
+  { path: 'accounts-manager', component: AccountsManager },
   { path: 'empty', component: Empty },
   { path: '**', redirectTo: '/notfound' }
 ] as Routes;
