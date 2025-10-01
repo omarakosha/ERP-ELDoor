@@ -11,6 +11,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-journal-entries',
@@ -26,17 +27,27 @@ import { MultiSelectModule } from 'primeng/multiselect';
     ToastModule,
     DatePickerModule,
     ContextMenuModule,
+    PaginatorModule,
     MultiSelectModule
   ],
   providers: [ConfirmationService, MessageService],
   template: `
-<div class="p-6 bg-white shadow-lg rounded-lg" dir="ltr">
+ <div class="p-6 bg-white shadow-lg rounded-lg" dir="ltr">
   <p-toast></p-toast>
+
+  <!-- عنوان الصفحة -->
   <h2 class="text-3xl font-bold mb-6">Journal Entries - قيود اليومية</h2>
 
-  <div class="flex justify-between items-center mb-4">
+  <!-- أزرار البحث والإضافة -->
+  <div class="flex flex-wrap items-center gap-4 mb-4">
     <button pButton label="New Entry" icon="pi pi-plus" class="p-button-success"
             (click)="openNewJournal()"></button>
+
+    <div class="flex items-center gap-2">
+      <input type="text" pInputText placeholder="Search her...."
+             [(ngModel)]="journalIdFilter"
+             class="p-inputtext w-40">
+    </div>
   </div>
 
   <!-- جدول القيد -->
@@ -50,8 +61,9 @@ import { MultiSelectModule } from 'primeng/multiselect';
         <th>Actions</th>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="body" let-journal let-i="rowIndex">
-      <tr>
+      <tr *ngIf="matchesJournalFilter(journal)">
         <td>{{journal.id}}</td>
         <td>{{journal.date}}</td>
         <td>{{journal.totalDebit | number:'1.2-2'}}</td>
@@ -68,233 +80,477 @@ import { MultiSelectModule } from 'primeng/multiselect';
     </ng-template>
   </p-table>
 
-  <!-- Dialog إضافة/تعديل القيد -->
-  <p-dialog header="{{isEdit ? 'Edit Entry' : 'New Entry'}}"
-            [(visible)]="displayDialog" [modal]="true"
-            [style]="{width:'90vw'}" [closable]="false">
+<p-dialog 
+    header="{{isEdit ? 'Edit Entry' : 'New Entry'}}"
+    [(visible)]="displayDialog" 
+    [modal]="true"
+    [style]="{width:'90vw', height:'76vh'}" 
+    [closable]="false">
 
-    <!-- رقم القيد + التاريخ -->
-    <div class="grid gap-4 mb-4">
-      <div class="col-6">
-        <label class="block mb-1 font-semibold">Entry No.</label>
-        <input type="text" [(ngModel)]="currentJournal.id"
-               class="p-inputtext w-full bg-gray-100" readonly>
-      </div>
-      <div class="col-6">
-        <label class="block mb-1 font-semibold">Date</label>
-        <p-datepicker [(ngModel)]="currentJournal.date" [showIcon]="true"></p-datepicker>
-      </div>
-    </div>
 
-    <!-- جدول الأسطر -->
-    <p-table [value]="currentJournal.entries"
-             [responsiveLayout]="'scroll'"
-             class="mb-4"
-             selectionMode="single"
-             [(contextMenuSelection)]="selectedLine"
-             [contextMenu]="cm">
+  <!-- المحتوى الرئيسي: flex column -->
+  <div class="flex flex-col h-full">
 
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Account</th>
-          <th>Vendor</th>
-          <th>Description</th>
-          <th>Debit</th>
-          <th>Credit</th>
-          <th>Cost Center</th>
-          <th>Tags</th>
-          <th>Action</th>
-        </tr>
-      </ng-template>
+<!-- ======= الهيدر ثابت ======= -->
+<div class="bg-white border-b shadow-md p-4 grid grid-cols-12 gap-6 items-center">
 
-      <ng-template pTemplate="body" let-line let-i="rowIndex">
-        <tr (click)="selectedRowIndex=i">
-          <td>
-            <input type="text" [(ngModel)]="line.account"
-                   (input)="handleAccountInput($event, i)"
-                   (keydown)="openAccountSearch($event, i)"
-                   [class.p-invalid]="line.invalidAccount"
-                   placeholder="Account No. or F9 to Search"
-                   class="p-inputtext w-full">
-          </td>
+  <!-- رقم القيد -->
+  <div class="col-span-3 flex flex-col">
+    <label class="font-semibold text-gray-700 mb-2">Entry No.</label>
+    <input type="text"
+           [(ngModel)]="currentJournal.id"
+           class="p-inputtext w-full bg-gray-100 rounded-md px-3 py-2"
+           readonly>
+  </div>
 
-          <td>
-            <input type="text" [(ngModel)]="line.vendor"
-                   (input)="handleVendorInput($event,i)"
-                   [class.p-invalid]="line.invalidVendor"
-                   (keydown)="openVendorDialog($event,i)"
-                   placeholder="Vendor No. or F9 to Search"
-                   class="p-inputtext w-full">
-          </td>
+  <!-- تاريخ القيد -->
+  <div class="col-span-2 flex flex-col">
+    <label class="font-semibold text-gray-700 mb-2">Date</label>
+    <p-datepicker [(ngModel)]="currentJournal.date"
+                  [showIcon]="true"
+                  inputStyleClass="w-full px-3 py-2 rounded-md"></p-datepicker>
+  </div>
 
-          <td>
-            <input type="text" [(ngModel)]="line.description" class="p-inputtext w-full">
-          </td>
+  <!-- حالة القيد -->
+  <div class="col-span-2 flex flex-col">
+    <label class="font-semibold text-gray-700 mb-2">Status</label>
+    <select [(ngModel)]="currentJournal.status"
+            class="p-inputtext w-full rounded-md px-3 py-2">
+      <option value="Pending">Pending</option>
+      <option value="Approved">Approved</option>
+      <option value="Rejected">Rejected</option>
+      <option value="Closed">Closed</option>
+    </select>
+  </div>
 
-          <!-- المدين والدائن -->
- <td>
+  <!-- نوع القيد -->
+  <div class="col-span-2 flex flex-col">
+    <label class="font-semibold text-gray-700 mb-2">Entry Type</label>
+    <select [(ngModel)]="currentJournal.type"
+            class="p-inputtext w-full rounded-md px-3 py-2">
+      <option value="Daily">Daily</option>
+      <option value="Adjustment">Adjustment</option>
+      <option value="Closing">Closing</option>
+    </select>
+  </div>
+
+  <!-- ملخص مالي -->
+  <div class="col-span-3 flex flex-col">
+    <label class="font-semibold text-gray-700 mb-2">Summary</label>
+    <input type="text"
+           [value]="(currentJournal.totalDebit + currentJournal.totalCredit) | number:'1.2-2'"
+           class="p-inputtext w-full bg-gray-100 text-right rounded-md px-3 py-2 font-semibold text-blue-700"
+           readonly>
+  </div>
+
+  <!-- ملاحظات -->
+  <div class="col-span-12 mt-4 flex flex-col">
+    <label class="font-semibold text-gray-700 mb-2">Notes</label>
+    <textarea [(ngModel)]="currentJournal.notes"
+              class="p-inputtext w-full rounded-md px-3 py-2"
+              rows="3"
+              placeholder="Add notes..."></textarea>
+  </div>
+
+</div>
+
+
+
+    <!-- ======= الجدول (يمتد لملء المساحة) ======= -->
+    <div class="flex-1 overflow-auto min-h-[360px]">
+      <p-table [value]="currentJournal.entries"
+               [scrollable]="true"
+               scrollHeight="100%"
+               selectionMode="single"
+               [(contextMenuSelection)]="selectedLine"
+               [contextMenu]="cm"
+               class="fixed-rows-table w-full">
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th>#</th>
+            <th>Account</th>
+            <th>Vendor</th>
+            <th>Description</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            <th>Cost Center</th>
+            <th>Tags</th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-line let-i="rowIndex">
+  <tr (click)="selectedRowIndex=i">
+    <td>{{ i + 1 }}</td>
+    
+    <!-- عمود الحساب -->
+    <td>
+      <input type="text" [(ngModel)]="line.account"
+             (input)="handleAccountInput($event, i)"
+             (keydown)="openAccountSearch($event, i)"
+             (keydown.enter)="addNewLine(i); $event.preventDefault()"
+             [class.p-invalid]="line.invalidAccount"
+             [id]="'account-' + i"
+             placeholder="Account No. or F9 to Search"
+             class="p-inputtext w-full">
+    </td>
+
+    <!-- عمود المورد -->
+    <td>
+      <input type="text" [(ngModel)]="line.vendor"
+             (input)="handleVendorInput($event,i)"
+             (keydown)="openVendorDialog($event,i)"
+             (keydown.enter)="addNewLine(i); $event.preventDefault()"
+             [class.p-invalid]="line.invalidVendor"
+             placeholder="Vendor No. or F9 to Search"
+             class="p-inputtext w-full">
+    </td>
+
+    <!-- عمود الوصف -->
+    <td>
+      <input type="text" [(ngModel)]="line.description"
+             (keydown.enter)="addNewLine(i); $event.preventDefault()"
+             class="p-inputtext w-full"
+             placeholder="Description"
+             style="width: 300px;">
+    </td>
+
+<!-- عمود المدين -->
+<td>
   <input type="text"
          [(ngModel)]="line.debit"
          (focus)="formatWithCommas(line, 'debit')"
-         (input)="formatWithCommas(line, 'debit')"
+         (input)="formatWithCommas(line, 'debit'); updateTotals()"
+         (keydown.enter)="addNewLine(i); $event.preventDefault()"
          class="p-inputtext w-full text-right"
          placeholder="0.00">
 </td>
 
+<!-- عمود الدائن -->
 <td>
   <input type="text"
          [(ngModel)]="line.credit"
          (focus)="formatWithCommas(line, 'credit')"
-         (input)="formatWithCommas(line, 'credit')"
+         (input)="formatWithCommas(line, 'credit'); updateTotals()"
+         (keydown.enter)="addNewLine(i); $event.preventDefault()"
          class="p-inputtext w-full text-right"
          placeholder="0.00">
 </td>
 
 
-          <td>
-            <input type="text" [(ngModel)]="line.costCenter"
-                   (input)="handleCostCenterInput($event,i)"
-                   (keydown)="openCostCenterSearch($event,i)"
-                   [class.p-invalid]="line.invalidCostCenter"
-                   placeholder="CostCenter No. or F9 to Search"
-                   class="p-inputtext w-full">
-          </td>
+    <!-- عمود مركز التكلفة -->
+    <td>
+      <input type="text" [(ngModel)]="line.costCenter"
+             (input)="handleCostCenterInput($event,i)"
+             (keydown)="openCostCenterSearch($event,i)"
+             (keydown.enter)="addNewLine(i); $event.preventDefault()"
+             [class.p-invalid]="line.invalidCostCenter"
+             placeholder="CostCenter No. or F9 to Search"
+             class="p-inputtext w-full">
+    </td>
 
-          <td>
-            <p-multiSelect [options]="tags" [(ngModel)]="line.tags"
-                           optionLabel="name" display="chip"
-                           defaultLabel="Select tags" [filter]="true"></p-multiSelect>
-          </td>
+    <!-- عمود الوسوم -->
+    <td>
+      <p-multiSelect [options]="tags" [(ngModel)]="line.tags"
+                     optionLabel="name" display="chip"
+                     defaultLabel="Select tags" [filter]="true"
+                     (keydown.enter)="addNewLine(i); $event.preventDefault()"></p-multiSelect>
+    </td>
 
-          <td>
-            <button pButton icon="pi pi-times" class="p-button-rounded p-button-danger p-button-sm"
-                    (click)="removeJournalLine(i)"></button>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+    <!-- زر الحذف -->
+    <td>
+      <button pButton icon="pi pi-trash" class="p-button p-button-danger p-button-sm"
+              (click)="removeJournalLine(i)"></button>
+    </td>
+  </tr>
+</ng-template>
+
+
+      </p-table>
+    </div>
 
     <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
+<!-- ======= الفوتر الجديد ======= -->
+<div class="bg-white border-t pt-4 pb-4 px-5 flex flex-col gap-3">
 
-    <div *ngIf="currentJournal.totalDebit !== currentJournal.totalCredit"
-         class="text-red-600 font-bold text-right">
-      ⚠️ Debit and Credit must be equal
+  <!-- مساحة مخصصة للرسالة حتى لو لم تظهر -->
+  <div class="h-6 flex items-center justify-center">
+
+      <div *ngIf="!isBalanced()" class="text-red-600 font-bold text-center mb-2">
+    ⚠️ Debit and Credit must be equal
+  </div>
+
+  </div>
+
+  <div class="flex justify-between items-start">
+
+    <!-- 2. المجموع النهائي على اليسار -->
+    <div class="flex flex-col text-left font-bold text-gray-800">
+      <div>Total Debit.: {{currentJournal.totalDebit | number:'1.2-2'}}</div>
+      <div>Total Credit: {{currentJournal.totalCredit | number:'1.2-2'}}</div>
     </div>
 
-    <div class="mt-2 text-right font-semibold">
-      <span *ngFor="let tag of tags">
-        {{tag.name}} Total: {{calculateTagTotal(tag.name) | number:'1.2-2'}} &nbsp;
-      </span>
-    </div>
-
-    <div class="text-right font-bold mt-2">
-      Total Debit: {{currentJournal.totalDebit | number:'1.2-2'}} |
-      Total Credit: {{currentJournal.totalCredit | number:'1.2-2'}}
-    </div>
-
-    <div class="mt-4 text-right flex gap-2 justify-end">
+    <!-- 3. الأزرار على اليمين -->
+    <div class="flex gap-2">
       <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary"
               (click)="displayDialog=false"></button>
       <button pButton label="Save" icon="pi pi-check" class="p-button-success"
               (click)="saveJournal()"></button>
     </div>
-  </p-dialog>
 
-  
+  </div>
 
-  <!-- Dialog اختيار الحساب -->
-  <p-dialog header="Select Account" [(visible)]="accountDialog" [modal]="true" [style]="{width:'40vw'}">
-    <input type="text" pInputText [(ngModel)]="accountFilter"
-           placeholder="Search account..." class="w-full mb-2">
-   <p-table [value]="filteredAccounts()" [paginator]="true" [rows]="5">
-  <ng-template pTemplate="body" let-acc>
-    <tr (click)="selectAccount(acc)" class="cursor-pointer hover:bg-gray-200">
-      <td>{{acc.name}}</td>
-      <td>{{acc.code}}</td>
-    </tr>
-  </ng-template>
-</p-table>
-  </p-dialog>
+</div>
 
-  <!-- Dialog اختيار مركز التكلفة -->
-  <p-dialog header="Select Cost Center" [(visible)]="costCenterDialog" [modal]="true" [style]="{width:'40vw'}">
-    <input type="text" pInputText [(ngModel)]="costCenterFilter"
-           placeholder="Search cost center..." class="w-full mb-2">
-   <p-table [value]="filteredCostCenters()" [paginator]="true" [rows]="5">
-  <ng-template pTemplate="body" let-cc>
-    <tr (click)="selectCostCenter(cc)" class="cursor-pointer hover:bg-gray-200">
-      <td>{{cc.name}}</td>
-      <td>{{cc.code}}</td>
-    </tr>
-  </ng-template>
-</p-table>
-  </p-dialog>
+  </div>
+</p-dialog>
 
-  <!-- Dialog الموردين -->
-  <p-dialog header="Vendors" [(visible)]="vendorDialog" [modal]="true" [style]="{width:'50vw'}">
-    <div class="flex justify-between mb-2">
-      <input type="text" pInputText [(ngModel)]="vendorFilter" placeholder="Search vendor..." class="w-full mr-2">
-      <button pButton label="Add Vendor" icon="pi pi-plus" class="p-button-success"
-              (click)="openAddVendor()"></button>
+
+
+
+
+<!-- Dialog الموردين -->
+<p-dialog header="Vendors" [(visible)]="vendorDialog" [modal]="true"
+          [style]="{'width':'50vw','height':'450px'}" [resizable]="false"
+          [breakpoints]="{'960px':'90vw'}">
+
+  <div class="flex flex-col h-full">
+
+    <!-- الهيدر ثابت -->
+    <div class="flex gap-2 mb-2 flex-shrink-0">
+      <input type="text" pInputText [(ngModel)]="vendorFilter"
+             placeholder="Search vendor..." class="flex-1"
+             (input)="filteredVendors()">
+      <button pButton label="Add Vendor" icon="pi pi-plus"
+              class="p-button-success" (click)="openAddVendor()"></button>
     </div>
 
-    <p-table [value]="filteredVendors()" [paginator]="true" [rows]="5">
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Vendor Name</th>
-          <th>Account No</th>
-          <th>Actions</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-vn>
-        <tr (click)="selectVendor(vn)" class="cursor-pointer hover:bg-gray-200">
-          <td>{{vn.name}}</td>
-          <td>{{vn.account}}</td>
-          <td class="flex gap-2">
-            <button pButton icon="pi pi-pencil" class="p-button-sm p-button-info"
-                    (click)="openEditVendor(vn); $event.stopPropagation()"></button>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </p-dialog>
+    <!-- الجدول scrollable -->
+    <div class="flex-1 overflow-auto min-h-[250px]">
+      <p-table [value]="filteredVendors()" [scrollable]="true" scrollHeight="100%">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>#</th>
+            <th>Vendor Name</th>
+            <th>Account No</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
 
-  <!-- Dialog إضافة / تعديل مورد -->
-  <p-dialog header="{{isEditVendor ? 'Edit Vendor' : 'Add Vendor'}}"
-            [(visible)]="vendorFormDialog" [modal]="true" [style]="{width:'40vw'}">
-    <label class="block mb-1 font-semibold">Vendor Name</label>
-    <input type="text" pInputText [(ngModel)]="currentVendor.name" class="w-full mb-2">
+        <ng-template pTemplate="body" let-vn let-i="rowIndex">
+          <tr style="height:50px" (click)="selectVendor(vn)" class="cursor-pointer hover:bg-gray-200">
+            <td>{{i + 1}}</td>
+            <td>{{vn.name}}</td>
+            <td>{{vn.account}}</td>
+            <td class="flex gap-2">
+              <button pButton icon="pi pi-pencil"
+                      class="p-button-sm p-button-info"
+                      (click)="openEditVendor(vn); $event.stopPropagation()"></button>
+            </td>
+          </tr>
+        </ng-template>
 
-    <label class="block mb-1 font-semibold">Account No</label>
-    <input type="text" pInputText [(ngModel)]="currentVendor.account" class="w-full mb-2">
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4">
+              <div class="flex flex-col items-center justify-center h-full py-10">
+                <i class="pi pi-database " style="font-size: 2rem"></i>
+                <span class="text-gray-500 text-lg">No Data Available</span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
 
-    <div class="flex justify-end gap-2 mt-2">
+      </p-table>
+    </div>
+
+    <!-- الفوتر ثابت -->
+    <div class="flex-shrink-0 mt-2 border-t pt-2 bg-white">
+      <p-paginator [rows]="5" [totalRecords]="filteredVendors().length || 0"
+                   [rowsPerPageOptions]="[5,10,15]"></p-paginator>
+    </div>
+
+  </div>
+</p-dialog>
+
+<!-- Dialog الحسابات -->
+<p-dialog header="Select Account" [(visible)]="accountDialog" [modal]="true"
+          [style]="{'width':'50vw','height':'450px'}" [resizable]="false"
+          [breakpoints]="{'960px':'90vw'}">
+
+  <div class="flex flex-col h-full">
+
+    <!-- الهيدر ثابت -->
+    <div class="mb-2 flex-shrink-0">
+      <input type="text" pInputText [(ngModel)]="accountFilter"
+             placeholder="Search account..." class="w-full"
+             (input)="filteredAccounts()">
+    </div>
+
+    <!-- الجدول scrollable -->
+    <div class="flex-1 overflow-auto min-h-[250px]">
+      <p-table [value]="filteredAccounts()" [scrollable]="true" scrollHeight="100%">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>#</th>
+            <th>Account Name</th>
+            <th>Account No</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-acc let-i="rowIndex">
+          <tr style="height:50px" (click)="selectAccount(acc)" class="cursor-pointer hover:bg-gray-200">
+            <td>{{i + 1}}</td>
+            <td>{{acc.name}}</td>
+            <td>{{acc.code}}</td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3">
+              <div class="flex flex-col items-center justify-center h-full py-10">
+                <i class="pi pi-database " style="font-size: 2rem"></i>
+                <span class="text-gray-500 text-lg">No Data Available</span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+    </div>
+
+    <!-- الفوتر ثابت -->
+    <div class="flex-shrink-0 mt-2 border-t pt-2 bg-white">
+      <p-paginator [rows]="5" [totalRecords]="filteredAccounts().length || 0"
+                   [rowsPerPageOptions]="[5,10,15]"></p-paginator>
+    </div>
+
+  </div>
+</p-dialog>
+
+<!-- Dialog مراكز التكلفة -->
+<p-dialog header="Select Cost Center" [(visible)]="costCenterDialog" [modal]="true"
+          [style]="{'width':'50vw','height':'450px'}" [resizable]="false"
+          [breakpoints]="{'960px':'90vw'}">
+
+  <div class="flex flex-col h-full">
+
+    <!-- الهيدر ثابت -->
+    <div class="mb-2 flex-shrink-0">
+      <input type="text" pInputText [(ngModel)]="costCenterFilter"
+             placeholder="Search cost center..." class="w-full"
+             (input)="filteredCostCenters()">
+    </div>
+
+    <!-- الجدول scrollable -->
+    <div class="flex-1 overflow-auto min-h-[250px]">
+      <p-table [value]="filteredCostCenters()" [scrollable]="true" scrollHeight="100%">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>#</th>
+            <th>Cost Center Name</th>
+            <th>Cost Center No</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-cc let-i="rowIndex">
+          <tr style="height:50px" (click)="selectCostCenter(cc)" class="cursor-pointer hover:bg-gray-200">
+            <td>{{i + 1}}</td>
+            <td>{{cc.name}}</td>
+            <td>{{cc.code}}</td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3">
+              <div class="flex flex-col items-center justify-center h-full py-10">
+              
+                <i class="pi pi-database " style="font-size: 2rem"></i>
+                <span class="text-gray-500 text-lg">No Data Available</span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+    </div>
+
+    <!-- الفوتر ثابت -->
+    <div class="flex-shrink-0 mt-2 border-t pt-2 bg-white">
+      <p-paginator [rows]="5" [totalRecords]="filteredCostCenters().length || 0"
+                   [rowsPerPageOptions]="[5,10,15]"></p-paginator>
+    </div>
+
+  </div>
+</p-dialog>
+
+<!-- Dialog إضافة / تعديل مورد -->
+<p-dialog header="{{isEditVendor ? 'Edit Vendor' : 'Add Vendor'}}"
+          [(visible)]="vendorFormDialog" [modal]="true" [style]="{width:'40vw'}"
+          [resizable]="true" [breakpoints]="{'960px':'90vw'}">
+
+  <div class="flex flex-col h-full">
+
+    <!-- محتوى الفورم -->
+    <div class="flex-1 overflow-auto">
+      <label class="block mb-1 font-semibold">Vendor Name</label>
+      <input type="text" pInputText [(ngModel)]="currentVendor.name" class="w-full mb-2">
+
+      <label class="block mb-1 font-semibold">Account No</label>
+      <input type="text" pInputText [(ngModel)]="currentVendor.account" class="w-full mb-2">
+    </div>
+
+    <!-- الفوتر ثابت -->
+    <div class="flex-shrink-0 mt-2 flex justify-end gap-2">
       <button pButton label="Cancel" class="p-button-secondary" (click)="cancelVendor()"></button>
       <button pButton label="Save" class="p-button-success" (click)="saveVendor()"></button>
     </div>
-  </p-dialog>
 
-  <p-confirmDialog></p-confirmDialog>
+  </div>
+</p-dialog>
+
+
+<p-confirmDialog></p-confirmDialog>
 </div>
-       
   `,
 })
 export class JournalEntriesComponent {
+
   journalEntries: any[] = [];
   displayDialog = false;
   isEdit = false;
-  currentJournal: any = { id: 0, date: '', entries: [], totalDebit: 0, totalCredit: 0 };
+
+
+  currentJournal: any = {
+    entries: [
+      { account: '', debit: null, credit: null, description: '', costCenter: '', currency: 'SAR' }
+    ],
+    totalDebit: 0,
+    totalCredit: 0
+  };
+
 
   accounts = [
     { name: 'Cash', code: '10101' },
     { name: 'Bank', code: '10102' },
     { name: 'Sales', code: '40101' },
     { name: 'Purchases', code: '50101' },
-    { name: 'Expenses', code: '60101' }
+    { name: 'rjh', code: '10120' },
+    { name: 'enma', code: '10130' },
+    { name: 'belad', code: '40140' },
+    { name: 'riadh', code: '50120' },
+    { name: 'sab', code: '60101' }
   ];
 
   costCenters = [
     { name: 'Main', code: '1001' },
+    { name: 'Branch1', code: '1002' },
+    { name: 'Branch2', code: '1003' },
+    { name: 'Branch1', code: '1002' },
+    { name: 'Branch2', code: '1003' },
     { name: 'Branch1', code: '1002' },
     { name: 'Branch2', code: '1003' },
     { name: 'ProjectX', code: '2001' }
@@ -304,7 +560,13 @@ export class JournalEntriesComponent {
 
   vendors = [
     { id: 1, name: 'Vendor A', account: '20101' },
-    { id: 2, name: 'Vendor B', account: '20102' }
+    { id: 2, name: 'Vendor A', account: '20102' },
+    { id: 3, name: 'Vendor A', account: '20103' },
+    { id: 4, name: 'Vendor A', account: '20104' },
+    { id: 5, name: 'Vendor A', account: '20105' },
+    { id: 6, name: 'Vendor A', account: '20106' },
+    { id: 7, name: 'Vendor A', account: '20107' },
+    { id: 8, name: 'Vendor B', account: '20108' }
   ];
 
   accountDialog = false;
@@ -327,6 +589,8 @@ export class JournalEntriesComponent {
   isEditVendor = false;
   currentVendor: any = { id: 0, name: '', account: '' };
 
+  journalIdFilter: string = '';
+
   contextMenuItems = [
     { label: 'Copy Line', icon: 'pi pi-copy', command: () => this.copyLine() },
     { label: 'Paste Line', icon: 'pi pi-clone', command: () => this.pasteLine() },
@@ -344,18 +608,80 @@ export class JournalEntriesComponent {
     ];
   }
 
+
+  addNewLine(index: number) {
+    if (!this.currentJournal.entries) {
+      this.currentJournal.entries = [];
+    }
+
+    const newLine = {
+      account: '',
+      accountCode: '',
+      vendor: '',
+      vendorAccount: '',
+      description: '',
+      debit: 0,
+      credit: 0,
+      costCenter: '',
+      costCenterCode: '',
+      tags: []
+    };
+
+    if (index === -1) {
+      this.currentJournal.entries.push(newLine);
+    } else {
+      this.currentJournal.entries.splice(index + 1, 0, newLine);
+    }
+  }
+
+
+
+
+  isBalanced(): boolean {
+    return this.currentJournal.totalDebit === this.currentJournal.totalCredit;
+  }
+
+
+  matchesJournalFilter(journal: any): boolean {
+    if (!this.journalIdFilter) return true; // إذا لم يوجد بحث، عرض كل القيود
+    return journal.id.toString().includes(this.journalIdFilter);
+  }
+
+  // عند أي تغيير في مدين أو دائن، يحدث حساب الإجماليات
+  updateTotals() {
+    if (!this.currentJournal || !this.currentJournal.entries) return;
+
+    let totalDebit = 0;
+    let totalCredit = 0;
+
+    for (let line of this.currentJournal.entries) {
+      totalDebit += parseFloat(line.debit) || 0;
+      totalCredit += parseFloat(line.credit) || 0;
+    }
+
+    this.currentJournal.totalDebit = totalDebit;
+    this.currentJournal.totalCredit = totalCredit;
+  }
+
+
   // 🟢 إضافة / تعديل / حذف
   openNewJournal() {
     this.isEdit = false;
     this.currentJournal = {
-      id: this.journalEntries.length + 1,
+      id: 'JE-' + new Date().getTime(), // توليد رقم تلقائي
       date: new Date().toISOString().substring(0, 10),
-      entries: [{ account: '', accountCode: '', vendor: '', vendorAccount: '', description: '', debit: 0, credit: 0, costCenter: '', costCenterCode: '', tags: [] }],
+      status: 'Pending',               // الحالة الافتراضية
+      type: 'Daily',                   // نوع القيد الافتراضي
+      entries: [
+        { account: '', accountCode: '', vendor: '', vendorAccount: '', description: '', debit: 0, credit: 0, costCenter: '', costCenterCode: '', tags: [] }
+      ],
       totalDebit: 0,
-      totalCredit: 0
+      totalCredit: 0,
+      notes: ''
     };
     this.displayDialog = true;
   }
+
 
   editJournal(journal: any) {
     this.isEdit = true;
@@ -376,59 +702,56 @@ export class JournalEntriesComponent {
     }
   }
 
- 
   calculateTagTotal(tagName: string) {
     return this.currentJournal.entries.filter((l: any) => l.tags?.includes(tagName))
       .reduce((sum: any, l: any) => sum + (Number(l.debit || 0) + Number(l.credit || 0)), 0);
   }
 
 
-  
-  
   saveJournal() {
-  let valid = true;
+    let valid = true;
 
-  // تحقق من كل سطر
-  this.currentJournal.entries.forEach((line: any) => {
-    // الحساب
-    const acc = this.accounts.find(a => a.code === line.accountCode || a.name === line.account);
-    line.invalidAccount = !acc;
-    if (!acc) valid = false;
+    // تحقق من كل سطر
+    this.currentJournal.entries.forEach((line: any) => {
+      // الحساب
+      const acc = this.accounts.find(a => a.code === line.accountCode || a.name === line.account);
+      line.invalidAccount = !acc;
+      if (!acc) valid = false;
 
-    // المورد
-    const ven = this.vendors.find(v => v.account === line.vendorAccount || v.name === line.vendor);
-    line.invalidVendor = !ven;
-    if (!ven) valid = false;
+      // المورد
+      const ven = this.vendors.find(v => v.account === line.vendorAccount || v.name === line.vendor);
+      line.invalidVendor = !ven;
+      if (!ven) valid = false;
 
-    // مركز التكلفة
-    const cc = this.costCenters.find(c => c.code === line.costCenterCode || c.name === line.costCenter);
-    line.invalidCostCenter = !cc;
-    if (!cc) valid = false;
-  });
+      // مركز التكلفة
+      const cc = this.costCenters.find(c => c.code === line.costCenterCode || c.name === line.costCenter);
+      line.invalidCostCenter = !cc;
+      if (!cc) valid = false;
+    });
 
-  // تحقق من تساوي المدين والدائن
-  this.calculateCurrentTotals();
-  if (this.currentJournal.totalDebit !== this.currentJournal.totalCredit) {
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Total debit does not equal total credit' });
-    valid = false;
+    // تحقق من تساوي المدين والدائن
+    this.calculateCurrentTotals();
+    if (this.currentJournal.totalDebit !== this.currentJournal.totalCredit) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Total debit does not equal total credit' });
+      valid = false;
+    }
+
+    if (!valid) {
+      this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please correct highlighted fields before saving' });
+      return; // لا يتم الحفظ
+    }
+
+    // إذا كل شيء صحيح
+    if (this.isEdit) {
+      const index = this.journalEntries.findIndex(j => j.id === this.currentJournal.id);
+      if (index > -1) this.journalEntries[index] = JSON.parse(JSON.stringify(this.currentJournal));
+    } else {
+      this.journalEntries.push(JSON.parse(JSON.stringify(this.currentJournal)));
+    }
+
+    this.displayDialog = false;
+    this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Entry saved successfully' });
   }
-
-  if (!valid) {
-    this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please correct highlighted fields before saving' });
-    return; // لا يتم الحفظ
-  }
-
-  // إذا كل شيء صحيح
-  if (this.isEdit) {
-    const index = this.journalEntries.findIndex(j => j.id === this.currentJournal.id);
-    if (index > -1) this.journalEntries[index] = JSON.parse(JSON.stringify(this.currentJournal));
-  } else {
-    this.journalEntries.push(JSON.parse(JSON.stringify(this.currentJournal)));
-  }
-
-  this.displayDialog = false;
-  this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Entry saved successfully' });
-}
 
   deleteJournal(index: number) {
     this.confirmationService.confirm({
@@ -442,103 +765,108 @@ export class JournalEntriesComponent {
     });
   }
 
- 
-formatWithCommas(line: any, field: 'debit' | 'credit') {
-  let val = line[field] ? line[field].toString().replace(/,/g, '') : '';
 
-  if (val === '') return;
+  formatWithCommas(line: any, field: 'debit' | 'credit') {
+    let val = line[field]?.toString().replace(/,/g, '');
+    if (!val) return;
 
-  // نتأكد أن القيمة رقمية
-  if (!isNaN(Number(val))) {
-    // تنسيق الرقم مع الفواصل
-    line[field] = Number(val).toLocaleString('en-US', {
-      maximumFractionDigits: 2
-    });
+    const numericVal = Number(val);
+    if (!isNaN(numericVal)) {
+      line[field] = numericVal;
+    }
+
+    if (field === 'debit' && line.debit) line.credit = null;
+    if (field === 'credit' && line.credit) line.debit = null;
+
+    // حساب الإجماليات
+    this.currentJournal.totalDebit = this.currentJournal.entries.reduce(
+      (sum: number, entry: any) => sum + (entry.debit || 0), 0
+    );
+    this.currentJournal.totalCredit = this.currentJournal.entries.reduce(
+      (sum: number, entry: any) => sum + (entry.credit || 0), 0
+    );
+
+    // إعادة تعيين المصفوفة لإخبار Angular بالتغيير
+    this.currentJournal.entries = this.currentJournal.entries.slice();
   }
 
-  // منع إدخال في المدين والدائن بنفس الوقت
-  if (field === 'debit' && line.debit) line.credit = null;
-  if (field === 'credit' && line.credit) line.debit = null;
 
-  this.calculateCurrentTotals();
-}
+  calculateCurrentTotals() {
+    this.currentJournal.totalDebit = this.currentJournal.entries.reduce((sum: any, line: any) => {
+      const val = parseFloat((line.debit || '0').toString().replace(/,/g, ''));
+      return sum + (isNaN(val) ? 0 : val);
+    }, 0);
 
-calculateCurrentTotals() {
-  this.currentJournal.totalDebit = this.currentJournal.entries.reduce((sum: any, line: any) => {
-    const val = parseFloat((line.debit || '0').toString().replace(/,/g, ''));
-    return sum + (isNaN(val) ? 0 : val);
-  }, 0);
-
-  this.currentJournal.totalCredit = this.currentJournal.entries.reduce((sum: any, line: any) => {
-    const val = parseFloat((line.credit || '0').toString().replace(/,/g, ''));
-    return sum + (isNaN(val) ? 0 : val);
-  }, 0);
-}
-
-
-
-// للـ F9 كما كان
-openAccountSearch(event: any, rowIndex: number) {
-  this.editingRowIndex = rowIndex;
-  if (event.key === 'F9') { 
-    this.accountDialog = true; 
-  } 
-}
-
-// الكتابة المباشرة
-handleAccountInput(event: any, rowIndex: number) {
-  const inputValue = event.target.value.trim();
-  const found = this.accounts.find(a => a.code === inputValue || a.name === inputValue);
-  const line = this.currentJournal.entries[rowIndex];
-
-  if (found) {
-    line.account = found.name;
-    line.accountCode = found.code;
-    line.invalidAccount = false;
-  } else {
-    line.invalidAccount = inputValue !== '';
+    this.currentJournal.totalCredit = this.currentJournal.entries.reduce((sum: any, line: any) => {
+      const val = parseFloat((line.credit || '0').toString().replace(/,/g, ''));
+      return sum + (isNaN(val) ? 0 : val);
+    }, 0);
   }
-}
 
 
-openCostCenterSearch(event: any, rowIndex: number) {
-  this.editingRowIndex = rowIndex;
-  if (event.key === 'F9') { this.costCenterDialog = true; }
-}
 
-handleCostCenterInput(event: any, rowIndex: number) {
-  const inputValue = event.target.value.trim();
-  const found = this.costCenters.find(c => c.code === inputValue || c.name === inputValue);
-
-  const line = this.currentJournal.entries[rowIndex];
-  if (found) {
-    line.costCenter = found.name;
-    line.costCenterCode = found.code;
-    line.invalidCostCenter = false;
-  } else {
-    line.invalidCostCenter = inputValue !== '';
+  // للـ F9 كما كان
+  openAccountSearch(event: any, rowIndex: number) {
+    this.editingRowIndex = rowIndex;
+    if (event.key === 'F9') {
+      this.accountDialog = true;
+    }
   }
-}
 
+  // الكتابة المباشرة
+  handleAccountInput(event: any, rowIndex: number) {
+    const inputValue = event.target.value.trim();
+    const found = this.accounts.find(a => a.code === inputValue || a.name === inputValue);
+    const line = this.currentJournal.entries[rowIndex];
 
-openVendorDialog(event: any, rowIndex: number) {
-  this.editingRowIndex = rowIndex;
-  if (event.key === 'F9') { this.vendorDialog = true; }
-}
-
-handleVendorInput(event: any, rowIndex: number) {
-  const inputValue = event.target.value.trim();
-  const found = this.vendors.find(v => v.account === inputValue || v.name === inputValue);
-
-  const line = this.currentJournal.entries[rowIndex];
-  if (found) {
-    line.vendor = found.name;
-    line.vendorAccount = found.account;
-    line.invalidVendor = false;
-  } else {
-    line.invalidVendor = inputValue !== '';
+    if (found) {
+      line.account = found.name;
+      line.accountCode = found.code;
+      line.invalidAccount = false;
+    } else {
+      line.invalidAccount = inputValue !== '';
+    }
   }
-}
+
+
+  openCostCenterSearch(event: any, rowIndex: number) {
+    this.editingRowIndex = rowIndex;
+    if (event.key === 'F9') { this.costCenterDialog = true; }
+  }
+
+  handleCostCenterInput(event: any, rowIndex: number) {
+    const inputValue = event.target.value.trim();
+    const found = this.costCenters.find(c => c.code === inputValue || c.name === inputValue);
+
+    const line = this.currentJournal.entries[rowIndex];
+    if (found) {
+      line.costCenter = found.name;
+      line.costCenterCode = found.code;
+      line.invalidCostCenter = false;
+    } else {
+      line.invalidCostCenter = inputValue !== '';
+    }
+  }
+
+
+  openVendorDialog(event: any, rowIndex: number) {
+    this.editingRowIndex = rowIndex;
+    if (event.key === 'F9') { this.vendorDialog = true; }
+  }
+
+  handleVendorInput(event: any, rowIndex: number) {
+    const inputValue = event.target.value.trim();
+    const found = this.vendors.find(v => v.account === inputValue || v.name === inputValue);
+
+    const line = this.currentJournal.entries[rowIndex];
+    if (found) {
+      line.vendor = found.name;
+      line.vendorAccount = found.account;
+      line.invalidVendor = false;
+    } else {
+      line.invalidVendor = inputValue !== '';
+    }
+  }
 
 
   // 🟢 الفلاتر
@@ -623,9 +951,9 @@ handleVendorInput(event: any, rowIndex: number) {
     this.vendorFormDialog = false;
   }
 
-  
 
-   // 🟢 نسخ / لصق
+
+  // 🟢 نسخ / لصق
   copyLine() { if (this.selectedRowIndex >= 0) { this.copiedLine = { ...this.currentJournal.entries[this.selectedRowIndex] }; this.messageService.add({ severity: 'info', summary: 'Copied', detail: 'Line copied' }); } }
   pasteLine() { if (this.copiedLine) { this.currentJournal.entries.splice(this.selectedRowIndex + 1, 0, { ...this.copiedLine }); this.messageService.add({ severity: 'success', summary: 'Pasted', detail: 'Line pasted' }); this.calculateCurrentTotals(); this.pushUndo(); } }
 
@@ -634,7 +962,6 @@ handleVendorInput(event: any, rowIndex: number) {
   undo() { if (this.undoStack.length > 0) { this.redoStack.push(JSON.stringify(this.currentJournal.entries)); this.currentJournal.entries = JSON.parse(this.undoStack.pop()!); this.calculateCurrentTotals(); } }
   redo() { if (this.redoStack.length > 0) { this.undoStack.push(JSON.stringify(this.currentJournal.entries)); this.currentJournal.entries = JSON.parse(this.redoStack.pop()!); this.calculateCurrentTotals(); } }
 
- 
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboard(event: KeyboardEvent) {
@@ -651,8 +978,8 @@ handleVendorInput(event: any, rowIndex: number) {
     } else if (key === 'delete' && this.selectedRowIndex >= 0) { this.removeJournalLine(this.selectedRowIndex); event.preventDefault(); }
   }
 
-  
- 
+
+
   // 🟢 الطباعة
   printEntry(journal: any) {
     const lines = journal.entries.map((line: any) => `
