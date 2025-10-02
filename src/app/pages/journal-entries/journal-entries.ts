@@ -48,37 +48,55 @@ import { PaginatorModule } from 'primeng/paginator';
              [(ngModel)]="journalIdFilter"
              class="p-inputtext w-40">
     </div>
+    
   </div>
+<p-table 
+  [value]="filteredJournals(journalIdFilter)" 
+  [paginator]="true" 
+  [rows]="10" 
+  [responsiveLayout]="'scroll'" 
+  [scrollable]="true" 
+  scrollHeight="400px">
 
-  <!-- جدول القيد -->
-  <p-table [value]="journalEntries" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>#</th>
-        <th>Date</th>
-        <th>Total Debit</th>
-        <th>Total Credit</th>
-        <th>Actions</th>
-      </tr>
-    </ng-template>
+  <ng-template pTemplate="header">
+    <tr class="bg-gray-100 sticky top-0 z-10">
+      <th>#</th>
+      <th>Date</th>
+      <th>Total Debit</th>
+      <th>Total Credit</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
 
-    <ng-template pTemplate="body" let-journal let-i="rowIndex">
-      <tr *ngIf="matchesJournalFilter(journal)">
-        <td>{{journal.id}}</td>
-        <td>{{journal.date}}</td>
-        <td>{{journal.totalDebit | number:'1.2-2'}}</td>
-        <td>{{journal.totalCredit | number:'1.2-2'}}</td>
-        <td class="flex gap-2">
-          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm"
-                  (click)="editJournal(journal)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm"
-                  (click)="deleteJournal(i)"></button>
-          <button pButton icon="pi pi-print" class="p-button-warning p-button-sm"
-                  (click)="printEntry(journal)"></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+  <ng-template pTemplate="body" let-journal let-i="rowIndex">
+    <tr>
+      <td>{{journal.id}}</td>
+      <td>{{journal.date | date:'yyyy-MM-dd'}}</td>
+      <td>{{journal.totalDebit | number:'1.2-2'}}</td>
+      <td>{{journal.totalCredit | number:'1.2-2'}}</td>
+      <td class="flex gap-2">
+        <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editJournal(journal)"></button>
+        <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteJournal(i)"></button>
+        <button pButton icon="pi pi-print" class="p-button-warning p-button-sm" (click)="printEntry(journal)"></button>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="5">
+        <div class="flex flex-col items-center justify-center h-full py-10">
+          <i class="pi pi-database" style="font-size: 2rem"></i>
+          <span class="text-gray-500 text-lg text-center">
+            {{ filteredJournals(journalIdFilter).length ? 'No results found for your search' : 'No Data Available' }}
+          </span>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+</p-table>
+
 
 <p-dialog 
     header="{{isEdit ? 'Edit Entry' : 'New Entry'}}"
@@ -201,6 +219,7 @@ import { PaginatorModule } from 'primeng/paginator';
       <input type="text" [(ngModel)]="line.vendor"
              (input)="handleVendorInput($event,i)"
              (keydown)="openVendorDialog($event,i)"
+             [disabled]="!line.isVendorEnabled"
              (keydown.enter)="addNewLine(i); $event.preventDefault()"
              [class.p-invalid]="line.invalidVendor"
              placeholder="Vendor No. or F9 to Search"
@@ -534,7 +553,7 @@ export class JournalEntriesComponent {
 
 
   accounts = [
-    { name: 'Cash', code: '10101' },
+    { name: 'vendor', code: '10101' },
     { name: 'Bank', code: '10102' },
     { name: 'Sales', code: '40101' },
     { name: 'Purchases', code: '50101' },
@@ -542,7 +561,7 @@ export class JournalEntriesComponent {
     { name: 'enma', code: '10130' },
     { name: 'belad', code: '40140' },
     { name: 'riadh', code: '50120' },
-    { name: 'sab', code: '60101' }
+    { name: 'Cash', code: '60101' }
   ];
 
   costCenters = [
@@ -624,7 +643,8 @@ export class JournalEntriesComponent {
       credit: 0,
       costCenter: '',
       costCenterCode: '',
-      tags: []
+      tags: [],
+       isVendorEnabled: false 
     };
 
     if (index === -1) {
@@ -639,12 +659,6 @@ export class JournalEntriesComponent {
 
   isBalanced(): boolean {
     return this.currentJournal.totalDebit === this.currentJournal.totalCredit;
-  }
-
-
-  matchesJournalFilter(journal: any): boolean {
-    if (!this.journalIdFilter) return true; // إذا لم يوجد بحث، عرض كل القيود
-    return journal.id.toString().includes(this.journalIdFilter);
   }
 
   // عند أي تغيير في مدين أو دائن، يحدث حساب الإجماليات
@@ -718,11 +732,7 @@ export class JournalEntriesComponent {
       line.invalidAccount = !acc;
       if (!acc) valid = false;
 
-      // المورد
-      const ven = this.vendors.find(v => v.account === line.vendorAccount || v.name === line.vendor);
-      line.invalidVendor = !ven;
-      if (!ven) valid = false;
-
+     
       // مركز التكلفة
       const cc = this.costCenters.find(c => c.code === line.costCenterCode || c.name === line.costCenter);
       line.invalidCostCenter = !cc;
@@ -815,18 +825,32 @@ export class JournalEntriesComponent {
 
   // الكتابة المباشرة
   handleAccountInput(event: any, rowIndex: number) {
-    const inputValue = event.target.value.trim();
-    const found = this.accounts.find(a => a.code === inputValue || a.name === inputValue);
-    const line = this.currentJournal.entries[rowIndex];
+  const inputValue = event.target.value.trim();
+  const found = this.accounts.find(a => a.code === inputValue || a.name === inputValue);
+  const line = this.currentJournal.entries[rowIndex];
 
-    if (found) {
-      line.account = found.name;
-      line.accountCode = found.code;
-      line.invalidAccount = false;
+  if (found) {
+    line.account = found.name;
+    line.accountCode = found.code;
+    line.invalidAccount = false;
+
+    // ✅ التحقق إذا الحساب من الموردين
+    if (found.name.toLowerCase().includes('vendor') || found.code.startsWith('201')) {
+      line.isVendorEnabled = true;
     } else {
-      line.invalidAccount = inputValue !== '';
+      line.isVendorEnabled = false;
+      line.vendor = '';           // مسح قيمة المورد عند تعطيله
+      line.vendorAccount = '';
     }
+
+  } else {
+    line.invalidAccount = inputValue !== '';
+    line.isVendorEnabled = false;
+    line.vendor = '';
+    line.vendorAccount = '';
   }
+}
+
 
 
   openCostCenterSearch(event: any, rowIndex: number) {
@@ -868,8 +892,27 @@ export class JournalEntriesComponent {
     }
   }
 
+  
+filteredJournals(filterText: string) {
+  if (!this.journalEntries) return [];
 
-  // 🟢 الفلاتر
+  // تحويل الفلتر لأي نوع إلى نص وتجاهل المسافات
+  const filter = filterText != null ? filterText.toString().trim().toLowerCase() : '';
+
+  if (!filter) return this.journalEntries;
+
+  return this.journalEntries.filter(j => {
+    // نحول كل قيمة من السجلات إلى نص لمطابقتها مع الفلتر
+    const id = j.id?.toString().toLowerCase() || '';
+    const date = j.date?.toString().toLowerCase() || '';
+    const totalDebit = j.totalDebit?.toString().toLowerCase() || '';
+    const totalCredit = j.totalCredit?.toString().toLowerCase() || '';
+
+    // تحقق إذا أي عمود يحتوي على النص المطلوب
+    return id.includes(filter) || date.includes(filter) || totalDebit.includes(filter) || totalCredit.includes(filter);
+  });
+}
+ // 🟢 الفلاتر
   filteredAccounts() {
     const filter = this.accountFilter.trim();
     if (!filter) return this.accounts;
@@ -879,14 +922,20 @@ export class JournalEntriesComponent {
     );
   }
 
-  selectAccount(acc: any) {
-    const line = this.currentJournal.entries[this.editingRowIndex];
+selectAccount(acc: any) {
+  if (this.selectedRowIndex >= 0) {
+    const line = this.currentJournal.entries[this.selectedRowIndex];
     line.account = acc.name;
     line.accountCode = acc.code;
+
+    // 🔹 لو الحساب مورّد، فعّل حقل المورد
+    line.isVendorEnabled = acc.name.toLowerCase().includes('vendor') || acc.code.startsWith('10101');
+    
     this.accountDialog = false;
-    line.invalidAccount = false;
-    this.accountFilter = '';
   }
+}
+
+
 
   filteredCostCenters() {
     const filter = this.costCenterFilter.trim();
