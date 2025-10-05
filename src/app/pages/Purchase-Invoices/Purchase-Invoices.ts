@@ -36,9 +36,9 @@ interface PurchaseOrder {
   ],
   providers: [ConfirmationService, MessageService],
     template: `
-<div class="p-6 bg-white shadow-lg rounded-lg">
+<div class="card">
   <p-toast></p-toast>
-  <h2 class="text-3xl font-bold mb-6">Purchases - المشتريات</h2>
+  <h2 class="text-3xl font-bold mb-6">Sales - المبيعات</h2>
 
   <div class="flex justify-between items-center mb-4">
     <button pButton label="Add Purchase Order" icon="pi pi-plus" class="p-button-success" (click)="openNewPO()"></button>

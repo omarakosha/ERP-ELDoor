@@ -8,6 +8,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'app-sales-invoices',
@@ -20,20 +21,24 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     DialogModule,
     ConfirmDialogModule,
     InputTextModule,
-    ToastModule
+    ToastModule,
+    TagModule
   ],
   providers: [ConfirmationService, MessageService],
   template: `
-<div class="p-6 bg-white shadow-lg rounded-lg">
+<div class="card">
   <p-toast></p-toast>
   <h2 class="text-3xl font-bold mb-6">Sales - المبيعات</h2>
 
   <div class="flex justify-between items-center mb-4">
     <button pButton label="Add Invoice" icon="pi pi-plus" class="p-button-success" (click)="openNewInvoice()"></button>
-    <input pInputText type="text" placeholder="Search..." (input)="dt.filterGlobal($event.target.value,'contains')" class="border rounded p-2 w-1/3">
+    <input pInputText type="text" placeholder="Search..."
+           (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+           class="border rounded p-2 w-1/3">
   </div>
 
-  <p-table #dt [value]="invoices" [paginator]="true" [rows]="10" [globalFilterFields]="['customer.name','status']" [responsiveLayout]="'scroll'">
+  <p-table #dt [value]="invoices" [paginator]="true" [rows]="10" 
+           [globalFilterFields]="['customer.name','status']" [responsiveLayout]="'scroll'">
     <ng-template pTemplate="header">
       <tr>
         <th>Invoice #</th>
@@ -51,21 +56,22 @@ import { ConfirmationService, MessageService } from 'primeng/api';
         <td>{{invoice.date}}</td>
         <td>{{invoice.total | currency}}</td>
         <td>
-          <span [ngClass]="statusClass(invoice.status)">
-            {{invoice.status}}
-          </span>
+          <p-tag 
+            [value]="invoice.status"
+            [severity]="invoice.status === 'Paid' ? 'success' 
+                      : (invoice.status === 'Pending' ? 'warn' : 'danger')">
+          </p-tag>
         </td>
         <td class="flex gap-2">
-  <button pButton icon="pi pi-pencil" class="p-button-info" (click)="editInvoice(invoice)"></button>
-  <button pButton icon="pi pi-trash" class="p-button-danger" (click)="confirmDelete(invoice)"></button>
-  <button pButton icon="pi pi-print" class="p-button-warning" (click)="printInvoice(invoice)" pTooltip="Print this invoice"></button>
-</td>
-
+          <button pButton icon="pi pi-pencil" class="p-button-info" (click)="editInvoice(invoice)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger" (click)="confirmDelete(invoice)"></button>
+          <button pButton icon="pi pi-print" class="p-button-warning" (click)="printInvoice(invoice)" pTooltip="Print this invoice"></button>
+        </td>
       </tr>
     </ng-template>
   </p-table>
 
-  <!-- Dialog -->
+  <!-- Invoice Dialog -->
   <p-dialog header="{{isEdit ? 'Edit' : 'New'}} Invoice" [(visible)]="displayDialog" [modal]="true" [style]="{width:'60vw'}" [closable]="false">
     <div class="grid gap-4">
       <div class="col-6">
@@ -106,7 +112,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
             <td>{{item.quantity * item.price | currency}}</td>
             <td>
               <button pButton icon="pi pi-times" class="p-button-danger" (click)="removeItem(i)"></button>
-              
             </td>
           </tr>
         </ng-template>
@@ -150,14 +155,6 @@ export class SalesInvoicesComponent {
       { id: 1, customer: this.customers[0], date: '2025-09-24', total: 100, status: 'Paid', items: [] },
       { id: 2, customer: this.customers[1], date: '2025-09-25', total: 200, status: 'Pending', items: [] }
     ];
-  }
-
-  statusClass(status: string) {
-    return {
-      'text-green-600 font-bold': status==='Paid',
-      'text-yellow-600 font-bold': status==='Pending',
-      'text-red-600 font-bold': status==='Overdue'
-    };
   }
 
   openNewInvoice() {
@@ -220,45 +217,43 @@ export class SalesInvoicesComponent {
     }
     this.displayDialog=false;
   }
+
   printInvoice(invoice: any) {
-  if (!confirm(`Are you sure you want to print Invoice #${invoice.id}?`)) {
-    return; // إذا رفض المستخدم، لا تطبع
-  }
+    if (!confirm(`Are you sure you want to print Invoice #${invoice.id}?`)) return;
 
-  const printContent = `
-    <div style="font-family: Arial, sans-serif; padding: 20px;">
-      <h2 style="text-align:center;">Invoice #${invoice.id}</h2>
-      <p><strong>Customer:</strong> ${invoice.customer?.name}</p>
-      <p><strong>Date:</strong> ${invoice.date}</p>
-      <table border="1" cellspacing="0" cellpadding="5" width="100%">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Qty</th>
-            <th>Price</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${invoice.items.map((item:any) => `
+    const printContent = `
+      <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <h2 style="text-align:center;">Invoice #${invoice.id}</h2>
+        <p><strong>Customer:</strong> ${invoice.customer?.name}</p>
+        <p><strong>Date:</strong> ${invoice.date}</p>
+        <table border="1" cellspacing="0" cellpadding="5" width="100%">
+          <thead>
             <tr>
-              <td>${item.product?.name}</td>
-              <td>${item.quantity}</td>
-              <td>${item.price}</td>
-              <td>${item.quantity * item.price}</td>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Total</th>
             </tr>
-          `).join('')}
-        </tbody>
-      </table>
-      <h3 style="text-align:right;">Total: ${invoice.total}</h3>
-      <p style="text-align:center; margin-top:20px;">Thank you for your business!</p>
-    </div>
-  `;
-  
-  const newWin = window.open('', '_blank', 'width=800,height=600');
-  newWin!.document.write(printContent);
-  newWin!.document.close();
-  newWin!.print();
-}
+          </thead>
+          <tbody>
+            ${invoice.items.map((item:any) => `
+              <tr>
+                <td>${item.product?.name}</td>
+                <td>${item.quantity}</td>
+                <td>${item.price}</td>
+                <td>${item.quantity * item.price}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <h3 style="text-align:right;">Total: ${invoice.total}</h3>
+        <p style="text-align:center; margin-top:20px;">Thank you for your business!</p>
+      </div>
+    `;
 
+    const newWin = window.open('', '_blank', 'width=800,height=600');
+    newWin!.document.write(printContent);
+    newWin!.document.close();
+    newWin!.print();
+  }
 }

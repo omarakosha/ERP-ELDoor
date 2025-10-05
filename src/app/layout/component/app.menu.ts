@@ -52,7 +52,10 @@ export class AppMenu {
     items: [{ label: 'Profit & Loss', icon: 'pi pi-chart-line', routerLink: ['/pages/profit-loss'] }]
 },
 {
-    items: [{ label: 'Accounts Manager', icon: 'pi pi-fw pi-share-alt', routerLink: ['/pages/accounts-manager'] }]
+    items: [{ label: 'Accounts Tree', icon: 'pi pi-fw pi-share-alt', routerLink: ['/pages/accounts-manager'] }]
+},
+{
+    items: [{ label: 'Financial Reports', icon: 'pi pi-fw pi-share-alt', routerLink: ['/pages/financial-report'] }]
 },
 
 

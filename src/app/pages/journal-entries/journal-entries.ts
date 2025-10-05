@@ -32,10 +32,8 @@ import { PaginatorModule } from 'primeng/paginator';
   ],
   providers: [ConfirmationService, MessageService],
   template: `
- <div class="p-6 bg-white shadow-lg rounded-lg" dir="ltr">
+ <div class="card">
   <p-toast></p-toast>
-
-  <!-- عنوان الصفحة -->
   <h2 class="text-3xl font-bold mb-6">Journal Entries - قيود اليومية</h2>
 
   <!-- أزرار البحث والإضافة -->
@@ -98,84 +96,76 @@ import { PaginatorModule } from 'primeng/paginator';
 </p-table>
 
 
+
 <p-dialog 
     header="{{isEdit ? 'Edit Entry' : 'New Entry'}}"
     [(visible)]="displayDialog" 
     [modal]="true"
-    [style]="{width:'90vw', height:'76vh'}" 
+    [style]="{width:'90vw', height:'100vh'}" 
     [closable]="false">
 
+  <div class="flex flex-col h-full bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
 
-  <!-- المحتوى الرئيسي: flex column -->
-  <div class="flex flex-col h-full">
+    <!-- ======= الهيدر ======= -->
+    <div class="border-b border-gray-200 dark:border-gray-700  grid grid-cols-12 gap-6 items-center">
 
-<!-- ======= الهيدر ثابت ======= -->
-<div class="bg-white border-b shadow-md p-4 grid grid-cols-12 gap-6 items-center">
+      <div class="col-span-3 flex flex-col">
+        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-1">Entry No.</label>
+        
+        <input type="text"
+               [(ngModel)]="currentJournal.id"
+               class="p-inputtext w-full rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
+               readonly>
+      </div>
 
-  <!-- رقم القيد -->
-  <div class="col-span-3 flex flex-col">
-    <label class="font-semibold text-gray-700 mb-2">Entry No.</label>
-    <input type="text"
-           [(ngModel)]="currentJournal.id"
-           class="p-inputtext w-full bg-gray-100 rounded-md px-3 py-2"
-           readonly>
-  </div>
+      <div class="col-span-2 flex flex-col">
+        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Date</label>
+        <p-datepicker [(ngModel)]="currentJournal.date"
+                      [showIcon]="true"
+                      inputStyleClass="w-full px-3 py-2 rounded-md bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"></p-datepicker>
+      </div>
 
-  <!-- تاريخ القيد -->
-  <div class="col-span-2 flex flex-col">
-    <label class="font-semibold text-gray-700 mb-2">Date</label>
-    <p-datepicker [(ngModel)]="currentJournal.date"
-                  [showIcon]="true"
-                  inputStyleClass="w-full px-3 py-2 rounded-md"></p-datepicker>
-  </div>
+      <div class="col-span-2 flex flex-col">
+        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Status</label>
+        <select [(ngModel)]="currentJournal.status"
+                class="p-inputtext w-full rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
 
-  <!-- حالة القيد -->
-  <div class="col-span-2 flex flex-col">
-    <label class="font-semibold text-gray-700 mb-2">Status</label>
-    <select [(ngModel)]="currentJournal.status"
-            class="p-inputtext w-full rounded-md px-3 py-2">
-      <option value="Pending">Pending</option>
-      <option value="Approved">Approved</option>
-      <option value="Rejected">Rejected</option>
-      <option value="Closed">Closed</option>
-    </select>
-  </div>
+      <div class="col-span-2 flex flex-col">
+        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Entry Type</label>
+        <select [(ngModel)]="currentJournal.type"
+                class="p-inputtext w-full rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
+          <option value="Daily">Daily</option>
+          <option value="Adjustment">Adjustment</option>
+          <option value="Closing">Closing</option>
+        </select>
+      </div>
 
-  <!-- نوع القيد -->
-  <div class="col-span-2 flex flex-col">
-    <label class="font-semibold text-gray-700 mb-2">Entry Type</label>
-    <select [(ngModel)]="currentJournal.type"
-            class="p-inputtext w-full rounded-md px-3 py-2">
-      <option value="Daily">Daily</option>
-      <option value="Adjustment">Adjustment</option>
-      <option value="Closing">Closing</option>
-    </select>
-  </div>
+      <div class="col-span-3 flex flex-col">
+        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Summary</label>
+        <input type="text"
+               [value]="(currentJournal.totalDebit + currentJournal.totalCredit) | number:'1.2-2'"
+               class="p-inputtext w-full text-right font-semibold text-blue-500 rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
+               readonly>
+      </div>
 
-  <!-- ملخص مالي -->
-  <div class="col-span-3 flex flex-col">
-    <label class="font-semibold text-gray-700 mb-2">Summary</label>
-    <input type="text"
-           [value]="(currentJournal.totalDebit + currentJournal.totalCredit) | number:'1.2-2'"
-           class="p-inputtext w-full bg-gray-100 text-right rounded-md px-3 py-2 font-semibold text-blue-700"
-           readonly>
-  </div>
+      <div class="col-span-12 mt-4 flex flex-col">
+        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Notes</label>
+        <textarea [(ngModel)]="currentJournal.notes"
+                  class="p-inputtext w-full rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
+                  rows="3"
+                  placeholder="Add notes..."></textarea>
+      </div>
 
-  <!-- ملاحظات -->
-  <div class="col-span-12 mt-4 flex flex-col">
-    <label class="font-semibold text-gray-700 mb-2">Notes</label>
-    <textarea [(ngModel)]="currentJournal.notes"
-              class="p-inputtext w-full rounded-md px-3 py-2"
-              rows="3"
-              placeholder="Add notes..."></textarea>
-  </div>
+    </div>
 
-</div>
-
-
-
-    <!-- ======= الجدول (يمتد لملء المساحة) ======= -->
-    <div class="flex-1 overflow-auto min-h-[360px]">
+    <!-- ======= الجدول ======= -->
+    <div class="flex-1 overflow-auto min-h-[320px] mt-2">
       <p-table [value]="currentJournal.entries"
                [scrollable]="true"
                scrollHeight="100%"
@@ -185,7 +175,7 @@ import { PaginatorModule } from 'primeng/paginator';
                class="fixed-rows-table w-full">
 
         <ng-template pTemplate="header">
-          <tr>
+          <tr class="bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
             <th>#</th>
             <th>Account</th>
             <th>Vendor</th>
@@ -199,132 +189,116 @@ import { PaginatorModule } from 'primeng/paginator';
         </ng-template>
 
         <ng-template pTemplate="body" let-line let-i="rowIndex">
-  <tr (click)="selectedRowIndex=i">
-    <td>{{ i + 1 }}</td>
-    
-    <!-- عمود الحساب -->
-    <td>
-      <input type="text" [(ngModel)]="line.account"
-             (input)="handleAccountInput($event, i)"
-             (keydown)="openAccountSearch($event, i)"
-             (keydown.enter)="addNewLine(i); $event.preventDefault()"
-             [class.p-invalid]="line.invalidAccount"
-             [id]="'account-' + i"
-             placeholder="Account No. or F9 to Search"
-             class="p-inputtext w-full">
-    </td>
+          <tr (click)="selectedRowIndex=i" class="hover:bg-gray-200 dark:hover:bg-gray-600">
+            <td>{{ i + 1 }}</td>
 
-    <!-- عمود المورد -->
-    <td>
-      <input type="text" [(ngModel)]="line.vendor"
-             (input)="handleVendorInput($event,i)"
-             (keydown)="openVendorDialog($event,i)"
-             [disabled]="!line.isVendorEnabled"
-             (keydown.enter)="addNewLine(i); $event.preventDefault()"
-             [class.p-invalid]="line.invalidVendor"
-             placeholder="Vendor No. or F9 to Search"
-             class="p-inputtext w-full">
-    </td>
+            <td>
+              <input type="text" [(ngModel)]="line.account"
+                     (input)="handleAccountInput($event, i)"
+                     (keydown)="openAccountSearch($event, i)"
+                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
+                     [class.p-invalid]="line.invalidAccount"
+                     [id]="'account-' + i"
+                     placeholder="Account No. or F9 to Search"
+                     class="p-inputtext w-full bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
+            </td>
 
-    <!-- عمود الوصف -->
-    <td>
-      <input type="text" [(ngModel)]="line.description"
-             (keydown.enter)="addNewLine(i); $event.preventDefault()"
-             class="p-inputtext w-full"
-             placeholder="Description"
-             style="width: 300px;">
-    </td>
+            <td>
+              <input type="text" [(ngModel)]="line.vendor"
+                     (input)="handleVendorInput($event,i)"
+                     (keydown)="openVendorDialog($event,i)"
+                     [disabled]="!line.isVendorEnabled"
+                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
+                     [class.p-invalid]="line.invalidVendor"
+                     placeholder="Vendor No. or F9 to Search"
+                     class="p-inputtext w-full bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
+            </td>
 
-<!-- عمود المدين -->
-<td>
-  <input type="text"
-         [(ngModel)]="line.debit"
-         (focus)="formatWithCommas(line, 'debit')"
-         (input)="formatWithCommas(line, 'debit'); updateTotals()"
-         (keydown.enter)="addNewLine(i); $event.preventDefault()"
-         class="p-inputtext w-full text-right"
-         placeholder="0.00">
-</td>
+            <td>
+              <input type="text" [(ngModel)]="line.description"
+                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
+                     class="p-inputtext w-full bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
+                     placeholder="Description"
+                     style="width: 300px;">
+            </td>
 
-<!-- عمود الدائن -->
-<td>
-  <input type="text"
-         [(ngModel)]="line.credit"
-         (focus)="formatWithCommas(line, 'credit')"
-         (input)="formatWithCommas(line, 'credit'); updateTotals()"
-         (keydown.enter)="addNewLine(i); $event.preventDefault()"
-         class="p-inputtext w-full text-right"
-         placeholder="0.00">
-</td>
+            <td>
+              <input type="text"
+                     [(ngModel)]="line.debit"
+                     (focus)="formatWithCommas(line, 'debit')"
+                     (input)="formatWithCommas(line, 'debit'); updateTotals()"
+                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
+                     class="p-inputtext w-full text-right bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
+                     placeholder="0.00">
+            </td>
 
+            <td>
+              <input type="text"
+                     [(ngModel)]="line.credit"
+                     (focus)="formatWithCommas(line, 'credit')"
+                     (input)="formatWithCommas(line, 'credit'); updateTotals()"
+                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
+                     class="p-inputtext w-full text-right bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
+                     placeholder="0.00">
+            </td>
 
-    <!-- عمود مركز التكلفة -->
-    <td>
-      <input type="text" [(ngModel)]="line.costCenter"
-             (input)="handleCostCenterInput($event,i)"
-             (keydown)="openCostCenterSearch($event,i)"
-             (keydown.enter)="addNewLine(i); $event.preventDefault()"
-             [class.p-invalid]="line.invalidCostCenter"
-             placeholder="CostCenter No. or F9 to Search"
-             class="p-inputtext w-full">
-    </td>
+            <td>
+              <input type="text" [(ngModel)]="line.costCenter"
+                     (input)="handleCostCenterInput($event,i)"
+                     (keydown)="openCostCenterSearch($event,i)"
+                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
+                     [class.p-invalid]="line.invalidCostCenter"
+                     placeholder="CostCenter No. or F9 to Search"
+                     class="p-inputtext w-full bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
+            </td>
 
-    <!-- عمود الوسوم -->
-    <td>
-      <p-multiSelect [options]="tags" [(ngModel)]="line.tags"
-                     optionLabel="name" display="chip"
-                     defaultLabel="Select tags" [filter]="true"
-                     (keydown.enter)="addNewLine(i); $event.preventDefault()"></p-multiSelect>
-    </td>
+            <td>
+              <p-multiSelect [options]="tags" [(ngModel)]="line.tags"
+                             optionLabel="name" display="chip"
+                             defaultLabel="Select tags" [filter]="true"
+                             styleClass="dark:text-white dark:bg-gray-700"
+                             (keydown.enter)="addNewLine(i); $event.preventDefault()"></p-multiSelect>
+            </td>
 
-    <!-- زر الحذف -->
-    <td>
-      <button pButton icon="pi pi-trash" class="p-button p-button-danger p-button-sm"
-              (click)="removeJournalLine(i)"></button>
-    </td>
-  </tr>
-</ng-template>
-
+            <td>
+              <button pButton icon="pi pi-trash" class="p-button p-button-danger p-button-sm"
+                      (click)="removeJournalLine(i)"></button>
+            </td>
+          </tr>
+        </ng-template>
 
       </p-table>
     </div>
 
     <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
-<!-- ======= الفوتر الجديد ======= -->
-<div class="bg-white border-t pt-4 pb-4 px-5 flex flex-col gap-3">
 
-  <!-- مساحة مخصصة للرسالة حتى لو لم تظهر -->
-  <div class="h-6 flex items-center justify-center">
+    <!-- ======= الفوتر ======= -->
+    <div class="border-t border-gray-200 dark:border-gray-700 pt-4 pb-4 px-5 flex flex-col gap-3 bg-gray-50 dark:bg-gray-800">
 
-      <div *ngIf="!isBalanced()" class="text-red-600 font-bold text-center mb-2">
-    ⚠️ Debit and Credit must be equal
-  </div>
+      <div class="h-6 flex items-center justify-center">
+        <div *ngIf="!isBalanced()" class="text-red-600 font-bold text-center mb-2">
+          ⚠️ Debit and Credit must be equal
+        </div>
+      </div>
 
-  </div>
+      <div class="flex justify-between items-start">
+        <div class="flex flex-col text-left font-bold text-gray-700 dark:text-gray-300">
+          <div>Total Debit.: {{currentJournal.totalDebit | number:'1.2-2'}}</div>
+          <div>Total Credit: {{currentJournal.totalCredit | number:'1.2-2'}}</div>
+        </div>
 
-  <div class="flex justify-between items-start">
+        <div class="flex gap-2">
+          <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary"
+                  (click)="displayDialog=false"></button>
+          <button pButton label="Save" icon="pi pi-check" class="p-button-success"
+                  (click)="saveJournal()"></button>
+        </div>
+      </div>
 
-    <!-- 2. المجموع النهائي على اليسار -->
-    <div class="flex flex-col text-left font-bold text-gray-800">
-      <div>Total Debit.: {{currentJournal.totalDebit | number:'1.2-2'}}</div>
-      <div>Total Credit: {{currentJournal.totalCredit | number:'1.2-2'}}</div>
     </div>
-
-    <!-- 3. الأزرار على اليمين -->
-    <div class="flex gap-2">
-      <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary"
-              (click)="displayDialog=false"></button>
-      <button pButton label="Save" icon="pi pi-check" class="p-button-success"
-              (click)="saveJournal()"></button>
-    </div>
-
-  </div>
-
-</div>
 
   </div>
 </p-dialog>
-
 
 
 
@@ -385,10 +359,16 @@ import { PaginatorModule } from 'primeng/paginator';
     </div>
 
     <!-- الفوتر ثابت -->
-    <div class="flex-shrink-0 mt-2 border-t pt-2 bg-white">
-      <p-paginator [rows]="5" [totalRecords]="filteredVendors().length || 0"
-                   [rowsPerPageOptions]="[5,10,15]"></p-paginator>
-    </div>
+ <div class="flex-shrink-0 mt-2 border-t pt-2 
+            bg-white border-gray-200 
+            dark:bg-[#18181b] dark:border-gray-700">
+  <p-paginator 
+    [rows]="5" 
+    [totalRecords]="filteredVendors().length || 0"
+   >
+  </p-paginator>
+</div>
+
 
   </div>
 </p-dialog>
@@ -441,10 +421,16 @@ import { PaginatorModule } from 'primeng/paginator';
     </div>
 
     <!-- الفوتر ثابت -->
-    <div class="flex-shrink-0 mt-2 border-t pt-2 bg-white">
-      <p-paginator [rows]="5" [totalRecords]="filteredAccounts().length || 0"
-                   [rowsPerPageOptions]="[5,10,15]"></p-paginator>
-    </div>
+   <div class="flex-shrink-0 mt-2 border-t pt-2 
+            bg-white border-gray-200 
+            dark:bg-[#18181b] dark:border-gray-700">
+  <p-paginator 
+    [rows]="5" 
+    [totalRecords]="filteredVendors().length || 0"
+   >
+  </p-paginator>
+</div>
+
 
   </div>
 </p-dialog>
@@ -498,10 +484,16 @@ import { PaginatorModule } from 'primeng/paginator';
     </div>
 
     <!-- الفوتر ثابت -->
-    <div class="flex-shrink-0 mt-2 border-t pt-2 bg-white">
-      <p-paginator [rows]="5" [totalRecords]="filteredCostCenters().length || 0"
-                   [rowsPerPageOptions]="[5,10,15]"></p-paginator>
-    </div>
+    <div class="flex-shrink-0 mt-2 border-t pt-2 
+            bg-white border-gray-200 
+            dark:bg-[#18181b] dark:border-gray-700">
+  <p-paginator 
+    [rows]="5" 
+    [totalRecords]="filteredVendors().length || 0"
+   >
+  </p-paginator>
+</div>
+
 
   </div>
 </p-dialog>

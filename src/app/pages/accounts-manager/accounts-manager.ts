@@ -9,6 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-accounts-manager',
@@ -21,14 +22,15 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     DialogModule,
     InputTextModule,
     ConfirmDialogModule,
-    ToastModule
+    ToastModule,
+     TooltipModule
   ],
   providers: [ConfirmationService, MessageService],
   template: `
-  <div class="p-6 bg-gray-50 min-h-screen font-sans">
-    <p-toast></p-toast>
+ <div class="card">
+  <p-toast></p-toast>
+  <h2 class="text-3xl font-bold mb-6">Accounts Management - إدارة الحسابات</h2>
 
-    <h1 class="text-3xl font-bold mb-4 text-gray-800">Accounts Management - إدارة الحسابات</h1>
 
     <!-- Search -->
     <div class="mb-4">
@@ -37,24 +39,73 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 
     <!-- Buttons -->
     <div class="flex flex-wrap gap-3 mb-4">
-      <button pButton label="Add Root Account" icon="pi pi-plus" class="p-button-success" (click)="openNewAccount(null)"></button>
-      <button pButton label="Add Child Account" icon="pi pi-plus-circle" class="p-button-warning" [disabled]="!selectedNode" (click)="openNewAccount(selectedNode)"></button>
-      <button pButton label="Edit Selected" icon="pi pi-pencil" class="p-button-info" [disabled]="!selectedNode" (click)="openEditAccount(selectedNode)"></button>
-      <button pButton label="Delete Selected" icon="pi pi-trash" class="p-button-danger" [disabled]="!selectedNode" (click)="deleteAccount(selectedNode)"></button>
+     <button pButton 
+        icon="pi pi-plus" 
+        aria-label="Add Root Account" 
+        class="p-button-success" 
+        (click)="openNewAccount(null)"
+        pTooltip=" إضافة حساب رئيسي جديد" 
+        tooltipPosition="top">
+</button>
+
+<button pButton 
+        icon="pi pi-plus-circle" 
+        aria-label="Add Child Account" 
+        class="p-button-warning" 
+        [disabled]="!selectedNode" 
+        (click)="openNewAccount(selectedNode)"
+        pTooltip=" إضافة حساب فرعي للحساب المحدد" 
+        tooltipPosition="top">
+</button>
+
+<button pButton 
+        icon="pi pi-pencil" 
+        aria-label="Edit Selected Account" 
+        class="p-button-info" 
+        [disabled]="!selectedNode" 
+        (click)="openEditAccount(selectedNode)"
+        pTooltip="لتعديل الحساب المحدد" 
+        tooltipPosition="top">
+</button>
+
+<button pButton 
+        icon="pi pi-trash" 
+        aria-label="Delete Selected Account" 
+        class="p-button-danger" 
+        [disabled]="!selectedNode" 
+        (click)="deleteAccount(selectedNode)"
+        pTooltip="حذف الحساب المحدد"  
+        tooltipPosition="top">
+</button>
+
     </div>
 
-    <!-- Tree -->
-    <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-200">
-      <p-tree [value]="filteredTree" selectionMode="single" [(selection)]="selectedNode" (onNodeSelect)="onNodeSelect($event)" [style]="{ width: '100%' }">
-        <ng-template let-node pTemplate="default">
-          <div class="flex justify-between items-center p-2 hover:bg-gray-100 transition-all"
-               [ngStyle]="{'padding-left': (node.level * 20) + 'px'}">
-            <span class="font-medium text-gray-800">{{ node.label ?? '' }}</span>
-            <span class="text-gray-500 font-mono"> - {{ node.data?.code ?? '-' }}</span>
-          </div>
-        </ng-template>
-      </p-tree>
-    </div>
+<!-- Tree Dark Mode - Hover مريح -->
+<div class="bg-gray-800 shadow-lg rounded-lg overflow-hidden border border-gray-700">
+  <p-tree 
+    [value]="filteredTree" 
+    selectionMode="single" 
+    [(selection)]="selectedNode" 
+    (onNodeSelect)="onNodeSelect($event)" 
+    [style]="{ width: '100%' }">
+    
+    <ng-template let-node pTemplate="default">
+      <div 
+        class="flex justify-between items-center p-2 transition-all rounded cursor-pointer"
+        [ngClass]="{
+          'bg-gray-700 text-white': selectedNode === node,
+          'hover:bg-gray-600 hover:text-white': selectedNode !== node
+        }"
+        [ngStyle]="{'padding-left': (node.level * 20) + 'px'}">
+        
+        <span class="font-medium">{{ node.label ?? '' }}</span>
+        <span class="font-mono text-gray-400"> - {{ node.data?.code ?? '-' }}</span>
+      </div>
+    </ng-template>
+
+  </p-tree>
+</div>
+
 
     <!-- Dialog -->
     <p-dialog *ngIf="currentNode" header="{{isEdit ? 'Edit Account' : 'New Account'}}" 
