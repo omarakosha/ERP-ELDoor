@@ -1,0 +1,55 @@
+<div dir="rtl" class="space-y-6">
+
+  <!-- كروت التقارير: تظهر فقط إذا لم يتم اختيار تقرير -->
+  <div *ngIf="!selectedReportId" class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+    <div *ngFor="let report of reports" (click)="onReportSelected(report.id)">
+      <app-report-card [report]="report" [isFavorite]="isFavorite(report.id)"
+        (favoriteChanged)="toggleFavorite($event)"></app-report-card>
+    </div>
+  </div>
+
+  <!-- جدول التقرير المحدد -->
+  <div *ngIf="selectedReportId" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+      <h2>{{ selectedReport?.title }}</h2>
+      <p>{{ selectedReport?.description }}</p>
+
+      <input type="text" [(ngModel)]="filterText" placeholder="بحث..."
+        class="border rounded-lg px-3 py-2 w-full md:w-64 focus:ring focus:ring-blue-200" />
+    </div>
+
+    <p-table [value]="tableData" [paginator]="true" [rows]="5" [globalFilterFields]="['supplier','invoice','date']"
+      [tableStyle]="{'min-width':'50rem'}" [filters]="{global:{value: filterText, matchMode: 'contains'}}">
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngIf="selectedReportId === 'supplier-transactions'">المورد</th>
+          <th *ngIf="selectedReportId === 'supplier-transactions'">المبلغ</th>
+
+          <th *ngIf="selectedReportId === 'purchase-summary'">رقم الفاتورة</th>
+          <th *ngIf="selectedReportId === 'purchase-summary'">الإجمالي</th>
+
+          <th>التاريخ</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td *ngIf="selectedReportId === 'supplier-transactions'">{{ row.supplier }}</td>
+          <td *ngIf="selectedReportId === 'supplier-transactions'">{{ row.amount | number }}</td>
+
+          <td *ngIf="selectedReportId === 'purchase-summary'">{{ row.invoice }}</td>
+          <td *ngIf="selectedReportId === 'purchase-summary'">{{ row.total | number }}</td>
+
+          <td>{{ row.date }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- زر العودة للقائمة -->
+    <button (click)="selectedReportId = null" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">
+      العودة للقائمة
+    </button>
+
+  </div>
+</div>

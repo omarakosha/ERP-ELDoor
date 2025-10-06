@@ -57,7 +57,9 @@ export class AppMenu {
 {
     items: [{ label: 'Financial Reports', icon: 'pi pi-fw pi-share-alt', routerLink: ['/pages/financial-report'] }]
 },
-
+{
+    items: [{ label: 'Reports', icon: 'pi pi-chart-line', routerLink: ['/pages/reports'] }]
+},
 
             {
                 label: 'UI Components',
