@@ -1,0 +1,30 @@
+<div
+  class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 hover:shadow-lg transition relative"
+>
+  <div class="absolute top-3 right-3">
+    <button (click)="toggleFavorite($event)" class="focus:outline-none">
+      <i
+        class="pi"
+        [ngClass]="
+          isFavorite
+            ? 'pi-star-fill text-yellow-500'
+            : 'pi-star text-gray-400 hover:text-yellow-400'
+        "
+      ></i>
+    </button>
+  </div>
+
+  <div class="flex flex-col items-center text-center">
+    <i
+      class="pi text-4xl mb-3"
+      [ngClass]="report.icon + ' ' + report.iconColor"
+    ></i>
+    <h3 class="font-bold text-lg mb-1 text-gray-800 dark:text-gray-100">
+      {{ report.title }}
+    </h3>
+    <p class="text-gray-500 dark:text-gray-400 text-sm mb-2">
+      {{ report.description }}
+    </p>
+    <span class="text-xs text-gray-400">آخر تحديث: {{ report.lastUpdate }}</span>
+  </div>
+</div>

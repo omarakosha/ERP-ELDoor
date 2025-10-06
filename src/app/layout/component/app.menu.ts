@@ -54,7 +54,9 @@ export class AppMenu {
 {
     items: [{ label: 'Accounts Manager', icon: 'pi pi-fw pi-share-alt', routerLink: ['/pages/accounts-manager'] }]
 },
-
+{
+    items: [{ label: 'Reports', icon: 'pi pi-chart-line', routerLink: ['/pages/reports'] }]
+},
 
             {
                 label: 'UI Components',
