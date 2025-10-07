@@ -1,17 +1,24 @@
-<div dir="rtl" class="space-y-6">
+  <!-- شبكة الكروت: تظهر فقط إذا لم يتم اختيار تقرير -->
+<div *ngIf="!selectedReportId" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+  <app-report-card
+    *ngFor="let report of reports"
+    [report]="report"
+    [isFavorite]="isFavorite(report.id)"
+    (favoriteChanged)="toggleFavorite($event)"
+    (click)="onReportSelected(report.id)"
+  >
+  </app-report-card>
+</div>
 
-  <!-- كروت التقارير: تظهر فقط إذا لم يتم اختيار تقرير -->
-  <div *ngIf="!selectedReportId" class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-    <div *ngFor="let report of reports" (click)="onReportSelected(report.id)">
-      <app-report-card [report]="report" [isFavorite]="isFavorite(report.id)"
-        (favoriteChanged)="toggleFavorite($event)"></app-report-card>
-    </div>
-  </div>
-
-  <!-- جدول التقرير المحدد -->
-<div *ngIf="selectedReportId" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mt-6">
-   <app-report-table title="تقرير المشتريات" [data]="purchaseData" [columns]="purchaseColumns"
-        (edit)="onEdit($event)" (delete)="onDelete($event)" (print)="onPrint($event)">
-      </app-report-table>
-
+<!-- جدول التقرير المختار: يظهر فقط عند اختيار تقرير -->
+<div *ngIf="selectedReportId" class="card">
+  <app-report-table
+    [title]="getReportTitle(selectedReportId)"
+    [data]="purchaseData"
+    [columns]="purchaseColumns"
+    (edit)="onEdit($event)"
+    (delete)="onDelete($event)"
+    (print)="onPrint($event)"
+  >
+  </app-report-table>
 </div>

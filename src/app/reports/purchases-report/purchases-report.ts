@@ -124,5 +124,9 @@ export class PurchasesReportComponent implements OnInit, AfterViewInit {
 onRepresentativeChange(event: any, filterCallback: (value: any) => void) {
   filterCallback(event.value);
 }
+getReportTitle(reportId: string): string {
+  const report = this.reports.find(r => r.id === reportId);
+  return report ? report.title : '';
+}
 
 }

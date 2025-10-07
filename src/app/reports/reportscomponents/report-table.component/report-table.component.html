@@ -4,55 +4,48 @@
   <p-table #dt [value]="data" [rows]="rows" [loading]="loading" [rowHover]="true" [showGridlines]="true"
     [paginator]="true" responsiveLayout="scroll">
     <!-- Caption -->
-   <ng-template #caption>
-  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-    
-    <!-- زر مسح الفلاتر -->
-    <button pButton 
-            label="Clear" 
-            class="p-button-outlined" 
-            icon="pi pi-filter-slash"
-            (click)="clear(dt)">
-    </button>
+    <ng-template #caption>
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
 
-    <!-- حقل البحث -->
-    <div class="flex items-center gap-2 w-full sm:w-auto">
-    
-      <input pInputText 
-             type="text" 
-             (input)="onGlobalFilter(dt, $event)" 
-             placeholder="Search keyword" 
-             class="flex-1 sm:flex-none" />
-    </div>
+        <!-- زر مسح الفلاتر -->
+        <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)">
+        </button>
 
-  </div>
-</ng-template>
+        <!-- حقل البحث -->
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+
+          <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search keyword"
+            class="flex-1 sm:flex-none" />
+        </div>
+
+      </div>
+    </ng-template>
 
     <!-- Header -->
-  <ng-template #header>
-  <tr>
-    <th *ngFor="let col of columns" [style.minWidth]="col.minWidth || '12rem'">
-      <div class="flex items-center gap-2">
-        <!-- العنوان -->
-        <span class="font-semibold">{{ col.header }}</span>
+    <ng-template #header>
+      <tr>
+        <th *ngFor="let col of columns" [style.minWidth]="col.minWidth || '12rem'">
+          <div class="flex items-center gap-2">
+            <!-- العنوان -->
+            <span class="font-semibold">{{ col.header }}</span>
 
-        <!-- فلتر العمود -->
-        <ng-container *ngIf="col.filter">
-          <ng-container [ngTemplateOutlet]="col.filter"></ng-container>
-        </ng-container>
+            <!-- فلتر العمود -->
+            <ng-container *ngIf="col.filter">
+              <ng-container [ngTemplateOutlet]="col.filter"></ng-container>
+            </ng-container>
 
-        <!-- فلتر افتراضي إذا لم يكن موجود -->
-        <ng-container *ngIf="!col.filter">
-          <p-columnFilter type="text" field="{{col.field}}" display="menu" placeholder="Search by"></p-columnFilter>
-        </ng-container>
-      </div>
-    </th>
+            <!-- فلتر افتراضي إذا لم يكن موجود -->
+            <ng-container *ngIf="!col.filter">
+              <p-columnFilter type="text" field="{{col.field}}" display="menu" placeholder="Search by"></p-columnFilter>
+            </ng-container>
+          </div>
+        </th>
 
-    <th style="min-width: 8rem">
-      <div class="flex justify-center font-semibold">Actions</div>
-    </th>
-  </tr>
-</ng-template>
+        <th style="min-width: 8rem">
+          <div class="flex justify-center font-semibold">Actions</div>
+        </th>
+      </tr>
+    </ng-template>
 
 
     <!-- Body -->
@@ -61,7 +54,7 @@
         <td *ngFor="let col of columns">
 
           <ng-container *ngIf="!col.template">
-            
+
             {{ row[col.field] }}
 
 
