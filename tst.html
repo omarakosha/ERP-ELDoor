@@ -1,4 +1,4 @@
-template: ` <div class="card">
+    template: ` <div class="card">
             <div class="font-semibold text-xl mb-4">Inventory</div>
             <p-table
                 #dt1
@@ -146,12 +146,13 @@ template: ` <div class="card">
                             <p-tag [value]="customer.status.toLowerCase()" [severity]="getSeverity(customer.status.toLowerCase())" styleClass="dark:bg-surface-900!" />
                         </td>
                         <td>
-                     <p-button  class="mr-2" icon="pi pi-pencil" severity="info" ></p-button>
+  <div class="flex gap-2">
+    <p-button icon="pi pi-pencil" severity="info" size="small"></p-button>
+    <p-button icon="pi pi-trash" severity="danger" size="small"></p-button>
+    <p-button icon="pi pi-print" severity="secondary" size="small"></p-button>
+  </div>
+</td>
 
-                     <p-button  class="mr-2" icon="pi pi-trash" severity="danger" ></p-button>
-                     
-                       <p-button  class="mr-2" icon="pi pi-print" severity="secondary" ></p-button>
-                    </td>
                     </tr>
                 </ng-template>
                 <ng-template #emptymessage>

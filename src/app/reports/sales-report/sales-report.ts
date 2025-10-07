@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReportCardComponent } from '../report-card.component/report-card.component';
+import { ReportCardComponent } from '../reportscomponents/report-card.component/report-card.component';
 import { SalesReportsService } from '@/pages/service/sales.reports.service';
 
 

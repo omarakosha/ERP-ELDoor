@@ -4,7 +4,7 @@ import { SalesReportComponent } from '../../reports/sales-report/sales-report';
 import { PurchasesReportComponent } from '../../reports/purchases-report/purchases-report';
 import { InventoryReportComponent } from '../../reports/inventory-report/inventory-report';
 import { TaxesReportComponent } from '../../reports/taxes-report/taxes-report';
-import { ReportCardComponent } from '@/reports/report-card.component/report-card.component';
+import { ReportCardComponent } from '@/reports/reportscomponents/report-card.component/report-card.component';
 import { PurchasesReportsService } from '../service/purchases.reports.service';
 import { SalesReportsService } from '../service/sales.reports.service';
 import { InventoryReportsService } from '../service/Inventory.reports.service';
@@ -36,6 +36,7 @@ export class ReportsComponent implements OnInit {
   activeTab: 'favorites' | 'sales' | 'purchases' | 'inventory' | 'taxes' = 'favorites';
   favoriteReports: string[] = [];
   allReports: Report[] = [];
+   selectedReportId: string | null = null;
 
   constructor(
     private inventoryReportsService: InventoryReportsService,
