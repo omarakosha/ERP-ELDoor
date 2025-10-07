@@ -31,6 +31,7 @@ import { InputTextModule } from 'primeng/inputtext';
   templateUrl: './report-table.component.html',
 })
 export class ReportTableComponent {
+
   @Input() title!: string;
   @Input() data: any[] = [];
   @Input() columns: any[] = [];
@@ -40,6 +41,7 @@ export class ReportTableComponent {
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
   @Output() print = new EventEmitter<any>();
+  
 
   clear(table: any) {
     table.clear();
