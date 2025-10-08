@@ -30,7 +30,8 @@ interface Report {
     PurchasesReportComponent,
     InventoryReportComponent,
     TaxesReportComponent,
-    ReportTableComponent
+    ReportTableComponent,
+    
   ],
   templateUrl: './reports.html',
 })
@@ -39,6 +40,7 @@ export class ReportsComponent implements OnInit {
   selectedReportId: string | null = null;
   favoriteReports: string[] = [];
   allReports: Report[] = [];
+   private searchTimeout: any;
 
   constructor(
     private inventoryReportsService: InventoryReportsService,
@@ -141,5 +143,20 @@ get reportData(): any[] {
 
   selectReport(reportId: string) {
     this.selectedReportId = reportId;
+  }
+
+  setActiveTab(tab: 'favorites' | 'sales' | 'purchases' | 'inventory' | 'taxes') {
+  if (this.activeTab === tab) {
+    this.selectedReportId = null; // إخفاء الجدول وإرجاع القائمة
+  }
+  this.activeTab = tab;
+}
+
+   onGlobalFilter(table: any, event: Event) {
+    const input = event.target as HTMLInputElement;
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      table.filterGlobal(input.value, 'contains');
+    }, 300);
   }
 }
