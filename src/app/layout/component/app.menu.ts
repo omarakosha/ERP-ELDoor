@@ -20,46 +20,88 @@ export class AppMenu {
 
     ngOnInit() {
         this.model = [
-           {
-    label: 'Home',
-    items: [{ label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/'] }]
-},
-{
-    items: [{ label: 'Products', icon: 'pi pi-shopping-bag', routerLink: ['/pages/crud'] }]
-},
-{
-    items: [{ label: 'Orders', icon: 'pi pi-shopping-cart', routerLink: ['/pages/orders'] }]
-},
-{
-    items: [{ label: 'CRM', icon: 'pi pi-users', routerLink: ['/pages/CRM'] }]
-},
-{
-    items: [{ label: 'Inventory', icon: 'pi pi-box', routerLink: ['/pages/inventory'] }]
-},
-{
-    items: [{ label: 'Sales', icon: 'pi pi-wallet', routerLink: ['/pages/sales-invoices'] }]
-},
-{
-    items: [{ label: 'Purchase', icon: 'pi pi-cart-plus', routerLink: ['/pages/purchase-invoices'] }]
-},
-{
-    items: [{ label: 'JournalEntries', icon: 'pi pi-book', routerLink: ['/pages/journal-entries'] }]
-},
-{
-    items: [{ label: 'Trial Balance', icon: 'pi pi-chart-bar', routerLink: ['/pages/trial-balance'] }]
-},
-{
-    items: [{ label: 'Profit & Loss', icon: 'pi pi-chart-line', routerLink: ['/pages/profit-loss'] }]
-},
-{
-    items: [{ label: 'Accounts Tree', icon: 'pi pi-fw pi-share-alt', routerLink: ['/pages/accounts-manager'] }]
-},
-{
-    items: [{ label: 'Financial Reports', icon: 'pi pi-fw pi-share-alt', routerLink: ['/pages/financial-report'] }]
-},
-{
-    items: [{ label: 'Reports', icon: 'pi pi-chart-line', routerLink: ['/pages/reports'] }]
-},
+            {
+                label: 'الرئسية',
+                items: [
+                    { label: 'لوحة المعلومات ', icon: 'pi pi-home', routerLink: ['/'] }
+                ]
+            },
+
+            {
+                routerLink: ['/pages'],
+                items: [
+                    {
+                        label: 'المبيعات و العملاء',
+                        icon: 'pi pi-shopping-cart',
+                        items: [
+                            { label: 'نقاط البيع', icon: 'pi pi-desktop', routerLink: ['/pages/sales-invoices'] },
+                            { label: 'صناديق البيع', icon: 'pi pi-briefcase', routerLink: ['/pages/sales-invoices'] },
+                            { label: 'فواتير المبيعات', icon: 'pi pi-file-invoice', routerLink: ['/pages/sales-invoices'] },
+                            { label: 'طلبات المتجر', icon: 'pi pi-shopping-bag', routerLink: ['/pages/orders'] },
+                            { label: 'العملاء', icon: 'pi pi-users', routerLink: ['/pages/CRM'] },
+                            { label: 'مدفوعات العملاء', icon: 'pi pi-credit-card', routerLink: ['/pages/CRM'] },
+                        ]
+                    }
+                ]
+            },
+
+            {
+                routerLink: ['/pages'],
+                items: [
+                    {
+                        label: 'المنتجات والمخزون',
+                        icon: 'pi pi-box',
+                        items: [
+                            { label: 'المنتجات', icon: 'pi pi-tags', routerLink: ['/pages/crud'] },
+                            { label: 'المخزون', icon: 'pi pi-database', routerLink: ['/pages/inventory'] },
+                            { label: 'جرد مخزون', icon: 'pi pi-check-square', routerLink: ['/pages/inventory'] },
+                            { label: 'تحويل مخزون', icon: 'pi pi-refresh', routerLink: ['/pages/inventory'] },
+                        ]
+                    }
+                ]
+            },
+
+            {
+                routerLink: ['/pages'],
+                items: [
+                    {
+                        label: 'المشتريات والموردين',
+                        icon: 'pi pi-truck',
+                        items: [
+                            { label: 'فواتير المشتريات', icon: 'pi pi-file-import', routerLink: ['/pages/purchase-invoices'] },
+                            { label: 'مردودات المشتريات', icon: 'pi pi-undo', routerLink: ['/pages/purchase-invoices'] },
+                            { label: 'الموردين', icon: 'pi pi-users', routerLink: ['/pages/inventory'] },
+                            { label: 'مدفوعات الموردين', icon: 'pi pi-wallet', routerLink: ['/pages/inventory'] },
+                        ]
+                    }
+                ]
+            },
+
+            {
+                routerLink: ['/pages'],
+                items: [
+                    {
+                        label: 'الحسابات',
+                        icon: 'pi pi-calculator',
+                        items: [
+                            { label: 'قيود اليومية', icon: 'pi pi-list', routerLink: ['/pages/journal-entries'] },
+                            { label: 'ميزان المراجعة', icon: 'pi pi-chart-bar', routerLink: ['/pages/trial-balance'] },
+                            { label: 'الأرباح و الخسائر', icon: 'pi pi-chart-line', routerLink: ['/pages/profit-loss'] },
+                            { label: 'إدارة الحسابات', icon: 'pi pi-sitemap', routerLink: ['/pages/accounts-manager'] },
+                            { label: 'التقارير المالية', icon: 'pi pi-file', routerLink: ['/pages/financial-report'] },
+                           
+                        ]
+                    }
+                ]
+            },
+
+             {
+               
+                items: [
+                   { label: 'التقارير', icon: 'pi pi-chart-pie', routerLink: ['/pages/reports'] }
+                ]
+            },
+
 
             {
                 label: 'UI Components',
@@ -112,7 +154,7 @@ export class AppMenu {
                             }
                         ]
                     },
-                   
+
                     {
                         label: 'Not Found',
                         icon: 'pi pi-fw pi-exclamation-circle',
