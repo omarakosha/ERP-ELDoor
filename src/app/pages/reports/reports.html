@@ -40,22 +40,44 @@
 
 
   <div class="grid grid-cols-1 gap-6">
+<div *ngIf="activeTab === 'favorites'">
+  <!-- حالة عدم وجود مفضلات -->
+  <div *ngIf="favoriteReports.length === 0" class="text-center p-6">
+    <img src="assets/icons/favorite.png" alt="favorite" class="mx-auto mb-4 w-24 h-24" />
+    <h3 class="text-lg font-bold mb-2">لا توجد تقارير مفضلة</h3>
+    <p>ستظهر هنا التقارير التي قمت بتحديدها كمفضلة</p>
+  </div>
 
-    <div *ngIf="activeTab === 'favorites'">
-      <!-- حالة عدم وجود مفضلات -->
-      <div *ngIf="favoriteReports.length === 0" class="text-center p-6">
-        <img src="assets/icons/favorite.png" alt="favorite" class="mx-auto mb-4 w-24 h-24" />
-        <h3 class="text-lg font-bold mb-2">لا توجد تقارير مفضلة</h3>
-        <p>ستظهر هنا التقارير التي قمت بتحديدها كمفضلة</p>
-      </div>
+  <!-- قائمة المفضلات -->
+<!-- قائمة المفضلات -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4"
+     *ngIf="favoriteReports.length > 0 && !selectedReportId">
+  <app-report-card 
+    *ngFor="let reportId of favoriteReports" 
+    [report]="getReportById(reportId)" 
+    [isFavorite]="true"
+    (favoriteChanged)="toggleFavoriteFromChild($event)"
+    (reportSelected)="selectReport($event)">
+  </app-report-card>
+</div>
 
-      <!-- قائمة المفضلات -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4"
-        *ngIf="favoriteReports.length > 0">
-        <app-report-card *ngFor="let reportId of favoriteReports" [report]="getReportById(reportId)" [isFavorite]="true"
-          (favoriteChanged)="toggleFavoriteFromChild($event)"></app-report-card>
-      </div>
-    </div>
+
+  <!-- جدول التقرير المختار -->
+  <div *ngIf="selectedReportId" class="mt-6">
+    <app-report-table
+    [title]="getReportById(selectedReportId).title"
+
+      [columns]="columns"
+      [data]="reportData"
+      [rows]="10"
+      [showActions]="true"
+      (edit)="onEdit($event)"
+      (delete)="onDelete($event)"
+      (print)="onPrint($event)">
+    </app-report-table>
+  </div>
+</div>
+
 
     <div *ngIf="activeTab === 'sales'">
       <app-sales-report [favoriteReports]="favoriteReports"

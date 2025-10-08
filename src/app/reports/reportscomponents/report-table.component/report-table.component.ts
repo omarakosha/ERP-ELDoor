@@ -3,45 +3,28 @@ import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
-import { SliderModule } from 'primeng/slider';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { InputIconModule } from 'primeng/inputicon';
-import { IconFieldModule } from 'primeng/iconfield';
 import { InputTextModule } from 'primeng/inputtext';
-
 
 @Component({
   selector: 'app-report-table',
   standalone: true,
-  imports: [CommonModule, 
-    FormsModule, 
-    TableModule, 
-    ButtonModule,
-    ProgressBarModule,
-    TagModule,
-    SliderModule, 
-    MultiSelectModule, 
-    InputIconModule, 
-    IconFieldModule,
-    TableModule,
-    InputTextModule,
-  ],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, TagModule, InputTextModule],
   templateUrl: './report-table.component.html',
 })
 export class ReportTableComponent {
-
   @Input() title!: string;
-  @Input() data: any[] = [];
-  @Input() columns: any[] = [];
+  @Input() data!: any[];
+  @Input() columns!: any[];
   @Input() rows: number = 10;
   @Input() loading: boolean = false;
+  @Input() showActions: boolean = true;
 
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
   @Output() print = new EventEmitter<any>();
-  
+
+  private searchTimeout: any;
 
   clear(table: any) {
     table.clear();
@@ -49,7 +32,10 @@ export class ReportTableComponent {
 
   onGlobalFilter(table: any, event: Event) {
     const input = event.target as HTMLInputElement;
-    table.filterGlobal(input.value, 'contains');
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      table.filterGlobal(input.value, 'contains');
+    }, 300);
   }
 
   getSeverity(status: string): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | null {
