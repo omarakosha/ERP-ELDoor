@@ -29,6 +29,7 @@ export interface  Order {
 }[];
 
 
+
 @Injectable()
 export class ProductService {
     getProductsData() {
@@ -1330,3 +1331,6 @@ export class ProductService {
         return Math.floor(Math.random() * Math.floor(5) + 1);
     }
 }
+
+
+
