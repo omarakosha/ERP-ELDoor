@@ -1,0 +1,24 @@
+<!-- شبكة الكروت: تظهر فقط إذا لم يتم اختيار تقرير -->
+<div *ngIf="!selectedReportId" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+  <app-report-card
+    *ngFor="let report of reports"
+    [report]="report"
+    [isFavorite]="isFavorite(report.id)"
+    (favoriteChanged)="toggleFavorite($event)"
+    (click)="onReportSelected(report.id)"
+  >
+  </app-report-card>
+</div>
+
+<!-- جدول التقرير المختار: يظهر فقط عند اختيار تقرير -->
+<div *ngIf="selectedReportId" class="card">
+  <app-report-table
+    [title]="getReportTitle(selectedReportId)"
+    [data]="taxData"
+    [columns]="taxColumns"
+    (edit)="onEdit($event)"
+    (delete)="onDelete($event)"
+    (print)="onPrint($event)"
+  >
+  </app-report-table>
+</div>

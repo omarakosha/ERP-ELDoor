@@ -1,0 +1,139 @@
+<div class="card shadow-sm p-4 rounded-xl bg-white">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-semibold text-gray-700">إدارة الصناديق</h2>
+
+    <div class="flex gap-2">
+      <input
+        type="text"
+        pInputText
+        placeholder="ابحث باسم الصندوق أو الموقع"
+        [(ngModel)]="searchTerm"
+        (input)="filterBoxes()"
+        class="w-64"
+      />
+      <button
+        pButton
+        label="إضافة صندوق جديد"
+        icon="pi pi-plus"
+        class="p-button-success"
+        (click)="openAddDialog()"
+      ></button>
+    </div>
+  </div>
+
+  <p-table
+    #dt
+    [value]="filteredBoxes"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[10, 20, 50]"
+    [responsiveLayout]="'scroll'"
+    dataKey="id"
+    [showGridlines]="true"
+    class="p-datatable-sm rounded-md"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>الموقع</th>
+        <th>اسم الصندوق</th>
+        <th>فتح بواسطة</th>
+        <th>تاريخ الفتح</th>
+        <th>تاريخ الإغلاق</th>
+        <th>الحالة</th>
+        <th class="text-center">الإجراءات</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-box>
+      <tr>
+        <td>{{ box.location }}</td>
+        <td>{{ box.name }}</td>
+        <td>{{ box.openedBy }}</td>
+        <td>{{ box.openDate | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ box.closeDate ? (box.closeDate | date: 'yyyy-MM-dd') : '-' }}</td>
+        <td>
+          <span
+            class="px-2 py-1 rounded-lg text-white text-sm"
+            [ngClass]="{
+              'bg-green-500': box.status === 'مفتوح',
+              'bg-blue-500': box.status === 'متوازن',
+              'bg-red-500': box.status === 'مغلق'
+            }"
+          >
+            {{ box.status }}
+          </span>
+        </td>
+        <td class="text-center">
+          <button
+            pButton
+            icon="pi pi-eye"
+            class="p-button-rounded p-button-info p-button-sm mr-2"
+            tooltip="عرض التفاصيل"
+            (click)="viewBox(box)"
+          ></button>
+
+          <button
+            pButton
+            icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-sm"
+            tooltip="إغلاق الصندوق"
+            (click)="closeBox(box)"
+            [disabled]="box.status !== 'مفتوح'"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- 🧾 نافذة إضافة صندوق جديد -->
+<p-dialog
+  header="إضافة صندوق بيع جديد"
+  [(visible)]="addDialogVisible"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '450px' }"
+>
+  <div class="p-fluid space-y-4">
+    <div class="field">
+      <label class="font-semibold mb-2 block">اسم الصندوق</label>
+      <input
+        type="text"
+        pInputText
+        placeholder="أدخل اسم الصندوق"
+        [(ngModel)]="newBox.name"
+        class="w-full"
+      />
+    </div>
+
+    <div class="field">
+      <label class="font-semibold mb-2 block">الموقع</label>
+      <input
+        type="text"
+        pInputText
+        placeholder="مثلاً: فرع جدة"
+        [(ngModel)]="newBox.location"
+        class="w-full"
+      />
+    </div>
+
+    <div class="flex justify-end gap-2 pt-4 border-t">
+      <button
+        pButton
+        label="إلغاء"
+        icon="pi pi-times"
+        class="p-button-text text-gray-600 hover:text-red-500"
+        (click)="addDialogVisible = false"
+      ></button>
+      <button
+        pButton
+        label="حفظ"
+        icon="pi pi-check"
+        class="p-button-success"
+        (click)="saveNewBox()"
+      ></button>
+    </div>
+  </div>
+</p-dialog>

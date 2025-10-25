@@ -1,0 +1,22 @@
+/* You can add global styles to this file, and also import other style files */
+@use './tailwind.css';
+@use './layout/layout.scss';
+@use 'primeicons/primeicons.css';
+@use './demo/demo.scss';
+
+
+:root {
+  --p-font-family: 'Sukar', sans-serif;
+}
+
+body, * {
+  font-family: 'Sukar', sans-serif !important;
+}
+
+/* ====== استثناء الأيقونات من الخط ====== */
+.pi,
+[class^="pi-"],
+[class*=" pi-"] {
+  font-family: 'PrimeIcons' !important;
+}
+
