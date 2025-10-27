@@ -40,7 +40,8 @@ interface PurchaseReturn {
     ButtonModule,
     InputTextModule,
     DialogModule,
-    TagModule
+    TagModule,
+  
   ],
   template: `
   <div class="card p-4 shadow-md rounded-xl bg-white">

@@ -76,30 +76,29 @@ export class AppMenu {
                 ]
             },
 
-            {
-                routerLink: ['/pages'],
+             {
+                label: 'Acoubting ',
                 items: [
-                    {
-                        label: 'الحسابات',
-                        icon: 'pi pi-calculator',
-                        items: [
-                            { label: 'قيود اليومية', icon: 'pi pi-list', routerLink: ['/pages/journal-entries'] },
+                    { label: 'قيود اليومية', icon: 'pi pi-list', routerLink: ['/pages/journal-entries'] },
                             { label: 'ميزان المراجعة', icon: 'pi pi-chart-bar', routerLink: ['/pages/trial-balance'] },
                             { label: 'الأرباح و الخسائر', icon: 'pi pi-chart-line', routerLink: ['/pages/profit-loss'] },
                             { label: 'إدارة الحسابات', icon: 'pi pi-sitemap', routerLink: ['/pages/accounts-manager'] },
-                            { label: 'التقارير المالية', icon: 'pi pi-file', routerLink: ['/pages/financial-report'] },
-                           
-                        ]
-                    }
+                    
+                ]
+            },
+            
+            {
+                label: 'Reports',
+                items: [
+                    { label: 'التقارير', icon: 'pi pi-chart-pie', routerLink: ['/pages/reports'] },
+                      { label: 'التقارير المالية', icon: 'pi pi-file', routerLink: ['/pages/financial-report'] },
                 ]
             },
 
-             {
-               
-                items: [
-                   { label: 'التقارير', icon: 'pi pi-chart-pie', routerLink: ['/pages/reports'] }
-                ]
-            },
+
+
+
+
 
 
             {

@@ -129,29 +129,101 @@ interface Supplier {
   </p-dialog>
 
   <!-- popup رفع Excel -->
-  <p-dialog header="استيراد الموردين" [(visible)]="displaySupplierUpload" [modal]="true" [closable]="false" [dismissableMask]="false" [style]="{width:'700px'}">
-    <div class="space-y-4 p-4">
-      <div class="p-3 bg-gray-50 border rounded">
-        <h3 class="font-semibold text-gray-700 mb-2">1. حمل نموذج الاستيراد</h3>
-        <button pButton label="تحميل نموذج الاستيراد" icon="pi pi-download" (click)="downloadTemplate()"></button>
+  <p-dialog 
+  header="استيراد الموردين" 
+  [(visible)]="displaySupplierUpload" 
+  [modal]="true" 
+  [closable]="false" 
+  [dismissableMask]="false" 
+  [style]="{width:'750px'}"
+>
+  <div class="relative p-5 text-right">
+
+    <!-- الخط المنقط يمر من منتصف الدوائر -->
+    <div class="absolute right-[1.85rem] top-[2.7rem] w-0 h-[82%] border-r-2 border-dotted border-gray-300 z-0"></div>
+
+    <!-- الخطوة 1 -->
+    <div class="relative pl-8 mb-10">
+      <div class="absolute -right-0 top-0 w-8 h-8 rounded-full bg-white border border-gray-400 flex items-center justify-center text-gray-700 font-semibold z-10">
+        1
       </div>
-      <div class="p-3 bg-gray-50 border rounded">
-        <h3 class="font-semibold text-gray-700 mb-2">2. قم بإدخال بيانات الموردين</h3>
-        <p class="text-gray-600 text-sm">
-          لضمان نجاح عملية الاستيراد، يُرجى اتباع إرشادات نموذج الاستيراد.
-        </p>
-      </div>
-      <div class="p-3 bg-gray-50 border rounded">
-        <h3 class="font-semibold text-gray-700 mb-2">3. بعد إدخال البيانات، قم برفع الملف هنا</h3>
-        <p-fileUpload mode="basic" name="file" accept=".xlsx"
-                      (onSelect)="handleSupplierFile($event)" 
-                      chooseLabel="اختر ملف Excel" [auto]="false"></p-fileUpload>
+      <div class="pr-10">
+        <h3 class="font-semibold text-gray-800 mb-2">حمل نموذج الاستيراد</h3>
+        <button 
+          pButton 
+          label="نموذج استيراد الموردين" 
+          icon="pi pi-download" 
+          class="p-button-sm p-button-success"
+          (click)="downloadTemplate()">
+        </button>
       </div>
     </div>
-    <ng-template pTemplate="footer">
-      <button pButton label="إلغاء" icon="pi pi-times" class="p-button-secondary" (click)="displaySupplierUpload=false"></button>
-    </ng-template>
-  </p-dialog>
+
+    <!-- الخطوة 2 -->
+    <div class="relative pl-8 mb-10">
+      <div class="absolute -right-0 top-0 w-8 h-8 rounded-full bg-white border border-gray-400 flex items-center justify-center text-gray-700 font-semibold z-10">
+        2
+      </div>
+      <div class="pr-10">
+        <h3 class="font-semibold text-gray-800 mb-2">قم بإدخال بيانات الموردين الخاصة بك</h3>
+        <p class="text-gray-600 text-sm mb-3 leading-relaxed">
+          لضمان نجاح عملية الاستيراد يُرجى اتباع إرشادات نموذج الاستيراد، ستجدها في صفحة "إرشادات قبل الاستيراد" داخل نموذج الاستيراد.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <button pButton label="مشاهدة فيديو الإرشادات للاستيراد" icon="pi pi-video" class="p-button-text"></button>
+          <button pButton label="اقرأ التعليمات بالتفصيل" icon="pi pi-info-circle" class="p-button-text"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- الخطوة 3 -->
+    <div class="relative pl-8 mb-4">
+      <div class="absolute -right-0 top-0 w-8 h-8 rounded-full bg-white border border-gray-400 flex items-center justify-center text-gray-700 font-semibold z-10">
+        3
+      </div>
+      <div class="pr-10">
+        <h3 class="font-semibold text-gray-800 mb-3">بعد إدخال بيانات الموردين في النموذج، قم برفعه هنا</h3>
+
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-10 text-center bg-gray-50 hover:bg-gray-100 transition">
+          <i class="pi pi-upload text-3xl text-gray-400 mb-3"></i>
+          <p class="text-gray-700 mb-1">قم بسحب وإسقاط الملف هنا لاستيراد</p>
+          <p class="text-gray-500 text-sm mb-4">
+            الصيغة المقبولة: (.xlsx)<br>
+            أقصى عدد للموردين في الملف الواحد 1000
+          </p>
+          <p-fileUpload 
+            mode="basic" 
+            name="file" 
+            accept=".xlsx" 
+            chooseLabel="تصفح الملفات"
+            [auto]="false"
+            (onSelect)="handleSupplierFile($event)">
+          </p-fileUpload>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-between w-full">
+      <button 
+        pButton 
+        label="إلغاء" 
+        icon="pi pi-times" 
+        class="p-button-text p-button-secondary"
+        (click)="displaySupplierUpload = false">
+      </button>
+      <button 
+        pButton 
+        label="التالي" 
+        icon="pi pi-arrow-left" 
+        class="p-button-success">
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
 
   <!-- popup عرض بيانات Excel -->
   <p-dialog header="بيانات الموردين المرفوعة" [(visible)]="displayExcelPopup" 

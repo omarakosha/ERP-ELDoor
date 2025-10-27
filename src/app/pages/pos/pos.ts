@@ -5,6 +5,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
+import { Router } from '@angular/router';
 
 interface POS {
   id: number;
@@ -18,13 +19,18 @@ interface POS {
     showCloseWarning?: boolean;
 }
 
+
 @Component({
   selector: 'app-pos',
    imports: [CommonModule, FormsModule, DialogModule, ButtonModule, InputTextModule, CardModule],
+
   templateUrl: './pos.html',
   styleUrls: ['./pos.scss'],
 })
+
 export class PosComponent {
+     constructor(private router: Router) {}
+  
   searchQuery: string = '';
   addDialogVisible: boolean = false;
 
@@ -82,7 +88,7 @@ export class PosComponent {
   }
 
   continueSale(pos: any) {
-  // عملية متابعة البيع
+  this.router.navigate(['/casher'], { queryParams: { posId: pos.id, posName: pos.name } });
 }
 
 attemptClosePos(pos: any) {
@@ -123,4 +129,5 @@ closePos(pos: any) {
   }
 
 
+  
 }
