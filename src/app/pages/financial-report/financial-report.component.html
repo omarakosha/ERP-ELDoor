@@ -1,0 +1,166 @@
+<div class="p-6 bg-white dark:bg-gray-900 dark:text-white rounded-xl shadow-2">
+
+  <!-- ====== عنوان التقرير ====== -->
+  <h2 class="text-center text-2xl font-bold mb-6 text-blue-700 border-b-4 border-blue-300 pb-2">
+    📊 تقرير الحركات المالية
+  </h2>
+
+  <!-- ====== لوحة الملخص ====== -->
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+    <div class="p-4 bg-green-100 dark:bg-green-800 rounded-lg shadow-sm flex flex-col items-center">
+      <i class="pi pi-arrow-down text-green-600 text-2xl"></i>
+      <span>إجمالي المدين</span>
+      <strong>{{ totalDebit | number:'1.2-2' }}</strong>
+    </div>
+    <div class="p-4 bg-red-100 dark:bg-red-800 rounded-lg shadow-sm flex flex-col items-center">
+      <i class="pi pi-arrow-up text-red-600 text-2xl"></i>
+      <span>إجمالي الدائن</span>
+      <strong>{{ totalCredit | number:'1.2-2' }}</strong>
+    </div>
+    <div class="p-4 bg-blue-100 dark:bg-blue-800 rounded-lg shadow-sm flex flex-col items-center">
+      <i class="pi pi-wallet text-blue-600 text-2xl"></i>
+      <span>الرصيد النهائي</span>
+      <strong>{{ finalBalance | number:'1.2-2' }}</strong>
+    </div>
+    <div class="p-4 bg-yellow-100 dark:bg-yellow-800 rounded-lg shadow-sm flex flex-col items-center">
+      <i class="pi pi-chart-line text-yellow-600 text-2xl"></i>
+      <span>متوسط الحركة</span>
+      <strong>{{ avgTransaction | number:'1.2-2' }}</strong>
+    </div>
+    <div class="p-4 bg-purple-100 dark:bg-purple-800 rounded-lg shadow-sm flex flex-col items-center">
+      <i class="pi pi-list text-purple-600 text-2xl"></i>
+      <span>عدد الحركات</span>
+      <strong>{{ filteredTransactions.length }}</strong>
+    </div>
+  </div>
+
+  <!-- ====== فلاتر التقرير ====== -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm flex flex-col gap-4">
+      <div class="flex gap-4">
+        <div class="flex-1">
+          <label class="font-semibold mb-1 block">من تاريخ</label>
+          <p-datepicker [(ngModel)]="filterData.startDate" dateFormat="yy-mm-dd" showIcon="true"
+                        [showButtonBar]="true" placeholder="اختر التاريخ" class="w-full"></p-datepicker>
+        </div>
+        <div class="flex-1">
+          <label class="font-semibold mb-1 block">إلى تاريخ</label>
+          <p-datepicker [(ngModel)]="filterData.endDate" dateFormat="yy-mm-dd" showIcon="true"
+                        [showButtonBar]="true" placeholder="اختر التاريخ" class="w-full"></p-datepicker>
+        </div>
+      </div>
+      <div>
+        <label class="font-semibold mb-1 block">مركز التكلفة</label>
+        <p-select [(ngModel)]="filterData.costCenter" [options]="costCenters"
+                  optionLabel="label" optionValue="value" placeholder="اختر مركز التكلفة" class="w-full"></p-select>
+      </div>
+      <div>
+        <label class="font-semibold mb-1 block">المشروع</label>
+        <input pInputText [(ngModel)]="filterData.project" placeholder="أدخل اسم المشروع" class="w-full" />
+      </div>
+      <div>
+        <label class="font-semibold mb-1 block">العملة</label>
+        <p-select [(ngModel)]="filterData.currency" [options]="currencies"
+                  optionLabel="label" optionValue="value" placeholder="اختر العملة" class="w-full"></p-select>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm flex flex-col gap-4">
+      <div>
+        <label class="font-semibold mb-1 block">نوع الحركة</label>
+        <p-select [(ngModel)]="filterData.transactionType" [options]="transactionTypes"
+                  optionLabel="label" optionValue="value" placeholder="اختر نوع الحركة" class="w-full"></p-select>
+      </div>
+      <div>
+        <label class="font-semibold mb-1 block">رقم الحساب</label>
+        <input pInputText [(ngModel)]="filterData.accountNumber" placeholder="أدخل رقم الحساب" class="w-full" />
+      </div>
+      <div>
+        <label class="font-semibold mb-1 block">السنة المالية</label>
+        <p-select [(ngModel)]="filterData.financialYear" [options]="financialYears"
+                  optionLabel="label" optionValue="value" placeholder="اختر السنة" class="w-full"></p-select>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ====== جدول التقرير ====== -->
+ <p-table #dt [value]="filteredTransactions" dataKey="id" [rows]="10" [loading]="loading"
+         [rowHover]="true" [showGridlines]="true" [paginator]="true"
+         [globalFilterFields]="['accountNumber', 'accountName', 'type']"
+         responsiveLayout="scroll" class="rounded-lg overflow-hidden shadow-sm"
+         (onRowSelect)="onRowSelect($event.data)">
+
+
+
+    <ng-template #caption>
+      <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+        <p-inputgroup class="sm:ml-auto w-full sm:w-auto">
+          <input pInputText type="text" placeholder="بحث عام..." class="p-input-outlined h-14"
+                 (input)="onGlobalFilter($event)" />
+          <button pButton icon="pi pi-times" class="p-button-outlined" (click)="clearFilters()"></button>
+          <p-button label="عرض التقرير" icon="pi pi-search" iconPos="right" (click)="filterReport()"
+                    severity="info" class="flex-2"></p-button>
+        </p-inputgroup>
+      </div>
+    </ng-template>
+
+    <ng-template #header>
+      <tr>
+        <th>رقم الحساب</th>
+        <th>اسم الحساب</th>
+        <th>التاريخ</th>
+        <th>نوع الحركة</th>
+        <th>المبلغ</th>
+        <th>الرصيد التراكمي</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-tx>
+      <tr [ngClass]="{
+            'bg-green-50 dark:bg-green-900': tx.type==='مدين',
+            'bg-red-50 dark:bg-red-900': tx.type==='دائن'
+          }" class="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+        <td>{{ tx.accountNumber }}</td>
+        <td>{{ tx.accountName }}</td>
+        <td>{{ tx.date | date:'yyyy-MM-dd' }}</td>
+        <td>
+          <p-tag [value]="tx.type" [severity]="tx.type === 'مدين' ? 'success' : 'danger'"></p-tag>
+        </td>
+        <td [ngClass]="{'text-red-600 font-bold': tx.amount > 1000}">{{ tx.amount | number:'1.2-2' }}</td>
+        <td>{{ tx.balance | number:'1.2-2' }}</td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="6" class="text-center py-4">لا توجد بيانات</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- ====== أزرار التصدير ====== -->
+  <div class="flex flex-wrap justify-end gap-3 mt-4">
+    <button pButton label="PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportToPDF()"></button>
+    <button pButton label="Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
+    <button pButton label="CSV" icon="pi pi-file" class="p-button-warning" (click)="exportCSV()"></button>
+  </div>
+
+  <!-- ====== Dialog لعرض تفاصيل الحركة ====== -->
+  <p-dialog header="تفاصيل الحركة" [(visible)]="displayDialog" [modal]="true" [closable]="true" [style]="{width:'400px'}">
+    <div *ngIf="selectedTransaction">
+      <p><strong>رقم الحساب:</strong> {{selectedTransaction.accountNumber}}</p>
+      <p><strong>اسم الحساب:</strong> {{selectedTransaction.accountName}}</p>
+      <p><strong>التاريخ:</strong> {{selectedTransaction.date | date:'yyyy-MM-dd'}}</p>
+      <p><strong>نوع الحركة:</strong> {{selectedTransaction.type}}</p>
+      <p><strong>المبلغ:</strong> {{selectedTransaction.amount | number:'1.2-2'}}</p>
+      <p><strong>الرصيد التراكمي:</strong> {{selectedTransaction.balance | number:'1.2-2'}}</p>
+      <p><strong>مركز التكلفة:</strong> {{selectedTransaction.costCenter}}</p>
+      <p><strong>المشروع:</strong> {{selectedTransaction.project}}</p>
+      <p><strong>الوصف:</strong> {{selectedTransaction.description}}</p>
+      <p><strong>العملة:</strong> {{selectedTransaction.currency}}</p>
+    </div>
+  </p-dialog>
+
+</div>

@@ -1,0 +1,25 @@
+/* جعل الجدول responsive */
+:host ::ng-deep .p-table .p-paginator {
+  justify-content: flex-end;
+}
+
+.img-wrap {
+  max-width: 200px;
+}
+:host ::ng-deep .p-table {
+  direction: rtl;
+  text-align: right;
+}
+
+:host ::ng-deep th, 
+:host ::ng-deep td {
+  padding: 0.75rem 1rem;
+}
+
+:host ::ng-deep .p-paginator {
+  direction: ltr;
+}
+
+:host ::ng-deep input {
+  width: 100%;
+}

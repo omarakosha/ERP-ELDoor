@@ -1,0 +1,81 @@
+<div class="card">
+  <div class="font-semibold text-xl mb-4">{{ title }}</div>
+
+  <p-table #dt 
+           [value]="data" 
+           [rows]="rows" 
+           [loading]="loading" 
+           [rowHover]="true" 
+           [showGridlines]="true"
+           [paginator]="true" 
+           responsiveLayout="scroll">
+
+    <!-- Caption: زر مسح الفلاتر + حقل البحث -->
+    <ng-template #caption>
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+        <!-- زر مسح الفلاتر -->
+        <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+
+        <!-- حقل البحث العام -->
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search keyword"
+                 class="flex-1 sm:flex-none" />
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- Header -->
+    <ng-template #header>
+      <tr>
+        <th *ngFor="let col of columns" [style.minWidth]="col.minWidth || '12rem'">
+          <div class="flex items-center gap-2">
+            <span class="font-semibold">{{ col.header }}</span>
+
+            <!-- فلتر افتراضي لكل عمود -->
+            <p-columnFilter *ngIf="col.filter !== false" type="text" field="{{ col.field }}" display="menu" placeholder="Search by"></p-columnFilter>
+          </div>
+        </th>
+
+        <!-- عمود Actions -->
+        <th *ngIf="showActions" style="min-width: 8rem">
+          <div class="flex justify-center font-semibold">Actions</div>
+        </th>
+      </tr>
+    </ng-template>
+
+    <!-- Body -->
+    <ng-template #body let-row>
+      <tr>
+        <td *ngFor="let col of columns">
+          <!-- عرض القيمة العادية -->
+          <ng-container *ngIf="!col.template">
+            {{ row[col.field] }}
+          </ng-container>
+
+          <!-- عرض عبر TemplateRef إذا كان موجود -->
+          <ng-container *ngIf="col.template">
+            <ng-container *ngTemplateOutlet="col.template; context: { $implicit: row }"></ng-container>
+          </ng-container>
+        </td>
+
+        <!-- عمود Actions -->
+        <td *ngIf="showActions">
+          <div class="flex gap-2 justify-center">
+            <p-button icon="pi pi-pencil" severity="info" size="small" (click)="edit.emit(row)"></p-button>
+            <p-button icon="pi pi-trash" severity="danger" size="small" (click)="delete.emit(row)"></p-button>
+            <p-button icon="pi pi-print" severity="secondary" size="small" (click)="print.emit(row)"></p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <!-- رسالة عدم وجود بيانات -->
+    <ng-template #emptymessage>
+      <tr>
+        <td [attr.colspan]="columns.length + (showActions ? 1 : 0)" class="text-center py-4">
+          لا توجد بيانات حالياً
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

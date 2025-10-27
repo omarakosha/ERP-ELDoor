@@ -1,0 +1,242 @@
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Table } from 'primeng/table';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
+import { TagModule } from 'primeng/tag';
+import { ProgressBarModule } from 'primeng/progressbar';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+interface Customer {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  paid: number;
+  balance: number;
+  status: string;
+  activity: number;
+}
+
+@Component({
+  selector: 'app-crm',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    DialogModule,
+    ToastModule,
+    TagModule,
+    ProgressBarModule
+  ],
+  providers: [ConfirmationService, MessageService],
+  template: `
+<div class="card">
+    <div class="font-semibold text-xl mb-4">CRM</div>
+
+    <!-- Toolbar -->
+    <div class="flex flex-wrap gap-2 mb-3">
+        <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+        <button pButton label="Add Customer" icon="pi pi-plus" class="p-button-success" (click)="openNew()"></button>
+        <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
+        <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"></button>
+        <p-inputText #filterInput type="text" placeholder="Search keyword" (input)="onGlobalFilter(dt1, $event)" class="ml-auto"></p-inputText>
+    </div>
+
+    <!-- Table -->
+    <p-table
+        #dt1
+        [value]="customers"
+        dataKey="id"
+        [rows]="10"
+        [rowHover]="true"
+        [showGridlines]="true"
+        [paginator]="true"
+        [loading]="loading"
+        [globalFilterFields]="['id','name','email','phone','paid','balance']"
+        responsiveLayout="scroll"
+    >
+        <ng-template #header>
+            <tr>
+                <th>
+                    رمز العميل
+                    <p-columnFilter type="text" field="id" display="menu" placeholder="Search by code"></p-columnFilter>
+                </th>
+                <th>
+                    اسم العميل
+                    <p-columnFilter type="text" field="name" display="menu" placeholder="Search by name"></p-columnFilter>
+                </th>
+                <th>
+                    البريد الإلكتروني
+                    <p-columnFilter type="text" field="email" display="menu" placeholder="Search by email"></p-columnFilter>
+                </th>
+                <th>
+                    الهاتف
+                    <p-columnFilter type="text" field="phone" display="menu" placeholder="Search by phone"></p-columnFilter>
+                </th>
+                <th>
+                    المبلغ المدفوع
+                    <p-columnFilter type="numeric" field="paid" display="menu" currency="USD"></p-columnFilter>
+                </th>
+                <th>
+                    المبلغ المستحق
+                    <p-columnFilter type="numeric" field="balance" display="menu" currency="USD"></p-columnFilter>
+                </th>
+                <th>
+                    الحالة
+                    <p-columnFilter type="text" field="status" display="menu"></p-columnFilter>
+                </th>
+                <th>الإجراءات</th>
+            </tr>
+        </ng-template>
+
+        <ng-template #body let-c>
+            <tr>
+                <td>{{c.id}}</td>
+                <td>{{c.name}}</td>
+                <td>{{c.email}}</td>
+                <td>{{c.phone}}</td>
+                <td>{{c.paid | currency:'USD':'symbol'}}</td>
+                <td>{{c.balance | currency:'USD':'symbol'}}</td>
+                <td>
+                    <p-tag [value]="c.status" [severity]="getSeverity(c.status)"></p-tag>
+                    <p-progressbar [value]="c.activity" [showValue]="false" [style]="{height:'0.5rem'}"></p-progressbar>
+                </td>
+                <td>
+                    <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info" (click)="editCustomer(c)"></button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">No customers found.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!-- Add/Edit Popup -->
+    <p-dialog header="{{isEdit ? 'Edit Customer' : 'Add Customer'}}" [(visible)]="displayDialog" [modal]="true" [closable]="false" [style]="{width: '450px'}">
+        <div class="grid gap-3">
+            <div>
+                <label>رمز العميل</label>
+                <input pInputText type="number" [(ngModel)]="newCustomer.id" class="w-full">
+            </div>
+            <div>
+                <label>اسم العميل</label>
+                <input pInputText [(ngModel)]="newCustomer.name" class="w-full">
+            </div>
+            <div>
+                <label>البريد الإلكتروني</label>
+                <input pInputText [(ngModel)]="newCustomer.email" class="w-full">
+            </div>
+            <div>
+                <label>الهاتف</label>
+                <input pInputText [(ngModel)]="newCustomer.phone" class="w-full">
+            </div>
+            <div>
+                <label>المبلغ المدفوع</label>
+                <input pInputText type="number" [(ngModel)]="newCustomer.paid" class="w-full">
+            </div>
+            <div>
+                <label>المبلغ المستحق</label>
+                <input pInputText type="number" [(ngModel)]="newCustomer.balance" class="w-full">
+            </div>
+            <div>
+                <label>الحالة</label>
+                <input pInputText [(ngModel)]="newCustomer.status" class="w-full">
+            </div>
+        </div>
+        <ng-template pTemplate="footer">
+            <button pButton label="Cancel" icon="pi pi-times" (click)="displayDialog=false" class="p-button-secondary"></button>
+            <button pButton label="Save" icon="pi pi-check" (click)="saveCustomer()" class="p-button-success"></button>
+        </ng-template>
+    </p-dialog>
+</div>
+  `
+})
+export class CRMComponent implements OnInit {
+  @ViewChild('filterInput') filterInput!: ElementRef;
+
+  customers: Customer[] = [];
+  displayDialog = false;
+  isEdit = false;
+  newCustomer: Customer = {id:0,name:'',email:'',phone:'',paid:0,balance:0,status:'New',activity:0};
+  loading = true;
+
+  ngOnInit() {
+    // بيانات تجريبية
+    this.customers = [
+      {id:6329206, name:'ليلى بنت عبد العالى بن عامر البنوى السلمي', email:'laila@example.com', phone:'0540249700', paid:17500, balance:0, status:'New', activity:80}
+    ];
+    this.loading = false;
+  }
+
+  onGlobalFilter(table: Table, event: Event) {
+    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  clear(table: Table) {
+    table.clear();
+    this.filterInput.nativeElement.value = '';
+  }
+
+  openNew() {
+    this.newCustomer = {id:0,name:'',email:'',phone:'',paid:0,balance:0,status:'New',activity:0};
+    this.isEdit = false;
+    this.displayDialog = true;
+  }
+
+  editCustomer(customer: Customer) {
+    this.newCustomer = {...customer};
+    this.isEdit = true;
+    this.displayDialog = true;
+  }
+
+  saveCustomer() {
+    if(!this.isEdit){
+      this.customers.push({...this.newCustomer});
+    } else {
+      const idx = this.customers.findIndex(c => c.id === this.newCustomer.id);
+      if(idx!==-1) this.customers[idx] = {...this.newCustomer};
+    }
+    this.displayDialog = false;
+  }
+
+  getSeverity(status: string) {
+    switch(status.toLowerCase()){
+      case 'new': return 'info';
+      case 'qualified': return 'success';
+      case 'pending': return 'warn';
+      case 'unqualified': return 'danger';
+      default: return 'info';
+    }
+  }
+
+  exportExcel() {
+    const ws = XLSX.utils.json_to_sheet(this.customers);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Customers');
+    XLSX.writeFile(wb, 'Customers.xlsx');
+  }
+
+  exportPDF() {
+    const doc = new jsPDF();
+    doc.text('Customers', 14, 10);
+    autoTable(doc, {
+      head:[['رمز العميل','اسم العميل','البريد الإلكتروني','الهاتف','المبلغ المدفوع','المبلغ المستحق','Status']],
+      body: this.customers.map(c => [c.id,c.name,c.email,c.phone,c.paid,c.balance,c.status])
+    });
+    doc.save('Customers.pdf');
+  }
+}

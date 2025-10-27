@@ -1,0 +1,41 @@
+<div
+  dir="rtl"
+  class="cursor-pointer bg-white dark:bg-gray-800 shadow-lg rounded-xl p-5  
+         w-full max-w-4xl text-right h-45 flex flex-col justify-between hover:scale-102 transition-transform duration-300 "
+  (click)="selectReport()"
+>
+
+  <!-- السطر الأول: الأيقونة + العنوان + المفضلة -->
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-3">
+      <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 
+                  flex items-center justify-center text-white shadow-lg">
+        <i class="pi text-3xl" [ngClass]="report.icon"></i>
+      </div>
+      <h5 class="font-extrabold text-2xl text-gray-800 dark:text-gray-100 leading-snug">
+        {{ report.title }}
+      </h5>
+    </div>
+
+    <button (click)="toggleFavorite($event)" class="focus:outline-none">
+      <i
+        class="cursor-pointer pi text-2xl transition-colors duration-200"
+        [ngClass]="
+          isFavorite
+            ? 'pi-star-fill text-yellow-500'
+            : 'pi-star text-gray-400 hover:text-yellow-400'
+        "
+      ></i>
+    </button>
+  </div>
+
+  <!-- السطر الثاني: الوصف -->
+  <p class="text-gray-600 dark:text-gray-400 text-sm mb-2 leading-relaxed line-clamp-2 font-normal">
+    {{ report.description }}
+  </p>
+
+  <!-- السطر الثالث: آخر تحديث -->
+  <span class="text-xs text-gray-500 dark:text-gray-400 font-light">
+    آخر تحديث: {{ report.lastUpdate }}
+  </span>
+</div>

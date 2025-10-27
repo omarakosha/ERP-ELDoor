@@ -1,0 +1,46 @@
+import { Routes } from '@angular/router';
+import { Documentation } from './documentation/documentation';
+import { Crud } from './crud/crud';
+import { Empty } from './empty/empty';
+import { Orders } from './orders/orders';
+import {  CRMComponent } from './CRM/crm';
+import { InventoryComponent } from './inventory/inventory';
+import { SalesInvoicesComponent } from './sales-invoices/sales-invoices';
+import { PurchaseOrdersComponent } from './Purchase-Invoices/Purchase-Invoices';
+import { JournalEntriesComponent } from './journal-entries/journal-entries';
+import { TrialBalanceComponent } from './trial-balance/trial-balance';
+import { ProfitLossComponent } from './profit-loss/profit-loss';
+import { AccountsManager } from './accounts-manager/accounts-manager';
+import { ReportsComponent } from './reports/reports';
+import { FinancialReportComponent } from './financial-report/financial-report.component';
+import { PosComponent } from './pos/pos';
+import { PosManagementComponent } from './pos-management/pos-management-component';
+import { PaymentsComponent } from './payments-component/payments-component';
+import { StockTransferComponent } from './stock-transfer/stock-transfer.component';
+import { PurchaseReturnsComponent } from './purchase-returns/purchase-returns.component';
+import { SuppliersComponent } from './suppliers/suppliers.component';
+import { SupplierPaymentsComponent } from './supplier-payments/supplier-payments.component';
+export default [
+  { path: 'documentation', component: Documentation },
+  { path: 'crud', component: Crud },
+  { path: 'orders', component: Orders },
+  { path: 'CRM', component: CRMComponent },
+  { path: 'inventory', component: InventoryComponent },
+  { path: 'sales-invoices', component: SalesInvoicesComponent },
+  { path: 'purchase-invoices', component: PurchaseOrdersComponent },
+  { path: 'journal-entries', component: JournalEntriesComponent },
+  { path: 'trial-balance', component: TrialBalanceComponent },
+  { path: 'profit-loss', component: ProfitLossComponent },
+  { path: 'accounts-manager', component: AccountsManager },
+  { path: 'financial-report', component: FinancialReportComponent },
+   { path: 'pos', component: PosComponent },
+    { path: 'pos-management', component: PosManagementComponent },
+    { path: 'payments-component', component: PaymentsComponent },
+    { path: 'stock-transfer', component: StockTransferComponent },
+    { path: 'purchase-returns', component: PurchaseReturnsComponent },
+     { path: 'suppliers', component: SuppliersComponent },
+      { path: 'supplier-payments', component: SupplierPaymentsComponent },
+  { path: 'empty', component: Empty },
+  { path: 'reports', component:ReportsComponent },
+  { path: '**', redirectTo: '/notfound' }
+] as Routes;
