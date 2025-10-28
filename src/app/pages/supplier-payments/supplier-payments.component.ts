@@ -32,14 +32,15 @@ interface SupplierPayment {
   template: `
 <div class="card p-4">
 
-  <h2 class="text-xl font-semibold mb-4">مدفوعات الموردين</h2>
+  <h2 class="text-xl font-semibold mb-4">Supplier Payments</h2>
 
-  <!-- البحث العام -->
+  <!-- Global Search -->
   <div class="mb-4">
-    <input pInputText placeholder="بحث عام..." [(ngModel)]="globalFilter" (input)="dt.filterGlobal(globalFilter, 'contains')" class="w-full md:w-1/3">
+    <input pInputText placeholder="Global Search..." [(ngModel)]="globalFilter" 
+           (input)="dt.filterGlobal(globalFilter, 'contains')" class="w-full md:w-1/3">
   </div>
 
-  <!-- الجدول -->
+  <!-- Payments Table -->
   <p-table #dt [value]="payments" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]"
            [showGridlines]="true" responsiveLayout="scroll"
            [globalFilterFields]="['invoiceNumber','creationDate','supplier','paymentCategory','status','paymentMethod']">
@@ -47,31 +48,31 @@ interface SupplierPayment {
     <ng-template pTemplate="header">
       <tr>
         <th>
-          <span>رقم الفاتورة</span>
-          <p-columnFilter type="text" field="invoiceNumber" display="menu" placeholder="بحث"></p-columnFilter>
+          <span>Invoice Number</span>
+          <p-columnFilter type="text" field="invoiceNumber" display="menu" placeholder="Search"></p-columnFilter>
         </th>
         <th>
-          <span>تاريخ الإنشاء</span>
+          <span>Creation Date</span>
           <p-columnFilter type="date" field="creationDate" display="menu"></p-columnFilter>
         </th>
         <th>
-          <span>المورد</span>
-          <p-columnFilter type="text" field="supplier" display="menu" placeholder="بحث"></p-columnFilter>
+          <span>Supplier</span>
+          <p-columnFilter type="text" field="supplier" display="menu" placeholder="Search"></p-columnFilter>
         </th>
         <th>
-          <span>فئة طريقة الدفع</span>
-          <p-columnFilter type="text" field="paymentCategory" display="menu" placeholder="بحث"></p-columnFilter>
+          <span>Payment Category</span>
+          <p-columnFilter type="text" field="paymentCategory" display="menu" placeholder="Search"></p-columnFilter>
         </th>
         <th>
-          <span>الحالة</span>
-          <p-columnFilter type="text" field="status" display="menu" placeholder="بحث"></p-columnFilter>
+          <span>Status</span>
+          <p-columnFilter type="text" field="status" display="menu" placeholder="Search"></p-columnFilter>
         </th>
         <th>
-          <span>وسيلة الدفع</span>
-          <p-columnFilter type="text" field="paymentMethod" display="menu" placeholder="بحث"></p-columnFilter>
+          <span>Payment Method</span>
+          <p-columnFilter type="text" field="paymentMethod" display="menu" placeholder="Search"></p-columnFilter>
         </th>
-        <th>إجمالي المبلغ المدفوع</th>
-        <th>إجراءات</th>
+        <th>Total Paid</th>
+        <th>Actions</th>
       </tr>
     </ng-template>
 
@@ -94,7 +95,7 @@ interface SupplierPayment {
     <ng-template pTemplate="emptymessage">
       <tr>
         <td colspan="8" class="text-center text-gray-500 p-4">
-          لايوجد بيانات
+          No data available
         </td>
       </tr>
     </ng-template>
@@ -102,20 +103,21 @@ interface SupplierPayment {
 
 </div>
 
-<p-dialog header="تفاصيل الدفع" [(visible)]="displayDialog" [modal]="true" [style]="{width:'400px'}">
+<p-dialog header="Payment Details" [(visible)]="displayDialog" [modal]="true" [style]="{width:'400px'}">
   <div *ngIf="selectedPayment">
-    <p><strong>رقم الفاتورة:</strong> {{selectedPayment.invoiceNumber}}</p>
-    <p><strong>تاريخ الإنشاء:</strong> {{selectedPayment.creationDate}}</p>
-    <p><strong>المورد:</strong> {{selectedPayment.supplier}}</p>
-    <p><strong>فئة طريقة الدفع:</strong> {{selectedPayment.paymentCategory}}</p>
-    <p><strong>الحالة:</strong> {{selectedPayment.status}}</p>
-    <p><strong>وسيلة الدفع:</strong> {{selectedPayment.paymentMethod}}</p>
-    <p><strong>إجمالي المبلغ المدفوع:</strong> {{selectedPayment.totalPaid | number:'1.2-2'}}</p>
+    <p><strong>Invoice Number:</strong> {{selectedPayment.invoiceNumber}}</p>
+    <p><strong>Creation Date:</strong> {{selectedPayment.creationDate}}</p>
+    <p><strong>Supplier:</strong> {{selectedPayment.supplier}}</p>
+    <p><strong>Payment Category:</strong> {{selectedPayment.paymentCategory}}</p>
+    <p><strong>Status:</strong> {{selectedPayment.status}}</p>
+    <p><strong>Payment Method:</strong> {{selectedPayment.paymentMethod}}</p>
+    <p><strong>Total Paid:</strong> {{selectedPayment.totalPaid | number:'1.2-2'}}</p>
   </div>
   <ng-template pTemplate="footer">
-    <button pButton label="إغلاق" (click)="displayDialog=false"></button>
+    <button pButton label="Close" (click)="displayDialog=false"></button>
   </ng-template>
 </p-dialog>
+
   `
 })
 export class SupplierPaymentsComponent {

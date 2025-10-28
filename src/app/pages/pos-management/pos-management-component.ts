@@ -33,7 +33,7 @@ export class PosManagementComponent {
       openedBy: 'Super Admin',
       openDate: new Date('2025-08-14'),
       closeDate: null,
-      status: 'مفتوح'
+      status: 'Open'
     },
     {
       id: 2,
@@ -42,7 +42,7 @@ export class PosManagementComponent {
       openedBy: 'Super Admin',
       openDate: new Date('2025-08-14'),
       closeDate: new Date('2025-08-14'),
-      status: 'متوازن'
+      status: 'Closed'
     }
   ];
 

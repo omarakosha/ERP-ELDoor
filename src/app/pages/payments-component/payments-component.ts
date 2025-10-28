@@ -34,14 +34,14 @@ interface Payment {
   ],
   template: `
 <div class="card">
-    <div class="font-semibold text-xl mb-4">مدفوعات العملاء</div>
+    <div class="font-semibold text-xl mb-4">Customer Payments</div>
 
     <!-- Toolbar -->
     <div class="flex flex-wrap gap-2 mb-3">
         <button pButton label="Clear Filters" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
         <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
         <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"></button>
-        <input pInputText #filterInput placeholder="بحث عام..." (input)="onGlobalFilter(dt, $event)" class="ml-auto">
+        <input pInputText #filterInput placeholder="Search..." (input)="onGlobalFilter(dt, $event)" class="ml-auto">
     </div>
 
     <!-- Payments Table -->
@@ -59,30 +59,30 @@ interface Payment {
         <ng-template #header>
             <tr>
                 <th>
-                    رقم سند القبض
-                    <p-columnFilter type="text" field="receiptNo" display="menu" placeholder="بحث برقم السند"></p-columnFilter>
+                    Receipt No
+                    <p-columnFilter type="text" field="receiptNo" display="menu" placeholder="Search by receipt #"></p-columnFilter>
                 </th>
                 <th>
-                    تاريخ الاستلام
-                    <p-columnFilter type="date" field="date" display="menu" placeholder="بحث بالتاريخ"></p-columnFilter>
+                    Date
+                    <p-columnFilter type="date" field="date" display="menu" placeholder="Search by date"></p-columnFilter>
                 </th>
                 <th>
-                    اسم العميل
-                    <p-columnFilter type="text" field="customer" display="menu" placeholder="بحث باسم العميل"></p-columnFilter>
+                    Customer Name
+                    <p-columnFilter type="text" field="customer" display="menu" placeholder="Search by customer"></p-columnFilter>
                 </th>
                 <th>
-                    المبلغ
-                    <p-columnFilter type="numeric" field="amount" display="menu" placeholder="بحث بالمبلغ"></p-columnFilter>
+                    Amount
+                    <p-columnFilter type="numeric" field="amount" display="menu" placeholder="Search by amount"></p-columnFilter>
                 </th>
                 <th>
-                    طريقة الدفع
-                    <p-columnFilter type="text" field="paymentMethod" display="menu" placeholder="بحث بطريقة الدفع"></p-columnFilter>
+                    Payment Method
+                    <p-columnFilter type="text" field="paymentMethod" display="menu" placeholder="Search by method"></p-columnFilter>
                 </th>
                 <th>
-                    اسم الصندوق
-                    <p-columnFilter type="text" field="cashBox" display="menu" placeholder="بحث باسم الصندوق"></p-columnFilter>
+                    Cash Box
+                    <p-columnFilter type="text" field="cashBox" display="menu" placeholder="Search by cash box"></p-columnFilter>
                 </th>
-                <th>الإجراءات</th>
+                <th>Actions</th>
             </tr>
         </ng-template>
 
@@ -95,43 +95,43 @@ interface Payment {
                 <td>{{p.paymentMethod}}</td>
                 <td>{{p.cashBox}}</td>
                 <td>
-                    <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info" (click)="editPayment(p)"></button>
+                    <button pButton icon="pi pi-pencil" class="p-button p-button-info" (click)="editPayment(p)"></button>
                 </td>
             </tr>
         </ng-template>
 
         <ng-template #emptymessage>
             <tr>
-                <td colspan="7">لا توجد نتائج. برجاء تعديل بحثك أو خيارات التصفية للعثور على ما تبحث عنه.</td>
+                <td colspan="7">No results. Please adjust your search or filters to find what you're looking for.</td>
             </tr>
         </ng-template>
     </p-table>
 
     <!-- Add/Edit Payment Dialog -->
-    <p-dialog header="{{isEdit ? 'تعديل الدفعة' : 'إضافة دفعة'}}" [(visible)]="displayDialog" [modal]="true" [closable]="false" [style]="{width: '450px'}">
+    <p-dialog header="{{isEdit ? 'Edit Payment' : 'Add Payment'}}" [(visible)]="displayDialog" [modal]="true" [closable]="false" [style]="{width: '450px'}">
         <div class="grid gap-3">
             <div>
-                <label>رقم سند القبض</label>
+                <label>Receipt No</label>
                 <input pInputText [(ngModel)]="newPayment.receiptNo" class="w-full">
             </div>
             <div>
-                <label>تاريخ الاستلام</label>
+                <label>Date</label>
                 <input pInputText type="date" [(ngModel)]="newPayment.date" class="w-full">
             </div>
             <div>
-                <label>اسم العميل</label>
+                <label>Customer Name</label>
                 <input pInputText [(ngModel)]="newPayment.customer" class="w-full">
             </div>
             <div>
-                <label>المبلغ</label>
+                <label>Amount</label>
                 <input pInputText type="number" [(ngModel)]="newPayment.amount" class="w-full">
             </div>
             <div>
-                <label>طريقة الدفع</label>
+                <label>Payment Method</label>
                 <input pInputText [(ngModel)]="newPayment.paymentMethod" class="w-full">
             </div>
             <div>
-                <label>اسم الصندوق</label>
+                <label>Cash Box</label>
                 <input pInputText [(ngModel)]="newPayment.cashBox" class="w-full">
             </div>
         </div>
@@ -141,6 +141,7 @@ interface Payment {
         </ng-template>
     </p-dialog>
 </div>
+
   `
 })
 export class PaymentsComponent implements OnInit {

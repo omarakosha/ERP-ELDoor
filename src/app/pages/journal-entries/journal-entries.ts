@@ -34,7 +34,7 @@ import { PaginatorModule } from 'primeng/paginator';
   template: `
  <div class="card">
   <p-toast></p-toast>
-  <h2 class="text-3xl font-bold mb-6">Journal Entries - قيود اليومية</h2>
+  <h2 class="text-3xl font-bold mb-6">Journal Entries</h2>
 
   <!-- أزرار البحث والإضافة -->
   <div class="flex flex-wrap items-center gap-4 mb-4">

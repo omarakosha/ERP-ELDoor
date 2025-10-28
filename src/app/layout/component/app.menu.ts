@@ -21,9 +21,9 @@ export class AppMenu {
     ngOnInit() {
         this.model = [
             {
-                label: 'الرئسية',
+                label: 'Home',
                 items: [
-                    { label: 'لوحة المعلومات ', icon: 'pi pi-home', routerLink: ['/'] }
+                    { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/'] }
                 ]
             },
 
@@ -31,15 +31,15 @@ export class AppMenu {
                 routerLink: ['/pages'],
                 items: [
                     {
-                        label: 'المبيعات و العملاء',
+                        label: 'Sales & Customers',
                         icon: 'pi pi-shopping-cart',
                         items: [
-                            { label: 'نقاط البيع', icon: 'pi pi-desktop', routerLink: ['/pages/pos'] },
-                            { label: 'صناديق البيع', icon: 'pi pi-briefcase', routerLink: ['/pages/pos-management'] },
-                            { label: 'فواتير المبيعات', icon: 'pi pi-file', routerLink: ['/pages/sales-invoices'] },
-                            { label: 'طلبات المتجر', icon: 'pi pi-shopping-bag', routerLink: ['/pages/orders'] },
-                            { label: 'العملاء', icon: 'pi pi-users', routerLink: ['/pages/CRM'] },
-                            { label: 'مدفوعات العملاء', icon: 'pi pi-credit-card', routerLink: ['/pages/payments-component'] },
+                            { label: 'POS', icon: 'pi pi-desktop', routerLink: ['/pages/pos'] },
+                            { label: 'Cash Registers', icon: 'pi pi-briefcase', routerLink: ['/pages/pos-management'] },
+                            { label: 'Sales Invoices', icon: 'pi pi-file', routerLink: ['/pages/sales-invoices'] },
+                            { label: 'Store Orders', icon: 'pi pi-shopping-bag', routerLink: ['/pages/orders'] },
+                            { label: 'Customers', icon: 'pi pi-users', routerLink: ['/pages/CRM'] },
+                            { label: 'Customer Payments', icon: 'pi pi-credit-card', routerLink: ['/pages/payments-component'] },
                         ]
                     }
                 ]
@@ -49,12 +49,12 @@ export class AppMenu {
                 routerLink: ['/pages'],
                 items: [
                     {
-                        label: 'المنتجات والمخزون',
+                        label: 'Products & Inventory',
                         icon: 'pi pi-box',
                         items: [
-                            { label: 'المنتجات', icon: 'pi pi-tags', routerLink: ['/pages/crud'] },
-                           { label: 'جرد مخزون', icon: 'pi pi-check-square', routerLink: ['/pages/inventory'] },
-                            { label: 'تحويل مخزون', icon: 'pi pi-refresh', routerLink: ['/pages/stock-transfer'] },
+                            { label: 'Products', icon: 'pi pi-tags', routerLink: ['/pages/crud'] },
+                            { label: 'Inventory Stock', icon: 'pi pi-check-square', routerLink: ['/pages/inventory'] },
+                            { label: 'Stock Transfer', icon: 'pi pi-refresh', routerLink: ['/pages/stock-transfer'] },
                         ]
                     }
                 ]
@@ -64,42 +64,35 @@ export class AppMenu {
                 routerLink: ['/pages'],
                 items: [
                     {
-                        label: 'المشتريات والموردين',
+                        label: 'Purchases & Suppliers',
                         icon: 'pi pi-truck',
                         items: [
-                            { label: 'فواتير المشتريات', icon: 'pi pi-file-import', routerLink: ['/pages/purchase-invoices'] },
-                            { label: 'مردودات المشتريات', icon: 'pi pi-undo', routerLink: ['/pages/purchase-returns'] },
-                            { label: 'الموردين', icon: 'pi pi-users', routerLink: ['/pages/suppliers'] },
-                            { label: 'مدفوعات الموردين', icon: 'pi pi-wallet', routerLink: ['/pages/supplier-payments'] },
+                            { label: 'Purchase Invoices', icon: 'pi pi-file-import', routerLink: ['/pages/purchase-invoices'] },
+                            { label: 'Purchase Returns', icon: 'pi pi-undo', routerLink: ['/pages/purchase-returns'] },
+                            { label: 'Suppliers', icon: 'pi pi-users', routerLink: ['/pages/suppliers'] },
+                            { label: 'Supplier Payments', icon: 'pi pi-wallet', routerLink: ['/pages/supplier-payments'] },
                         ]
                     }
                 ]
             },
 
-             {
-                label: 'Acoubting ',
+            {
+                label: 'Accounting',
                 items: [
-                    { label: 'قيود اليومية', icon: 'pi pi-list', routerLink: ['/pages/journal-entries'] },
-                            { label: 'ميزان المراجعة', icon: 'pi pi-chart-bar', routerLink: ['/pages/trial-balance'] },
-                            { label: 'الأرباح و الخسائر', icon: 'pi pi-chart-line', routerLink: ['/pages/profit-loss'] },
-                            { label: 'إدارة الحسابات', icon: 'pi pi-sitemap', routerLink: ['/pages/accounts-manager'] },
-                    
+                    { label: 'Journal Entries', icon: 'pi pi-list', routerLink: ['/pages/journal-entries'] },
+                    { label: 'Trial Balance', icon: 'pi pi-chart-bar', routerLink: ['/pages/trial-balance'] },
+                    { label: 'Profit & Loss', icon: 'pi pi-chart-line', routerLink: ['/pages/profit-loss'] },
+                    { label: 'Accounts Manager', icon: 'pi pi-sitemap', routerLink: ['/pages/accounts-manager'] },
                 ]
             },
-            
+
             {
                 label: 'Reports',
                 items: [
-                    { label: 'التقارير', icon: 'pi pi-chart-pie', routerLink: ['/pages/reports'] },
-                      { label: 'التقارير المالية', icon: 'pi pi-file', routerLink: ['/pages/financial-report'] },
+                    { label: 'Reports', icon: 'pi pi-chart-pie', routerLink: ['/pages/reports'] },
+                    { label: 'Financial Reports', icon: 'pi pi-file', routerLink: ['/pages/financial-report'] },
                 ]
             },
-
-
-
-
-
-
 
             {
                 label: 'UI Components',
@@ -121,60 +114,34 @@ export class AppMenu {
                     { label: 'Misc', icon: 'pi pi-fw pi-circle', routerLink: ['/uikit/misc'] }
                 ]
             },
+
             {
                 label: 'Pages',
                 icon: 'pi pi-fw pi-briefcase',
                 routerLink: ['/pages'],
                 items: [
+                    { label: 'Landing', icon: 'pi pi-fw pi-globe', routerLink: ['/landing'] },
                     {
-                        label: 'Landing',
-                        icon: 'pi pi-fw pi-globe',
-                        routerLink: ['/landing']
-                    },
-                    {
-                        label: 'Auth',
-                        icon: 'pi pi-fw pi-user',
+                        label: 'Auth', icon: 'pi pi-fw pi-user',
                         items: [
-                            {
-                                label: 'Login',
-                                icon: 'pi pi-fw pi-sign-in',
-                                routerLink: ['/auth/login']
-                            },
-                            {
-                                label: 'Error',
-                                icon: 'pi pi-fw pi-times-circle',
-                                routerLink: ['/auth/error']
-                            },
-                            {
-                                label: 'Access Denied',
-                                icon: 'pi pi-fw pi-lock',
-                                routerLink: ['/auth/access']
-                            }
+                            { label: 'Login', icon: 'pi pi-fw pi-sign-in', routerLink: ['/auth/login'] },
+                            { label: 'Error', icon: 'pi pi-fw pi-times-circle', routerLink: ['/auth/error'] },
+                            { label: 'Access Denied', icon: 'pi pi-fw pi-lock', routerLink: ['/auth/access'] },
                         ]
                     },
-
-                    {
-                        label: 'Not Found',
-                        icon: 'pi pi-fw pi-exclamation-circle',
-                        routerLink: ['/pages/notfound']
-                    },
-                    {
-                        label: 'Empty',
-                        icon: 'pi pi-fw pi-circle-off',
-                        routerLink: ['/pages/empty']
-                    }
+                    { label: 'Not Found', icon: 'pi pi-fw pi-exclamation-circle', routerLink: ['/pages/notfound'] },
+                    { label: 'Empty', icon: 'pi pi-fw pi-circle-off', routerLink: ['/pages/empty'] }
                 ]
             },
+
             {
                 label: 'Hierarchy',
                 items: [
                     {
-                        label: 'Submenu 1',
-                        icon: 'pi pi-fw pi-bookmark',
+                        label: 'Submenu 1', icon: 'pi pi-fw pi-bookmark',
                         items: [
                             {
-                                label: 'Submenu 1.1',
-                                icon: 'pi pi-fw pi-bookmark',
+                                label: 'Submenu 1.1', icon: 'pi pi-fw pi-bookmark',
                                 items: [
                                     { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
                                     { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
@@ -182,47 +149,35 @@ export class AppMenu {
                                 ]
                             },
                             {
-                                label: 'Submenu 1.2',
-                                icon: 'pi pi-fw pi-bookmark',
+                                label: 'Submenu 1.2', icon: 'pi pi-fw pi-bookmark',
                                 items: [{ label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' }]
                             }
                         ]
                     },
                     {
-                        label: 'Submenu 2',
-                        icon: 'pi pi-fw pi-bookmark',
+                        label: 'Submenu 2', icon: 'pi pi-fw pi-bookmark',
                         items: [
                             {
-                                label: 'Submenu 2.1',
-                                icon: 'pi pi-fw pi-bookmark',
+                                label: 'Submenu 2.1', icon: 'pi pi-fw pi-bookmark',
                                 items: [
                                     { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark' },
                                     { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' }
                                 ]
                             },
                             {
-                                label: 'Submenu 2.2',
-                                icon: 'pi pi-fw pi-bookmark',
+                                label: 'Submenu 2.2', icon: 'pi pi-fw pi-bookmark',
                                 items: [{ label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' }]
                             }
                         ]
                     }
                 ]
             },
+
             {
                 label: 'Get Started',
                 items: [
-                    {
-                        label: 'Documentation',
-                        icon: 'pi pi-fw pi-pencil',
-                        routerLink: ['/documentation']
-                    },
-                    {
-                        label: 'View Source',
-                        icon: 'pi pi-fw pi-github',
-                        url: 'https://github.com/primefaces/sakai-ng',
-                        target: '_blank'
-                    }
+                    { label: 'Documentation', icon: 'pi pi-fw pi-pencil', routerLink: ['/documentation'] },
+                    { label: 'View Source', icon: 'pi pi-fw pi-github', url: 'https://github.com/primefaces/sakai-ng', target: '_blank' }
                 ]
             }
         ];

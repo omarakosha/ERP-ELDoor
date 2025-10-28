@@ -34,23 +34,23 @@ interface Inventory {
     TagModule
   ],
   template: `
-  <div class="card p-4 shadow-md rounded-xl bg-white">
+ <div class="card p-4 shadow-md rounded-xl bg-white">
     <div class="flex flex-wrap justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold text-gray-700">جرد المخزون</h2>
+      <h2 class="text-xl font-semibold text-gray-700">Inventory Management</h2>
 
       <div class="flex gap-2">
-        <button pButton icon="pi pi-plus" label="إضافة جرد جديد" class="p-button-success" (click)="openNew()"></button>
-        <button pButton icon="pi pi-file-excel" label="تصدير Excel" class="p-button-success" (click)="exportExcel()"></button>
-        <button pButton icon="pi pi-file-pdf" label="تصدير PDF" class="p-button-danger" (click)="exportPDF()"></button>
+        <button pButton icon="pi pi-plus" label="Add New Inventory" class="p-button-success" (click)="openNew()"></button>
+        <button pButton icon="pi pi-file-excel" label="Export Excel" class="p-button-success" (click)="exportExcel()"></button>
+        <button pButton icon="pi pi-file-pdf" label="Export PDF" class="p-button-danger" (click)="exportPDF()"></button>
       </div>
     </div>
 
-    <!-- حقل البحث العام -->
+    <!-- Global Search -->
     <div class="flex justify-between items-center mb-3">
-      <input pInputText #filterInput placeholder="البحث بواسطة رقم الجرد أو اسم الجرد..." (input)="onGlobalFilter(dt, $event)" class="w-full md:w-1/3">
+      <input pInputText #filterInput placeholder="Search by Inventory ID or Name..." (input)="onGlobalFilter(dt, $event)" class="w-full md:w-1/3">
     </div>
 
-    <!-- الجدول -->
+    <!-- Inventory Table -->
     <p-table #dt [value]="inventories" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]"
              [showGridlines]="true" responsiveLayout="scroll"
              [globalFilterFields]="['id','name','location','status']">
@@ -59,41 +59,41 @@ interface Inventory {
         <tr class="bg-gray-100 text-gray-700 text-sm">
           <th>
             <div class="flex justify-between items-center">
-              <span>رقم الجرد</span>
-              <p-columnFilter type="text" field="id" display="menu" placeholder="بحث"></p-columnFilter>
+              <span>Inventory ID</span>
+              <p-columnFilter type="text" field="id" display="menu" placeholder="Search"></p-columnFilter>
             </div>
           </th>
           <th>
             <div class="flex justify-between items-center">
-              <span>اسم الجرد</span>
-              <p-columnFilter type="text" field="name" display="menu" placeholder="بحث"></p-columnFilter>
+              <span>Inventory Name</span>
+              <p-columnFilter type="text" field="name" display="menu" placeholder="Search"></p-columnFilter>
             </div>
           </th>
           <th>
             <div class="flex justify-between items-center">
-              <span>تاريخ الإنشاء</span>
+              <span>Created Date</span>
               <p-columnFilter type="date" field="createdAt" display="menu"></p-columnFilter>
             </div>
           </th>
           <th>
             <div class="flex justify-between items-center">
-              <span>الموقع</span>
-              <p-columnFilter type="text" field="location" display="menu" placeholder="بحث"></p-columnFilter>
+              <span>Location</span>
+              <p-columnFilter type="text" field="location" display="menu" placeholder="Search"></p-columnFilter>
             </div>
           </th>
           <th>
             <div class="flex justify-between items-center">
-              <span>إجمالي التكلفة</span>
+              <span>Total Cost</span>
               <p-columnFilter type="numeric" field="totalCost" display="menu"></p-columnFilter>
             </div>
           </th>
           <th>
             <div class="flex justify-between items-center">
-              <span>حالة الجرد</span>
+              <span>Status</span>
               <p-columnFilter type="text" field="status" display="menu"></p-columnFilter>
             </div>
           </th>
-          <th style="width: 120px;">الإجراءات</th>
+          <th style="width: 120px;">Actions</th>
         </tr>
       </ng-template>
 
@@ -115,46 +115,46 @@ interface Inventory {
       <ng-template pTemplate="emptymessage">
         <tr>
           <td colspan="7" class="text-center py-4 text-gray-500">
-            لا يوجد نتائج لعرضها. برجاء تعديل البحث أو الفلاتر للعثور على ما تبحث عنه.
+            No results to display. Please adjust search or filters to find what you are looking for.
           </td>
         </tr>
       </ng-template>
     </p-table>
 
-    <!-- نافذة إضافة / تعديل -->
-    <p-dialog header="{{isEdit ? 'تعديل جرد' : 'إضافة جرد جديد'}}" [(visible)]="displayDialog" [modal]="true" [style]="{width:'450px'}">
+    <!-- Add/Edit Inventory Dialog -->
+    <p-dialog header="{{isEdit ? 'Edit Inventory' : 'Add New Inventory'}}" [(visible)]="displayDialog" [modal]="true" [style]="{width:'450px'}">
       <div class="grid gap-3">
         <div>
-          <label>رقم الجرد</label>
+          <label>Inventory ID</label>
           <input pInputText type="number" [(ngModel)]="currentInventory.id" class="w-full">
         </div>
         <div>
-          <label>اسم الجرد</label>
+          <label>Inventory Name</label>
           <input pInputText [(ngModel)]="currentInventory.name" class="w-full">
         </div>
         <div>
-          <label>تاريخ الإنشاء</label>
+          <label>Created Date</label>
           <input pInputText type="date" [(ngModel)]="currentInventory.createdAt" class="w-full">
         </div>
         <div>
-          <label>الموقع</label>
+          <label>Location</label>
           <input pInputText [(ngModel)]="currentInventory.location" class="w-full">
         </div>
         <div>
-          <label>إجمالي التكلفة</label>
+          <label>Total Cost</label>
           <input pInputText type="number" [(ngModel)]="currentInventory.totalCost" class="w-full">
         </div>
         <div>
-          <label>حالة الجرد</label>
+          <label>Status</label>
           <input pInputText [(ngModel)]="currentInventory.status" class="w-full">
         </div>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton label="إلغاء" icon="pi pi-times" (click)="displayDialog=false" class="p-button-secondary"></button>
-        <button pButton label="حفظ" icon="pi pi-check" (click)="saveInventory()" class="p-button-success"></button>
+        <button pButton label="Cancel" icon="pi pi-times" (click)="displayDialog=false" class="p-button-secondary"></button>
+        <button pButton label="Save" icon="pi pi-check" (click)="saveInventory()" class="p-button-success"></button>
       </ng-template>
     </p-dialog>
-  </div>
+</div>
   `
 })
 export class InventoryComponent implements OnInit {

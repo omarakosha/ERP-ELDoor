@@ -41,39 +41,39 @@ interface Product {
     TagModule
   ],
   template: `
-  <div class="card p-4 shadow-md rounded-xl bg-white">
+<div class="card p-4 shadow-md rounded-xl bg-white">
     <div class="flex flex-wrap justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold text-gray-700">تحويل المخزون</h2>
+      <h2 class="text-xl font-semibold text-gray-700">Stock Transfer</h2>
 
       <div class="flex gap-2">
-        <button pButton icon="pi pi-plus" label="نقل مخزون جديد" class="p-button-success" (click)="openNewTransfer()"></button>
-        <button pButton icon="pi pi-send" label="طلب مخزون مبدئي" class="p-button-info" (click)="openInitialRequest()"></button>
-        <button pButton icon="pi pi-file-excel" label="تصدير Excel" class="p-button-success" (click)="exportExcel()"></button>
-        <button pButton icon="pi pi-file-pdf" label="تصدير PDF" class="p-button-danger" (click)="exportPDF()"></button>
+        <button pButton icon="pi pi-plus" label="New Transfer" class="p-button-success" (click)="openNewTransfer()"></button>
+        <button pButton icon="pi pi-send" label="Initial Stock Request" class="p-button-info" (click)="openInitialRequest()"></button>
+        <button pButton icon="pi pi-file-excel" label="Export Excel" class="p-button-success" (click)="exportExcel()"></button>
+        <button pButton icon="pi pi-file-pdf" label="Export PDF" class="p-button-danger" (click)="exportPDF()"></button>
       </div>
     </div>
 
-    <!-- البحث العام -->
+    <!-- General Search -->
     <div class="flex justify-between items-center mb-3">
-      <input pInputText #filterInput placeholder="ابحث عن طلبات النقل عن طريق رقم الفاتورة..." 
+      <input pInputText #filterInput placeholder="Search transfers by invoice number..." 
              (input)="onGlobalFilter(dt, $event)" class="w-full md:w-1/3">
     </div>
 
-    <!-- الجدول -->
+    <!-- Table -->
     <p-table #dt [value]="transfers" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]"
              [showGridlines]="true" responsiveLayout="scroll"
              [globalFilterFields]="['invoiceNo','user','from','to','status']">
 
       <ng-template pTemplate="header">
         <tr class="bg-gray-100 text-gray-700 text-sm">
-          <th>رقم الفاتورة</th>
-          <th>المستخدم</th>
-          <th>من</th>
-          <th>إلى</th>
-          <th>تاريخ الإنشاء</th>
-          <th>آخر تحديث</th>
-          <th>حالة النقل</th>
-          <th style="width: 120px;">الإجراءات</th>
+          <th>Invoice No.</th>
+          <th>User</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Creation Date</th>
+          <th>Last Update</th>
+          <th>Transfer Status</th>
+          <th style="width: 120px;">Actions</th>
         </tr>
       </ng-template>
 
@@ -94,82 +94,81 @@ interface Product {
       </ng-template>
     </p-table>
 
-    <!-- نافذة إضافة / تعديل -->
-    <p-dialog header="{{isEdit ? 'تعديل طلب النقل' : 'إضافة طلب نقل جديد'}}" 
+    <!-- Add/Edit Transfer Dialog -->
+    <p-dialog header="{{isEdit ? 'Edit Transfer' : 'New Transfer'}}" 
               [(visible)]="displayDialog" [modal]="true" [style]="{width:'480px'}">
       <div class="grid gap-3">
         <div>
-          <label>رقم الفاتورة</label>
+          <label>Invoice No.</label>
           <input pInputText [(ngModel)]="currentTransfer.invoiceNo" class="w-full">
         </div>
         <div>
-          <label>المستخدم</label>
+          <label>User</label>
           <input pInputText [(ngModel)]="currentTransfer.user" class="w-full">
         </div>
         <div>
-          <label>من</label>
+          <label>From</label>
           <input pInputText [(ngModel)]="currentTransfer.from" class="w-full">
         </div>
         <div>
-          <label>إلى</label>
+          <label>To</label>
           <input pInputText [(ngModel)]="currentTransfer.to" class="w-full">
         </div>
         <div>
-          <label>تاريخ الإنشاء</label>
+          <label>Creation Date</label>
           <input type="date" pInputText [(ngModel)]="currentTransfer.createdAt" class="w-full">
         </div>
         <div>
-          <label>آخر تحديث</label>
+          <label>Last Update</label>
           <input type="date" pInputText [(ngModel)]="currentTransfer.updatedAt" class="w-full">
         </div>
         <div>
-          <label>حالة النقل</label>
+          <label>Transfer Status</label>
           <input pInputText [(ngModel)]="currentTransfer.status" class="w-full">
         </div>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton label="إلغاء" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
-        <button pButton label="حفظ" icon="pi pi-check" class="p-button-success" (click)="saveTransfer()"></button>
+        <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
+        <button pButton label="Save" icon="pi pi-check" class="p-button-success" (click)="saveTransfer()"></button>
       </ng-template>
     </p-dialog>
 
-    <!-- نافذة طلب المخزون المبدئي -->
-    <!-- نافذة طلب المخزون المبدئي -->
-<p-dialog header="طلب مخزون مبدئي" [(visible)]="initialRequestDialog" [modal]="true" [style]="{width:'600px'}">
+    <!-- Initial Stock Request Dialog -->
+<p-dialog header="Initial Stock Request" [(visible)]="initialRequestDialog" [modal]="true" [style]="{width:'600px'}">
   <div class="flex flex-col gap-4 p-4 bg-gray-50 rounded-lg">
-    <!-- اختيار الفرع المتلقي -->
+    <!-- Select Destination Branch -->
     <div class="flex flex-col">
-      <label class="font-semibold mb-1">وجهة المخزون (الفرع المتلقي)</label>
-      <input pInputText [(ngModel)]="destination" placeholder="أدخل اسم الفرع" class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <label class="font-semibold mb-1">Destination (Receiving Branch)</label>
+      <input pInputText [(ngModel)]="destination" placeholder="Enter branch name" class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
     </div>
 
-    <!-- البحث عن المنتجات -->
+    <!-- Search Products -->
     <div class="flex flex-col">
-      <label class="font-semibold mb-1">بحث عن المنتجات</label>
-      <input pInputText [(ngModel)]="productSearch" placeholder="بحث باسم المنتج أو SKU..." 
+      <label class="font-semibold mb-1">Search Products</label>
+      <input pInputText [(ngModel)]="productSearch" placeholder="Search by product name or SKU..." 
              (input)="filterProducts()" class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
     </div>
 
-    <!-- قائمة المنتجات المطابقة للبحث -->
+    <!-- Matching Products List -->
     <div *ngIf="filteredProducts.length > 0" class="border rounded-md p-2 max-h-44 overflow-y-auto bg-white shadow-sm">
       <div *ngFor="let p of filteredProducts" 
            (click)="addProduct(p)" 
            class="cursor-pointer hover:bg-blue-50 p-2 rounded transition-colors flex justify-between items-center">
         <span>{{p.name}} ({{p.sku}})</span>
-        <span class="text-gray-400 text-sm">اضغط للإضافة</span>
+        <span class="text-gray-400 text-sm">Click to add</span>
       </div>
     </div>
 
-    <!-- ملخص المنتجات المختارة -->
+    <!-- Selected Products Summary -->
     <div>
-      <h3 class="font-semibold mt-3 mb-2 border-b pb-1">ملخص المنتجات المختارة</h3>
-      <div *ngIf="selectedProducts.length === 0" class="text-gray-500 italic">لم يتم اختيار أي منتجات بعد.</div>
+      <h3 class="font-semibold mt-3 mb-2 border-b pb-1">Selected Products Summary</h3>
+      <div *ngIf="selectedProducts.length === 0" class="text-gray-500 italic">No products selected yet.</div>
       <table *ngIf="selectedProducts.length > 0" class="w-full text-sm border rounded">
         <thead class="bg-gray-100">
           <tr>
-            <th class="p-2 text-right">المنتج</th>
-            <th class="p-2 text-center">الكمية</th>
-            <th class="p-2 text-center">إزالة</th>
+            <th class="p-2 text-right">Product</th>
+            <th class="p-2 text-center">Quantity</th>
+            <th class="p-2 text-center">Remove</th>
           </tr>
         </thead>
         <tbody>
@@ -187,16 +186,16 @@ interface Product {
     </div>
   </div>
 
-  <!-- أزرار التحكم -->
+  <!-- Control Buttons -->
   <ng-template pTemplate="footer">
     <div class="flex justify-end gap-2">
-      <button pButton label="إلغاء" icon="pi pi-times" class="p-button-secondary" (click)="initialRequestDialog=false"></button>
-      <button pButton label="إرسال الطلب" icon="pi pi-check" class="p-button-success" (click)="submitInitialRequest()"></button>
+      <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="initialRequestDialog=false"></button>
+      <button pButton label="Submit Request" icon="pi pi-check" class="p-button-success" (click)="submitInitialRequest()"></button>
     </div>
   </ng-template>
 </p-dialog>
 
-  </div>
+</div>
   `
 })
 export class StockTransferComponent implements OnInit {

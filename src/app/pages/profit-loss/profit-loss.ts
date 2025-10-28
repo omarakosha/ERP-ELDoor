@@ -40,7 +40,7 @@ interface MultiSelectOption {
   template: `
 <div class="card">
   <p-toast></p-toast>
-  <h2 class="text-3xl font-bold mb-6">Profit & Loss Statement - الربح والخسارة</h2>
+  <h2 class="text-3xl font-bold mb-6">Profit & Loss Statement</h2>
 
  
   <div class="flex gap-4 mb-4 flex-wrap">

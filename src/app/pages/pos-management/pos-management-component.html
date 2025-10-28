@@ -1,19 +1,19 @@
 <div class="card shadow-sm p-4 rounded-xl bg-white">
   <div class="flex justify-between items-center mb-4">
-    <h2 class="text-xl font-semibold text-gray-700">إدارة الصناديق</h2>
+    <h2 class="text-xl font-semibold text-gray-700">Cash Register Management</h2>
 
     <div class="flex gap-2">
       <input
         type="text"
         pInputText
-        placeholder="ابحث باسم الصندوق أو الموقع"
+        placeholder="Search by box name or location"
         [(ngModel)]="searchTerm"
         (input)="filterBoxes()"
         class="w-64"
       />
       <button
         pButton
-        label="إضافة صندوق جديد"
+        label="Add New Register"
         icon="pi pi-plus"
         class="p-button-success"
         (click)="openAddDialog()"
@@ -34,13 +34,13 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th>الموقع</th>
-        <th>اسم الصندوق</th>
-        <th>فتح بواسطة</th>
-        <th>تاريخ الفتح</th>
-        <th>تاريخ الإغلاق</th>
-        <th>الحالة</th>
-        <th class="text-center">الإجراءات</th>
+        <th>Location</th>
+        <th>Register Name</th>
+        <th>Opened By</th>
+        <th>Open Date</th>
+        <th>Close Date</th>
+        <th>Status</th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
 
@@ -55,9 +55,9 @@
           <span
             class="px-2 py-1 rounded-lg text-white text-sm"
             [ngClass]="{
-              'bg-green-500': box.status === 'مفتوح',
-              'bg-blue-500': box.status === 'متوازن',
-              'bg-red-500': box.status === 'مغلق'
+              'bg-green-500': box.status === 'Open',
+              'bg-blue-500': box.status === 'Balanced',
+              'bg-red-500': box.status === 'Closed'
             }"
           >
             {{ box.status }}
@@ -67,18 +67,20 @@
           <button
             pButton
             icon="pi pi-eye"
-            class="p-button-rounded p-button-info p-button-sm mr-2"
-            tooltip="عرض التفاصيل"
+            class="p-button p-button-info p-button-sm mr-2"
+            tooltip="View Details"
             (click)="viewBox(box)"
+            pTooltip=" Box Details" 
           ></button>
 
           <button
             pButton
             icon="pi pi-times"
-            class="p-button-rounded p-button-danger p-button-sm"
-            tooltip="إغلاق الصندوق"
+            class="p-button p-button-danger p-button-sm"
+            tooltip="Close Register"
             (click)="closeBox(box)"
-            [disabled]="box.status !== 'مفتوح'"
+            pTooltip="close Box" 
+            [disabled]="box.status !== 'Open'"
           ></button>
         </td>
       </tr>
@@ -86,9 +88,9 @@
   </p-table>
 </div>
 
-<!-- 🧾 نافذة إضافة صندوق جديد -->
+<!-- 🧾 Add New Register Dialog -->
 <p-dialog
-  header="إضافة صندوق بيع جديد"
+  header="Add New Register"
   [(visible)]="addDialogVisible"
   [modal]="true"
   [closable]="true"
@@ -98,22 +100,22 @@
 >
   <div class="p-fluid space-y-4">
     <div class="field">
-      <label class="font-semibold mb-2 block">اسم الصندوق</label>
+      <label class="font-semibold mb-2 block">Register Name</label>
       <input
         type="text"
         pInputText
-        placeholder="أدخل اسم الصندوق"
+        placeholder="Enter register name"
         [(ngModel)]="newBox.name"
         class="w-full"
       />
     </div>
 
     <div class="field">
-      <label class="font-semibold mb-2 block">الموقع</label>
+      <label class="font-semibold mb-2 block">Location</label>
       <input
         type="text"
         pInputText
-        placeholder="مثلاً: فرع جدة"
+        placeholder="e.g., Jeddah Branch"
         [(ngModel)]="newBox.location"
         class="w-full"
       />
@@ -122,14 +124,14 @@
     <div class="flex justify-end gap-2 pt-4 border-t">
       <button
         pButton
-        label="إلغاء"
+        label="Cancel"
         icon="pi pi-times"
         class="p-button-text text-gray-600 hover:text-red-500"
         (click)="addDialogVisible = false"
       ></button>
       <button
         pButton
-        label="حفظ"
+        label="Save"
         icon="pi pi-check"
         class="p-button-success"
         (click)="saveNewBox()"

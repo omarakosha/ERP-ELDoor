@@ -44,34 +44,34 @@ interface PurchaseReturn {
   
   ],
   template: `
-  <div class="card p-4 shadow-md rounded-xl bg-white">
+ <div class="card p-4 shadow-md rounded-xl bg-white">
     <div class="flex flex-wrap justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold text-gray-700">مردودات المشتريات</h2>
-      <button pButton icon="pi pi-plus" label="إضافة مردود جديد" class="p-button-success" (click)="openNewReturn()"></button>
+      <h2 class="text-xl font-semibold text-gray-700">Purchase Returns</h2>
+      <button pButton icon="pi pi-plus" label="Add New Return" class="p-button-success" (click)="openNewReturn()"></button>
     </div>
 
-    <!-- البحث -->
+    <!-- Search -->
     <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
-      <input pInputText #filterInput placeholder="ابحث عن المردودات..." 
+      <input pInputText #filterInput placeholder="Search returns..." 
              (input)="onGlobalFilter(dt, $event)" class="w-full md:w-1/3">
-      <input type="date" [(ngModel)]="filterDate" placeholder="تاريخ الإنشاء" class="border rounded p-2 w-48">
+      <input type="date" [(ngModel)]="filterDate" placeholder="Creation Date" class="border rounded p-2 w-48">
     </div>
 
-    <!-- الجدول -->
+    <!-- Table -->
     <p-table #dt [value]="returns" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]"
              [showGridlines]="true" responsiveLayout="scroll"
              [globalFilterFields]="['invoiceNo','supplier','location','invoiceType','status','paymentStatus']">
 
       <ng-template pTemplate="header">
         <tr class="bg-gray-100 text-gray-700 text-sm">
-          <th>رقم الفاتورة</th>
-          <th>تاريخ الإنشاء</th>
-          <th>المورد</th>
-          <th>الموقع</th>
-          <th>نوع الفاتورة</th>
-          <th>الحالة</th>
-          <th>حالة الدفع</th>
-          <th style="width: 120px;">الإجراءات</th>
+          <th>Invoice No</th>
+          <th>Creation Date</th>
+          <th>Supplier</th>
+          <th>Location</th>
+          <th>Invoice Type</th>
+          <th>Status</th>
+          <th>Payment Status</th>
+          <th style="width: 120px;">Actions</th>
         </tr>
       </ng-template>
 
@@ -93,47 +93,47 @@ interface PurchaseReturn {
     </p-table>
 
     
-    <p-dialog header="مردود مشتريات جديد" [(visible)]="displayDialog" [modal]="true" [style]="{width:'950px'}" [closable]="false">
+    <p-dialog header="New Purchase Return" [(visible)]="displayDialog" [modal]="true" [style]="{width:'950px'}" [closable]="false">
   <div class="space-y-6 p-5 bg-gray-50 rounded-md">
 
-    <!-- بيانات المردود -->
+    <!-- Return Details -->
     <div class="bg-white border rounded-md shadow-sm p-5">
-      <h3 class="font-semibold text-gray-700 mb-4">بيانات المردود</h3>
+      <h3 class="font-semibold text-gray-700 mb-4">Return Details</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block mb-1 font-medium text-gray-600">المورد</label>
-          <input pInputText [(ngModel)]="currentReturn.supplier" placeholder="أدخل اسم المورد" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
+          <label class="block mb-1 font-medium text-gray-600">Supplier</label>
+          <input pInputText [(ngModel)]="currentReturn.supplier" placeholder="Enter supplier name" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
         </div>
         <div>
-          <label class="block mb-1 font-medium text-gray-600">الموقع</label>
-          <input pInputText [(ngModel)]="currentReturn.location" placeholder="الموقع أو الفرع" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
+          <label class="block mb-1 font-medium text-gray-600">Location</label>
+          <input pInputText [(ngModel)]="currentReturn.location" placeholder="Location or branch" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
         </div>
         <div>
-          <label class="block mb-1 font-medium text-gray-600">رقم فاتورة المورد</label>
-          <input pInputText [(ngModel)]="currentReturn.invoiceNo" placeholder="رقم الفاتورة" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
+          <label class="block mb-1 font-medium text-gray-600">Supplier Invoice No</label>
+          <input pInputText [(ngModel)]="currentReturn.invoiceNo" placeholder="Invoice number" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
         </div>
         <div>
-          <label class="block mb-1 font-medium text-gray-600">الرقم المرجعي</label>
-          <input pInputText [(ngModel)]="currentReturn.referenceNo" placeholder="رقم مرجعي داخلي" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
+          <label class="block mb-1 font-medium text-gray-600">Reference No</label>
+          <input pInputText [(ngModel)]="currentReturn.referenceNo" placeholder="Internal reference number" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
         </div>
         <div class="md:col-span-2">
-          <label class="block mb-1 font-medium text-gray-600">ملاحظات</label>
-          <input pInputText [(ngModel)]="currentReturn.notes" placeholder="إضافة ملاحظات إن وجدت" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
+          <label class="block mb-1 font-medium text-gray-600">Notes</label>
+          <input pInputText [(ngModel)]="currentReturn.notes" placeholder="Add notes if any" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
         </div>
       </div>
     </div>
 
-    <!-- إضافة المنتجات -->
+    <!-- Add Products -->
     <div class="bg-white border rounded-md shadow-sm p-5">
-      <h3 class="font-semibold text-gray-700 mb-4">إضافة المنتجات</h3>
-      <input pInputText [(ngModel)]="productSearch" placeholder="بحث باسم المنتج أو SKU" 
+      <h3 class="font-semibold text-gray-700 mb-4">Add Products</h3>
+      <input pInputText [(ngModel)]="productSearch" placeholder="Search by product name or SKU" 
              (input)="filterProducts()" class="w-full p-3 border rounded-lg mb-3 focus:ring-2 focus:ring-blue-200">
 
       <div *ngIf="filteredProducts.length > 0" class="border rounded-md p-2 max-h-48 overflow-y-auto bg-white shadow-inner">
         <div *ngFor="let p of filteredProducts" (click)="addProduct(p)" 
              class="cursor-pointer hover:bg-blue-50 transition-colors duration-150 p-2 rounded flex justify-between items-center">
           <span class="font-medium">{{p.name}} ({{p.sku}})</span>
-          <span class="text-gray-500 text-xs">متوفر: {{p.availableQuantity}}</span>
+          <span class="text-gray-500 text-xs">Available: {{p.availableQuantity}}</span>
         </div>
       </div>
 
@@ -141,14 +141,14 @@ interface PurchaseReturn {
         <table class="min-w-full text-sm border border-gray-200 rounded-lg table-fixed">
           <thead class="bg-gray-100">
             <tr>
-              <th class="p-3 text-right w-2/12">المنتج</th>
+              <th class="p-3 text-right w-2/12">Product</th>
               <th class="p-3 text-right w-2/12">SKU</th>
-              <th class="p-3 text-right w-1/12">السعر</th>
-              <th class="p-3 text-right w-1/12">السعر + ضريبة</th>
-              <th class="p-3 text-right w-1/12">الكمية</th>
-              <th class="p-3 text-right w-1/12">المتاح</th>
-              <th class="p-3 text-right w-2/12">المجموع</th>
-              <th class="p-3 text-center w-1/12">حذف</th>
+              <th class="p-3 text-right w-1/12">Price</th>
+              <th class="p-3 text-right w-1/12">Price + Tax</th>
+              <th class="p-3 text-right w-1/12">Qty</th>
+              <th class="p-3 text-right w-1/12">Available</th>
+              <th class="p-3 text-right w-2/12">Total</th>
+              <th class="p-3 text-center w-1/12">Remove</th>
             </tr>
           </thead>
           <tbody>
@@ -177,26 +177,26 @@ interface PurchaseReturn {
         </table>
       </div>
 
-      <div *ngIf="selectedProducts.length === 0" class="text-gray-500 mt-2">ﻻ يوجد منتجات مختارة</div>
+      <div *ngIf="selectedProducts.length === 0" class="text-gray-500 mt-2">No products selected</div>
     </div>
 
-    <!-- الدفع والحسابات -->
+    <!-- Payment & Accounts -->
     <div class="bg-white border rounded-md shadow-sm p-5">
-      <h3 class="font-semibold text-gray-700 mb-4">خيارات الدفع والحسابات</h3>
+      <h3 class="font-semibold text-gray-700 mb-4">Payment & Accounts Options</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label class="font-medium">وسيلة الدفع</label>
-          <input pInputText [(ngModel)]="paymentMethod" placeholder="مثال: نقدي، تحويل" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
+          <label class="font-medium">Payment Method</label>
+          <input pInputText [(ngModel)]="paymentMethod" placeholder="e.g., Cash, Transfer" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-200">
         </div>
         <div>
-          <label class="font-medium">المبلغ المدفوع</label>
+          <label class="font-medium">Paid Amount</label>
           <input type="number" [(ngModel)]="paymentAmount" class="w-full p-2 border rounded-lg">
         </div>
         <div class="flex flex-col justify-end bg-gray-50 p-3 rounded border">
-          <p class="text-gray-700">الإجمالي غير شامل الضريبة: <span class="font-semibold">{{getSubtotal()}}</span></p>
-          <p class="text-gray-700">قيمة الضريبة: <span class="font-semibold">{{getTotalTax()}}</span></p>
-          <p class="text-gray-700">الإجمالي شامل الضريبة: <span class="font-semibold">{{getTotal()}}</span></p>
-          <p class="text-gray-700">المبلغ المستحق: <span class="font-semibold">{{getTotal() - paymentAmount}}</span></p>
+          <p class="text-gray-700">Subtotal (Excl. Tax): <span class="font-semibold">{{getSubtotal()}}</span></p>
+          <p class="text-gray-700">Tax Amount: <span class="font-semibold">{{getTotalTax()}}</span></p>
+          <p class="text-gray-700">Total (Incl. Tax): <span class="font-semibold">{{getTotal()}}</span></p>
+          <p class="text-gray-700">Amount Due: <span class="font-semibold">{{getTotal() - paymentAmount}}</span></p>
         </div>
       </div>
     </div>
@@ -204,13 +204,13 @@ interface PurchaseReturn {
   </div>
 
   <ng-template pTemplate="footer">
-    <button pButton label="إلغاء" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
-    <button pButton label="حفظ" icon="pi pi-check" class="p-button-success" (click)="saveReturn()"></button>
+    <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
+    <button pButton label="Save" icon="pi pi-check" class="p-button-success" (click)="saveReturn()"></button>
   </ng-template>
 </p-dialog>
 
+</div>
 
-  </div>
   `
 })
 export class PurchaseReturnsComponent implements OnInit {

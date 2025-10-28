@@ -1,72 +1,59 @@
 <div class="card">
 
-  <div class="flex flex-col md:flex-row h-[90vh] bg-gray-50 dark:bg-gray-900">
+  <div class="flex flex-col md:flex-row h-[71vh] bg-gray-50 dark:bg-gray-900 gap-4">
 
-    <!-- ✅ القسم الأيسر: المنتجات -->
-    <div class="w-full md:w-2/3 flex flex-col bg-white dark:bg-gray-800 shadow-lg border-l border-gray-200 dark:border-gray-700 rounded-r-3xl">
+    <!-- Left Section: Products -->
+    <div
+      class="w-full md:w-2/3 flex flex-col bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-3xl overflow-hidden">
 
-      <!-- 🔍 شريط البحث -->
-      <div class="flex justify-between items-center gap-3 px-6 py-4 border-b bg-gray-50 dark:bg-gray-700 rounded-tr-3xl">
-        <input
-          type="text"
-          placeholder=" امسح المنتج أو ابحث عنه"
+      <!-- Search Bar -->
+      <div class="flex justify-between items-center gap-3 px-6 py-4 border-b bg-gray-50 dark:bg-gray-700">
+        <input type="text" placeholder="Scan or search product"
           class="w-full md:w-3/4 border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-2 text-gray-700 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2CA3A3]" />
       </div>
 
-      <!-- 🧭 التصنيفات -->
+      <!-- Categories -->
       <div class="flex justify-between items-center px-6 py-4 border-b bg-white dark:bg-gray-800">
         <p class="text-gray-500 dark:text-gray-300 text-sm font-medium flex items-center gap-2">
-          <i class="pi pi-tags text-[#2CA3A3]"></i> لا يوجد تصنيفات
+          <i class="pi pi-tags text-[#2CA3A3]"></i> No categories
         </p>
-        <button
-          pButton
-          label="إضافة منتج"
-          icon="pi pi-plus"
-          class="p-button-success px-4 py-2 text-sm font-semibold rounded-lg shadow-sm hover:shadow-md transition-all"
+
+        <button pButton label="Add Product" icon="pi pi-plus" severity="success" outlined
+          class="px-4 py-2 text-sm font-semibold rounded-lg shadow-sm hover:shadow-md transition-all"
           (click)="addProduct()">
         </button>
+
       </div>
 
-      <!-- 📦 جدول المنتجات مع سكول داخلي -->
+      <!-- Product Table -->
       <div class="flex-1 overflow-y-auto p-6">
         <p-table [value]="products" [responsiveLayout]="'scroll'" class="rounded-xl overflow-hidden shadow-sm">
           <ng-template pTemplate="header">
             <tr class="bg-[#2CA3A3]/10 text-gray-700 dark:text-gray-200">
-              <th class="py-3 px-3 text-left font-semibold">المنتج</th>
-              <th class="text-center font-semibold">الكمية</th>
-              <th class="text-center font-semibold">السعر</th>
-              <th class="text-right font-semibold">الإجمالي</th>
+              <th class="py-3 px-3 text-left font-semibold">Product</th>
+              <th class="text-center font-semibold">Quantity</th>
+              <th class="text-center font-semibold">Price</th>
+              <th class="text-right font-semibold">Total</th>
               <th></th>
             </tr>
           </ng-template>
 
           <ng-template pTemplate="body" let-prod let-i="rowIndex">
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-all animate-fade-in border-b">
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-all border-b">
               <td class="py-3 px-3 font-medium text-gray-700 dark:text-gray-200">{{ prod.name }}</td>
               <td class="text-center">
-                <input
-                  type="number"
-                  [(ngModel)]="prod.qty"
-                  (ngModelChange)="calculateTotals()"
-                  min="1"
+                <input type="number" [(ngModel)]="prod.qty" (ngModelChange)="calculateTotals()" min="1"
                   class="p-inputtext w-16 text-center border-gray-300 dark:border-gray-600 rounded-md focus:ring-[#2CA3A3]" />
               </td>
               <td class="text-center">
-                <input
-                  type="number"
-                  [(ngModel)]="prod.price"
-                  (ngModelChange)="calculateTotals()"
-                  min="0"
+                <input type="number" [(ngModel)]="prod.price" (ngModelChange)="calculateTotals()" min="0"
                   class="p-inputtext w-20 text-center border-gray-300 dark:border-gray-600 rounded-md focus:ring-[#2CA3A3]" />
               </td>
               <td class="text-right font-semibold text-gray-800 dark:text-gray-200">
                 {{ prod.qty * prod.price | number:'1.2-2' }} SAR
               </td>
               <td class="text-center">
-                <button
-                  pButton
-                  icon="pi pi-times"
-                  class="p-button p-button-danger p-button-sm"
+                <button pButton icon="pi pi-times" class="p-button p-button-danger p-button-sm"
                   (click)="removeProduct(i)">
                 </button>
               </td>
@@ -76,123 +63,109 @@
           <ng-template pTemplate="emptymessage">
             <tr>
               <td colspan="5" class="text-center align-middle py-8 text-gray-400 dark:text-gray-400 font-medium">
-  <div class="flex flex-col items-center justify-center">
-    <i class="pi pi-inbox text-2xl mb-2 block"></i>
-    لا توجد عناصر مضافة حتى الآن
-  </div>
-</td>
-
+                <div class="flex flex-col items-center justify-center">
+                  <i class="pi pi-inbox text-2xl mb-2 block"></i>
+                  No items added yet
+                </div>
+              </td>
             </tr>
           </ng-template>
         </p-table>
       </div>
 
-      <!-- ⚙️ أزرار العمليات السفلية -->
-      <div class="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4 flex gap-3 px-6 pb-6 bg-gray-50 dark:bg-gray-700 rounded-br-3xl">
-       
-
-        <button
-          pButton
-          label="مسح الكل"
-          icon="pi pi-trash"
-          class="p-button-danger flex-1 py-3 text-base font-semibold shadow-sm hover:shadow-md transition-all"
+      <!-- Bottom Actions -->
+      <div
+        class="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4 flex gap-3 px-6 pb-6 bg-gray-50 dark:bg-gray-700">
+        <button pButton label="Clear All" icon="pi pi-trash" severity="danger" outlined
+          class="w-full py-3 text-base font-semibold shadow-sm hover:shadow-md transition-all rounded-lg"
           (click)="confirmClearAll()">
         </button>
       </div>
+
     </div>
 
-    <!-- ✅ القسم الأيمن: تفاصيل الفاتورة -->
-    <div class="w-full md:w-1/3 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 shadow-inner p-6 flex flex-col justify-between">
+    <!-- Right Section: Invoice Details -->
+    <div
+      class="w-full md:w-1/3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-inner p-6 flex flex-col justify-between rounded-3xl">
 
-      <!-- العميل مع SelectButton -->
+      <!-- Client Selection -->
       <div class="mb-6">
-        <label class="text-gray-600 dark:text-gray-300 font-semibold mb-2 block">👤 اختر العميل</label>
-
-        <p-select 
-          [options]="clients" 
-          [(ngModel)]="selectedClient" 
-          optionLabel="name" 
-          optionValue="id"
-          (onChange)="onClientChange($event)"
-          class="w-full">
+        <label class="text-gray-600 dark:text-gray-300 font-semibold mb-2 block">👤 Select Client</label>
+        <p-select [options]="clients" [(ngModel)]="selectedClient" optionLabel="name" optionValue="name"
+          (onChange)="onClientChange($event)" class="w-full">
         </p-select>
-
-        <button 
-          pButton 
-          label="إضافة عميل جديد" 
-          icon="pi pi-plus" 
-          class="mt-3 p-button-sm p-button-text text-[#2CA3A3]" 
-          (click)="showAddClientDialog = true">
+        <button pButton label="Add New Client" icon="pi pi-plus" class="mt-3 p-button-sm p-button-text text-[#2CA3A3]"
+          (click)="openAddClientDialog()">
         </button>
       </div>
 
-      <!-- 💰 تفاصيل -->
-      <div class="bg-gray-50 dark:bg-gray-700 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-sm space-y-3 mt-auto p-6">
+      <!-- Invoice Summary -->
+      <div
+        class="bg-gray-50 dark:bg-gray-700 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-sm space-y-3 mt-auto p-6">
         <div class="flex justify-between text-gray-600 dark:text-gray-300">
-          <span>الإجمالي:</span>
+          <span>Total:</span>
           <span>{{ total | number:'1.2-2' }} SAR</span>
         </div>
         <div class="flex justify-between text-gray-600 dark:text-gray-300">
-          <span>VAT (15%):</span>
+          <span>VAT ({{ vatRate }}%):</span>
           <span>{{ vatAmount | number:'1.2-2' }} SAR</span>
         </div>
         <div class="flex justify-between items-center text-gray-600 dark:text-gray-300">
-          <label>الخصم (%):</label>
-          <input
-            type="number"
-            [(ngModel)]="discount"
-            (ngModelChange)="calculateTotals()"
-            min="0"
-            max="100"
+          <label>Discount (%):</label>
+          <input type="number" [(ngModel)]="discount" (ngModelChange)="calculateTotals()" min="0" max="100"
             class="p-inputtext w-24 text-center border border-gray-300 dark:border-gray-600 rounded-md focus:ring-[#2CA3A3]" />
         </div>
         <hr class="border-gray-200 dark:border-gray-600">
         <div class="flex justify-between font-bold text-green-700 dark:text-green-500 text-lg">
-          <span>المجموع النهائي:</span>
+          <span>Grand Total:</span>
           <span>{{ grandTotal | number:'1.2-2' }} SAR</span>
         </div>
       </div>
 
-      <!-- 🧾 أزرار الدفع -->
+      <!-- Pay Button -->
       <div class="mt-6 flex flex-col gap-3">
-        <button
-          pButton
-          pRipple
-          label="💰 دفع {{ grandTotal | number:'1.2-2' }} SAR"
-          class="p-button-success text-lg font-bold py-3 shadow-md hover:shadow-lg transition-all">
+        <button pButton pRipple label="💰 Pay {{ grandTotal | number:'1.2-2' }} SAR" severity="success" outlined
+          class="text-lg font-bold py-3 shadow-md hover:shadow-lg transition-all w-full rounded-lg"
+          (click)="payInvoice()">
         </button>
       </div>
+
     </div>
 
-    <!-- ✅ حوار إضافة عميل -->
-    <p-dialog header="إضافة عميل جديد" [(visible)]="showAddClientDialog" [modal]="true" [closable]="true" [style]="{width: '400px'}">
-      <div class="flex flex-col gap-3">
-        <div>
-          <label class="text-gray-700 dark:text-gray-200 font-medium">اسم العميل</label>
-          <input type="text" [(ngModel)]="newClient.name" class="p-inputtext w-full dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md px-3 py-2" />
-        </div>
-        <div>
-          <label class="text-gray-700 dark:text-gray-200 font-medium">رقم الهاتف</label>
-          <input type="text" [(ngModel)]="newClient.phone" class="p-inputtext w-full dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md px-3 py-2" />
-        </div>
-        <div>
-          <label class="text-gray-700 dark:text-gray-200 font-medium">البريد الإلكتروني</label>
-          <input type="email" [(ngModel)]="newClient.email" class="p-inputtext w-full dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md px-3 py-2" />
-        </div>
-        <div>
-          <label class="text-gray-700 dark:text-gray-200 font-medium">الرقم الضريبي</label>
-          <input type="text" [(ngModel)]="newClient.taxNumber" class="p-inputtext w-full dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md px-3 py-2" />
-        </div>
-        <div class="flex justify-end gap-2 mt-3">
-          <button pButton label="إلغاء" class="p-button-text" (click)="showAddClientDialog = false"></button>
-          <button pButton label="إضافة" class="p-button-success" (click)="addNewClient()"></button>
-        </div>
-      </div>
-    </p-dialog>
-
-    <!-- ✅ مكونات إضافية -->
-    <p-confirmDialog></p-confirmDialog>
-    <p-toast></p-toast>
-
   </div>
+
+  <!-- Add Client Dialog -->
+  <p-dialog header="Add New Client" [(visible)]="showAddClientDialog" [modal]="true" [closable]="true"
+    [style]="{width: '400px'}">
+    <div class="flex flex-col gap-3">
+      <div>
+        <label class="text-gray-700 dark:text-gray-200 font-medium">Client Name</label>
+        <input type="text" [(ngModel)]="newClient.name"
+          class="p-inputtext w-full dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md px-3 py-2" />
+      </div>
+      <div>
+        <label class="text-gray-700 dark:text-gray-200 font-medium">Phone Number</label>
+        <input type="text" [(ngModel)]="newClient.phone"
+          class="p-inputtext w-full dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md px-3 py-2" />
+      </div>
+      <div>
+        <label class="text-gray-700 dark:text-gray-200 font-medium">Email</label>
+        <input type="email" [(ngModel)]="newClient.email"
+          class="p-inputtext w-full dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md px-3 py-2" />
+      </div>
+      <div>
+        <label class="text-gray-700 dark:text-gray-200 font-medium">Tax Number</label>
+        <input type="text" [(ngModel)]="newClient.taxNumber"
+          class="p-inputtext w-full dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md px-3 py-2" />
+      </div>
+      <div class="flex justify-end gap-2 mt-3">
+        <button pButton label="Cancel" class="p-button-text" (click)="showAddClientDialog = false"></button>
+        <button pButton label="Add" class="p-button-success" (click)="addNewClient()"></button>
+      </div>
+    </div>
+  </p-dialog>
+
+  <p-confirmDialog></p-confirmDialog>
+  <p-toast></p-toast>
+
 </div>

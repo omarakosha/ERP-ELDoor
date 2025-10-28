@@ -45,7 +45,7 @@ interface Sale {
   template: `
 <div class="card p-6 bg-white shadow-md rounded-lg">
   <p-toast></p-toast>
-  <h2 class="text-3xl font-bold mb-6 text-center md:text-left">💰 Sales - المبيعات</h2>
+  <h2 class="text-3xl font-bold mb-6 text-center md:text-left">💰 Sales</h2>
 
   <!-- Toolbar Filters -->
   <div class="flex flex-wrap gap-2 justify-between p-2 rounded-t-lg mb-2">
@@ -101,7 +101,7 @@ interface Sale {
     <ng-template pTemplate="emptymessage">
       <tr>
         <td colspan="10" class="text-center py-4 text-gray-500">
-          لا توجد نتائج. برجاء تعديل البحث أو الفلاتر للعثور على ما تبحث عنه.
+          No results found. Please adjust your search or filters to find what you are looking for.
         </td>
       </tr>
     </ng-template>
@@ -165,6 +165,7 @@ interface Sale {
 
   <p-confirmDialog></p-confirmDialog>
 </div>
+
   `
 })
 export class SalesInvoicesComponent {

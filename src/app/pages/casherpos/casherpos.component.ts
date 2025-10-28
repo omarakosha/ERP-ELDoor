@@ -11,7 +11,10 @@ import { ActivatedRoute } from '@angular/router';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { DialogModule } from 'primeng/dialog';
 import { Subscription, interval } from 'rxjs';
-import { Select } from "primeng/select";
+import { Select } from 'primeng/select';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { InvoiceService } from '../service/invoice.service';
 
 interface Product {
   name: string;
@@ -40,37 +43,32 @@ interface Customer {
     SelectButtonModule,
     DialogModule,
     Select
-],
+  ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './casherpos.component.html',
   styleUrls: ['./casherpos.component.scss']
 })
 export class CasherposComponent implements OnInit, OnDestroy {
-  clientName = 'walk-in Client';
+
+  clientName = 'Walk-in Client';
   currentDateTime = '';
   products: Product[] = [];
-  
+
   discount = 0;
   vatRate = 15;
   total = 0;
   vatAmount = 0;
   grandTotal = 0;
 
-  // العميل المحدد افتراضيًا
-  selectedCustomer: Customer = {
-    name: 'John Doe',
-    phone: '1234567890',
-    email: 'john@example.com',
-    taxNumber: '123-456-789'
-  };
+  selectedCustomer: Customer = { name: 'John Doe', phone: '1234567890', email: 'john@example.com', taxNumber: '123-456-789' };
 
-  // ===== خصائص العملاء =====
   clients: Customer[] = [
-    { name: 'عميل 1', phone: '', email: '', taxNumber: '' },
-    { name: 'عميل 2', phone: '', email: '', taxNumber: '' },
-    { name: 'عميل 3', phone: '', email: '', taxNumber: '' }
+    { name: 'عميل 1' },
+    { name: 'عميل 2' },
+    { name: 'عميل 3' }
   ];
   selectedClient: Customer | null = null;
+
   showAddClientDialog = false;
   newClient: Customer = { name: '', phone: '', email: '', taxNumber: '' };
 
@@ -79,6 +77,7 @@ export class CasherposComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private confirmationService: ConfirmationService,
+    private invoiceService: InvoiceService,
     private messageService: MessageService
   ) {}
 
@@ -101,21 +100,11 @@ export class CasherposComponent implements OnInit, OnDestroy {
 
   updateDateTime() {
     const now = new Date();
-    this.currentDateTime = now.toLocaleString('ar-EG', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    this.currentDateTime = now.toLocaleString('ar-EG', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
 
   addProduct() {
-    this.products.push({
-      name: `منتج ${this.products.length + 1}`,
-      qty: 1,
-      price: 10
-    });
+    this.products.push({ name: `منتج ${this.products.length + 1}`, qty: 1, price: 10 });
     this.calculateTotals();
     this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تمت إضافة منتج جديد بنجاح' });
   }
@@ -155,7 +144,6 @@ export class CasherposComponent implements OnInit, OnDestroy {
     return index;
   }
 
-  // ===== دوال العملاء =====
   onClientChange(event: any) {
     console.log('تم اختيار العميل:', this.selectedClient);
   }
@@ -172,5 +160,61 @@ export class CasherposComponent implements OnInit, OnDestroy {
       this.showAddClientDialog = false;
       this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تمت إضافة العميل الجديد' });
     }
+  }
+
+  // ===== حفظ وطباعة الفاتورة =====
+  payInvoice() {
+    if (!this.selectedClient) {
+      this.messageService.add({ severity: 'warn', summary: 'تنبيه', detail: 'الرجاء اختيار عميل أولاً!' });
+      return;
+    }
+
+    const invoiceData = {
+      client: this.selectedClient,
+      items: this.products.map(p => ({ name: p.name, qty: p.qty, price: p.price, total: p.qty * p.price })),
+      total: this.total,
+      vat: this.vatAmount,
+      discount: this.discount,
+      grandTotal: this.grandTotal,
+      date: new Date()
+    };
+
+    this.invoiceService.saveInvoice(invoiceData).subscribe({
+      next: (res: any) => {
+        this.messageService.add({ severity: 'success', summary: 'تم الحفظ', detail: 'تم حفظ الفاتورة بنجاح!' });
+        this.printInvoice(invoiceData, res.invoiceNumber || '0001');
+      },
+      error: (err: any) => {
+        this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل حفظ الفاتورة!' });
+        console.error('Invoice save error:', err);
+      }
+    });
+  }
+
+  printInvoice(invoiceData: any, invoiceNumber: string) {
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.text('فاتورة بيع', 105, 15, { align: 'center' });
+    doc.setFontSize(12);
+    doc.text(`رقم الفاتورة: ${invoiceNumber}`, 14, 25);
+    doc.text(`التاريخ: ${new Date().toLocaleDateString('ar-EG')}`, 150, 25);
+    doc.text(`العميل: ${this.selectedClient?.name}`, 14, 35);
+
+    const tableData = invoiceData.items.map((item: any, index: number) => [
+      index + 1, item.name, item.qty, item.price.toFixed(2), item.total.toFixed(2)
+    ]);
+
+    autoTable(doc, { head: [['#', 'المنتج', 'الكمية', 'السعر', 'الإجمالي']], body: tableData, startY: 45 });
+
+    const lastY = (doc as any).lastAutoTable.finalY || 60;
+    doc.text(`المجموع: ${invoiceData.total.toFixed(2)} ريال`, 14, lastY + 10);
+    doc.text(`الضريبة (${this.vatRate}%): ${invoiceData.vat.toFixed(2)} ريال`, 14, lastY + 18);
+    doc.text(`الخصم: ${invoiceData.discount.toFixed(2)}%`, 14, lastY + 26);
+    doc.text(`الإجمالي النهائي: ${invoiceData.grandTotal.toFixed(2)} ريال`, 14, lastY + 34);
+
+    // 🖨️ معاينة الطباعة
+    doc.autoPrint();
+    window.open(doc.output('bloburl'), '_blank');
   }
 }

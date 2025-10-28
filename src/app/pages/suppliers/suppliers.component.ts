@@ -55,34 +55,34 @@ interface Supplier {
 <div class="card p-4 shadow-md rounded-xl bg-white">
 
   <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
-    <h2 class="text-xl font-semibold text-gray-700">الموردين</h2>
+    <h2 class="text-xl font-semibold text-gray-700">Suppliers</h2>
     <div class="flex gap-2">
-      <button pButton label="استرداد موردين" icon="pi pi-upload" class="p-button-warning" (click)="openSupplierUpload()"></button>
-      <button pButton label="إضافة مورد" icon="pi pi-plus" class="p-button-success" (click)="openNewSupplier()"></button>
+      <button pButton label="Upload Suppliers" icon="pi pi-upload" class="p-button-warning" (click)="openSupplierUpload()"></button>
+      <button pButton label="Add Supplier" icon="pi pi-plus" class="p-button-success" (click)="openNewSupplier()"></button>
     </div>
   </div>
 
-  <!-- البحث -->
+  <!-- Search -->
   <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
-    <input pInputText #filterInput placeholder="ابحث عن الموردين..." 
+    <input pInputText #filterInput placeholder="Search suppliers..." 
            (input)="onGlobalFilter(dt, $event)" class="w-full md:w-1/3">
   </div>
 
-  <!-- جدول الموردين -->
+  <!-- Suppliers Table -->
   <p-table #dt [value]="suppliers" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]"
            [showGridlines]="true" responsiveLayout="scroll"
            [globalFilterFields]="['code','name','status']">
 
     <ng-template pTemplate="header">
       <tr class="bg-gray-100 text-gray-700 text-sm">
-        <th>رمز المورد</th>
-        <th>اسم المورد</th>
-        <th>إجمالي المدفوع</th>
-        <th>مدين</th>
-        <th>دائن</th>
-        <th>صافي المبلغ</th>
-        <th>الحالة</th>
-        <th style="width: 120px;">إجراءات</th>
+        <th>Supplier Code</th>
+        <th>Supplier Name</th>
+        <th>Total Paid</th>
+        <th>Debit</th>
+        <th>Credit</th>
+        <th>Balance</th>
+        <th>Status</th>
+        <th style="width: 120px;">Actions</th>
       </tr>
     </ng-template>
 
@@ -103,55 +103,55 @@ interface Supplier {
     </ng-template>
   </p-table>
 
-  <!-- إضافة / تعديل مورد -->
-  <p-dialog header="إضافة / تعديل مورد" [(visible)]="displayDialog" [modal]="true" [style]="{width:'500px'}" [closable]="false">
+  <!-- Add/Edit Supplier -->
+  <p-dialog header="Add / Edit Supplier" [(visible)]="displayDialog" [modal]="true" [style]="{width:'500px'}" [closable]="false">
     <div class="space-y-4 p-4">
       <div>
-        <label>رمز المورد</label>
+        <label>Supplier Code</label>
         <input pInputText [(ngModel)]="currentSupplier.code" class="w-full p-2 border rounded"
                [ngClass]="{'border-red-500': isInvalidField(currentSupplier, 'code')}"/>
       </div>
       <div>
-        <label>اسم المورد</label>
+        <label>Supplier Name</label>
         <input pInputText [(ngModel)]="currentSupplier.name" class="w-full p-2 border rounded"
                [ngClass]="{'border-red-500': isInvalidField(currentSupplier, 'name')}"/>
       </div>
       <div>
-        <label>الحالة</label>
+        <label>Status</label>
         <input pInputText [(ngModel)]="currentSupplier.status" class="w-full p-2 border rounded">
       </div>
     </div>
     <ng-template pTemplate="footer">
-      <button pButton label="إلغاء" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
-      <button pButton label="حفظ" icon="pi pi-check" class="p-button-success" (click)="saveSupplier()"
+      <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
+      <button pButton label="Save" icon="pi pi-check" class="p-button-success" (click)="saveSupplier()"
               [disabled]="isInvalidField(currentSupplier,'name') || isInvalidField(currentSupplier,'code')"></button>
     </ng-template>
   </p-dialog>
 
-  <!-- popup رفع Excel -->
+  <!-- Upload Excel -->
   <p-dialog 
-  header="استيراد الموردين" 
-  [(visible)]="displaySupplierUpload" 
-  [modal]="true" 
-  [closable]="false" 
-  [dismissableMask]="false" 
-  [style]="{width:'750px'}"
->
+    header="Import Suppliers" 
+    [(visible)]="displaySupplierUpload" 
+    [modal]="true" 
+    [closable]="false" 
+    [dismissableMask]="false" 
+    [style]="{width:'750px'}"
+  >
   <div class="relative p-5 text-right">
 
-    <!-- الخط المنقط يمر من منتصف الدوائر -->
+    <!-- Dotted line connecting steps -->
     <div class="absolute right-[1.85rem] top-[2.7rem] w-0 h-[82%] border-r-2 border-dotted border-gray-300 z-0"></div>
 
-    <!-- الخطوة 1 -->
+    <!-- Step 1 -->
     <div class="relative pl-8 mb-10">
       <div class="absolute -right-0 top-0 w-8 h-8 rounded-full bg-white border border-gray-400 flex items-center justify-center text-gray-700 font-semibold z-10">
         1
       </div>
       <div class="pr-10">
-        <h3 class="font-semibold text-gray-800 mb-2">حمل نموذج الاستيراد</h3>
+        <h3 class="font-semibold text-gray-800 mb-2">Download Import Template</h3>
         <button 
           pButton 
-          label="نموذج استيراد الموردين" 
+          label="Supplier Import Template" 
           icon="pi pi-download" 
           class="p-button-sm p-button-success"
           (click)="downloadTemplate()">
@@ -159,43 +159,43 @@ interface Supplier {
       </div>
     </div>
 
-    <!-- الخطوة 2 -->
+    <!-- Step 2 -->
     <div class="relative pl-8 mb-10">
       <div class="absolute -right-0 top-0 w-8 h-8 rounded-full bg-white border border-gray-400 flex items-center justify-center text-gray-700 font-semibold z-10">
         2
       </div>
       <div class="pr-10">
-        <h3 class="font-semibold text-gray-800 mb-2">قم بإدخال بيانات الموردين الخاصة بك</h3>
+        <h3 class="font-semibold text-gray-800 mb-2">Fill in Your Suppliers Data</h3>
         <p class="text-gray-600 text-sm mb-3 leading-relaxed">
-          لضمان نجاح عملية الاستيراد يُرجى اتباع إرشادات نموذج الاستيراد، ستجدها في صفحة "إرشادات قبل الاستيراد" داخل نموذج الاستيراد.
+          To ensure successful import, follow the instructions in the template found on the "Pre-Import Instructions" section of the template.
         </p>
         <div class="flex flex-wrap gap-2">
-          <button pButton label="مشاهدة فيديو الإرشادات للاستيراد" icon="pi pi-video" class="p-button-text"></button>
-          <button pButton label="اقرأ التعليمات بالتفصيل" icon="pi pi-info-circle" class="p-button-text"></button>
+          <button pButton label="Watch Import Instructions Video" icon="pi pi-video" class="p-button-text"></button>
+          <button pButton label="Read Instructions in Detail" icon="pi pi-info-circle" class="p-button-text"></button>
         </div>
       </div>
     </div>
 
-    <!-- الخطوة 3 -->
+    <!-- Step 3 -->
     <div class="relative pl-8 mb-4">
       <div class="absolute -right-0 top-0 w-8 h-8 rounded-full bg-white border border-gray-400 flex items-center justify-center text-gray-700 font-semibold z-10">
         3
       </div>
       <div class="pr-10">
-        <h3 class="font-semibold text-gray-800 mb-3">بعد إدخال بيانات الموردين في النموذج، قم برفعه هنا</h3>
+        <h3 class="font-semibold text-gray-800 mb-3">Upload the Filled Template Here</h3>
 
         <div class="border-2 border-dashed border-gray-300 rounded-lg p-10 text-center bg-gray-50 hover:bg-gray-100 transition">
           <i class="pi pi-upload text-3xl text-gray-400 mb-3"></i>
-          <p class="text-gray-700 mb-1">قم بسحب وإسقاط الملف هنا لاستيراد</p>
+          <p class="text-gray-700 mb-1">Drag & Drop your file here to import</p>
           <p class="text-gray-500 text-sm mb-4">
-            الصيغة المقبولة: (.xlsx)<br>
-            أقصى عدد للموردين في الملف الواحد 1000
+            Accepted format: (.xlsx)<br>
+            Max suppliers per file: 1000
           </p>
           <p-fileUpload 
             mode="basic" 
             name="file" 
             accept=".xlsx" 
-            chooseLabel="تصفح الملفات"
+            chooseLabel="Browse Files"
             [auto]="false"
             (onSelect)="handleSupplierFile($event)">
           </p-fileUpload>
@@ -209,14 +209,14 @@ interface Supplier {
     <div class="flex justify-between w-full">
       <button 
         pButton 
-        label="إلغاء" 
+        label="Cancel" 
         icon="pi pi-times" 
         class="p-button-text p-button-secondary"
         (click)="displaySupplierUpload = false">
       </button>
       <button 
         pButton 
-        label="التالي" 
+        label="Next" 
         icon="pi pi-arrow-left" 
         class="p-button-success">
       </button>
@@ -224,9 +224,8 @@ interface Supplier {
   </ng-template>
 </p-dialog>
 
-
-  <!-- popup عرض بيانات Excel -->
-  <p-dialog header="بيانات الموردين المرفوعة" [(visible)]="displayExcelPopup" 
+  <!-- Excel Data Preview -->
+  <p-dialog header="Uploaded Suppliers Data" [(visible)]="displayExcelPopup" 
           [modal]="true" [closable]="true" 
           [style]="{width:'95%', maxWidth:'1200px'}">
 
@@ -234,23 +233,23 @@ interface Supplier {
     <table class="min-w-max text-sm border border-gray-200 rounded-lg table-auto">
       <thead class="bg-gray-100 sticky top-0 z-10">
         <tr>
-          <th class="p-2 text-right">رمز المورد</th>
-          <th class="p-2 text-right">اسم المورد</th>
-          <th class="p-2 text-right">الرصيد الافتتاحي</th>
-          <th class="p-2 text-right">قيمة الرصيد الافتتاحي</th>
-          <th class="p-2 text-right">اعتبارًا من تاريخ</th>
-          <th class="p-2 text-right">رقم الجوال</th>
-          <th class="p-2 text-right">البريد الإلكتروني</th>
-          <th class="p-2 text-right">الرقم الضريبي</th>
-          <th class="p-2 text-right">الدولة</th>
-          <th class="p-2 text-right">المدينة</th>
-          <th class="p-2 text-right">المنطقة</th>
-          <th class="p-2 text-right">الحي</th>
-          <th class="p-2 text-right">اسم الشارع</th>
-          <th class="p-2 text-right">رقم المبنى</th>
-          <th class="p-2 text-right">الرمز البريدي</th>
-          <th class="p-2 text-right">الرقم الإضافي</th>
-          <th class="p-2 text-center">حذف</th>
+          <th class="p-2 text-right">Supplier Code</th>
+          <th class="p-2 text-right">Supplier Name</th>
+          <th class="p-2 text-right">Opening Balance</th>
+          <th class="p-2 text-right">Opening Value</th>
+          <th class="p-2 text-right">Start Date</th>
+          <th class="p-2 text-right">Phone</th>
+          <th class="p-2 text-right">Email</th>
+          <th class="p-2 text-right">Tax Number</th>
+          <th class="p-2 text-right">Country</th>
+          <th class="p-2 text-right">City</th>
+          <th class="p-2 text-right">Region</th>
+          <th class="p-2 text-right">District</th>
+          <th class="p-2 text-right">Street</th>
+          <th class="p-2 text-right">Building No</th>
+          <th class="p-2 text-right">Postal Code</th>
+          <th class="p-2 text-right">Additional No</th>
+          <th class="p-2 text-center">Remove</th>
         </tr>
       </thead>
       <tbody>
@@ -286,13 +285,14 @@ interface Supplier {
   </div>
 
   <ng-template pTemplate="footer">
-    <button pButton label="إغلاق" icon="pi pi-times" class="p-button-secondary" (click)="closeExcelPopup()"></button>
-    <button pButton label="استيراد الموردين" icon="pi pi-check" class="p-button-success" 
+    <button pButton label="Close" icon="pi pi-times" class="p-button-secondary" (click)="closeExcelPopup()"></button>
+    <button pButton label="Import Suppliers" icon="pi pi-check" class="p-button-success" 
             [disabled]="canImportExcel()" (click)="saveExcelSuppliers()"></button>
   </ng-template>
 </p-dialog>
 
 </div>
+
   `
 })
 export class SuppliersComponent implements OnInit {
