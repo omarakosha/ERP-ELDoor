@@ -12,12 +12,12 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-interface Supplier { id:number; name:string; }
-interface Product { id:number; name:string; }
-interface POItem { product: Product|null; quantity:number; price:number; }
+interface Supplier { id: number; name: string; }
+interface Product { id: number; name: string; }
+interface POItem { product: Product | null; quantity: number; price: number; }
 interface PurchaseOrder {
   id: string;
-  supplier: Supplier|null;
+  supplier: Supplier | null;
   date: string;
   status: string;
   items: POItem[];
@@ -164,7 +164,7 @@ export class PurchaseOrdersComponent {
   purchaseOrders: PurchaseOrder[] = [];
   suppliers: Supplier[] = [];
   products: Product[] = [];
-  newPO: PurchaseOrder = { id:'', supplier:null, date:'', status:'New', items:[], total:0 };
+  newPO: PurchaseOrder = { id: '', supplier: null, date: '', status: 'New', items: [], total: 0 };
   displayDialog = false;
   isEdit = false;
 
@@ -174,35 +174,35 @@ export class PurchaseOrdersComponent {
   filterStatus = '';
 
   tableColumns = [
-    { header:'PO #', field:'id', filterType:'text', filterPlaceholder:'بحث برقم PO', minWidth:'120px' },
-    { header:'Supplier', field:'supplier.name', filterType:'text', filterPlaceholder:'بحث بالمورد', minWidth:'160px' },
-    { header:'Date', field:'date', filterType:'date', filterPlaceholder:'بحث بالتاريخ', minWidth:'120px' },
-    { header:'Total', field:'total', filterType:'numeric', filterPlaceholder:'بحث بالمجموع', minWidth:'100px' },
-    { header:'Status', field:'status', filterType:'text', filterPlaceholder:'بحث بالحالة', minWidth:'120px' }
+    { header: 'PO #', field: 'id', filterType: 'text', filterPlaceholder: 'بحث برقم PO', minWidth: '120px' },
+    { header: 'Supplier', field: 'supplier.name', filterType: 'text', filterPlaceholder: 'بحث بالمورد', minWidth: '160px' },
+    { header: 'Date', field: 'date', filterType: 'date', filterPlaceholder: 'بحث بالتاريخ', minWidth: '120px' },
+    { header: 'Total', field: 'total', filterType: 'numeric', filterPlaceholder: 'بحث بالمجموع', minWidth: '100px' },
+    { header: 'Status', field: 'status', filterType: 'text', filterPlaceholder: 'بحث بالحالة', minWidth: '120px' }
   ];
 
   constructor(private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.suppliers = [
-      { id:1, name:'Supplier A'}, { id:2, name:'Supplier B'}, { id:3, name:'Supplier C'}
+      { id: 1, name: 'Supplier A' }, { id: 2, name: 'Supplier B' }, { id: 3, name: 'Supplier C' }
     ];
     this.products = [
-      { id:1, name:'Product 1'}, { id:2, name:'Product 2'}, { id:3, name:'Product 3'}
+      { id: 1, name: 'Product 1' }, { id: 2, name: 'Product 2' }, { id: 3, name: 'Product 3' }
     ];
     this.purchaseOrders = [
-      { id:'PO-001', supplier:this.suppliers[0], date:'2025-09-24', status:'New', items:[], total:1200 }
+      { id: 'PO-001', supplier: this.suppliers[0], date: '2025-09-24', status: 'New', items: [], total: 1200 }
     ];
   }
 
   statusClass(status: string) {
     return {
-      'text-blue-600 font-bold': status==='New',
-      'text-green-600 font-bold': status==='Approved',
-      'text-orange-600 font-bold': status==='Received'
+      'text-blue-600 font-bold': status === 'New',
+      'text-green-600 font-bold': status === 'Approved',
+      'text-orange-600 font-bold': status === 'Received'
     };
   }
 
   get filteredPOs() {
-    return this.purchaseOrders.filter(po=>{
+    return this.purchaseOrders.filter(po => {
       const poMatch = this.filterPO ? po.id.toLowerCase().includes(this.filterPO.toLowerCase()) : true;
       const supplierMatch = this.filterSupplier ? po.supplier?.name.toLowerCase().includes(this.filterSupplier.toLowerCase()) : true;
       const dateMatch = this.filterDate ? po.date === this.filterDate : true;
@@ -212,13 +212,13 @@ export class PurchaseOrdersComponent {
   }
 
   openNewPO() {
-    this.newPO = { id:'', supplier:null, date:new Date().toISOString().substring(0,10), status:'New', items:[], total:0 };
+    this.newPO = { id: '', supplier: null, date: new Date().toISOString().substring(0, 10), status: 'New', items: [], total: 0 };
     this.isEdit = false;
     this.displayDialog = true;
   }
 
   editPO(po: PurchaseOrder) {
-    this.newPO = { ...po, items: po.items.map(i=>({...i})) };
+    this.newPO = { ...po, items: po.items.map(i => ({ ...i })) };
     this.isEdit = true;
     this.displayDialog = true;
     this.calculateTotal();
@@ -235,43 +235,43 @@ export class PurchaseOrdersComponent {
 
   deletePO(po: PurchaseOrder) {
     this.purchaseOrders = this.purchaseOrders.filter(p => p.id !== po.id);
-      this.messageService.clear();
-    this.messageService.add({severity:'success', summary:'Deleted', detail:`PO #${po.id} deleted.`});
+    this.messageService.clear();
+    this.messageService.add({ severity: 'success', summary: 'Deleted', detail: `PO #${po.id} deleted.` });
   }
 
   addItem() {
-    this.newPO.items.push({ product:this.products[0], quantity:1, price:0 });
+    this.newPO.items.push({ product: this.products[0], quantity: 1, price: 0 });
     this.calculateTotal();
   }
 
-  removeItem(index:number) {
-    this.newPO.items.splice(index,1);
+  removeItem(index: number) {
+    this.newPO.items.splice(index, 1);
     this.calculateTotal();
   }
 
   calculateTotal() {
-    this.newPO.total = this.newPO.items.reduce((sum,item) => sum + (item.quantity*item.price),0);
+    this.newPO.total = this.newPO.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
   }
 
   savePO() {
-    if(!this.newPO.supplier){
-        this.messageService.clear();
-      this.messageService.add({severity:'warn', summary:'Validation', detail:'Please select a supplier!'});
+    if (!this.newPO.supplier) {
+      this.messageService.clear();
+      this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please select a supplier!' });
       return;
     }
     this.calculateTotal();
-    if(!this.isEdit){
+    if (!this.isEdit) {
       this.newPO.id = 'PO-' + (1000 + this.purchaseOrders.length + 1);
-      this.purchaseOrders.push({...this.newPO});
-        this.messageService.clear();
-      this.messageService.add({severity:'success', summary:'Saved', detail:`PO #${this.newPO.id} added.`});
+      this.purchaseOrders.push({ ...this.newPO });
+      this.messageService.clear();
+      this.messageService.add({ severity: 'success', summary: 'Saved', detail: `PO #${this.newPO.id} added.` });
     } else {
-      const idx = this.purchaseOrders.findIndex(p=>p.id===this.newPO.id);
-      if(idx!==-1) this.purchaseOrders[idx] = {...this.newPO};
-        this.messageService.clear();
-      this.messageService.add({severity:'success', summary:'Updated', detail:`PO #${this.newPO.id} updated.`});
+      const idx = this.purchaseOrders.findIndex(p => p.id === this.newPO.id);
+      if (idx !== -1) this.purchaseOrders[idx] = { ...this.newPO };
+      this.messageService.clear();
+      this.messageService.add({ severity: 'success', summary: 'Updated', detail: `PO #${this.newPO.id} updated.` });
     }
-    this.displayDialog=false;
+    this.displayDialog = false;
   }
 
   printPO(po: PurchaseOrder) {
@@ -283,8 +283,8 @@ export class PurchaseOrdersComponent {
         <p><strong>Status:</strong> ${po.status}</p>
         <table border="1" cellspacing="0" cellpadding="5" width="100%">
           <thead><tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
-          <tbody>${po.items.map(i=>`
-              <tr><td>${i.product?.name}</td><td>${i.quantity}</td><td>${i.price}</td><td>${i.quantity*i.price}</td></tr>
+          <tbody>${po.items.map(i => `
+              <tr><td>${i.product?.name}</td><td>${i.quantity}</td><td>${i.price}</td><td>${i.quantity * i.price}</td></tr>
           `).join('')}</tbody>
         </table>
         <h3 style="text-align:right;">Total: ${po.total}</h3>
@@ -312,7 +312,7 @@ export class PurchaseOrdersComponent {
     const doc = new jsPDF();
     doc.text('Purchase Orders', 14, 10);
     autoTable(doc, {
-      head: [['PO #','Supplier','Date','Status','Total']],
+      head: [['PO #', 'Supplier', 'Date', 'Status', 'Total']],
       body: this.filteredPOs.map(po => [
         po.id || '',
         po.supplier?.name || '',

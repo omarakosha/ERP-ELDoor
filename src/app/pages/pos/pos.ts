@@ -6,6 +6,8 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 interface POS {
   id: number;
@@ -22,14 +24,14 @@ interface POS {
 
 @Component({
   selector: 'app-pos',
-   imports: [CommonModule, FormsModule, DialogModule, ButtonModule, InputTextModule, CardModule],
-
+   imports: [CommonModule, FormsModule, DialogModule, ButtonModule, InputTextModule, CardModule,  ToastModule,],
+ providers: [MessageService],
   templateUrl: './pos.html',
   styleUrls: ['./pos.scss'],
 })
 
 export class PosComponent {
-     constructor(private router: Router) {}
+     constructor(private router: Router,private messageService: MessageService) {}
   
   searchQuery: string = '';
   addDialogVisible: boolean = false;
@@ -111,22 +113,43 @@ closePos(pos: any) {
     this.addDialogVisible = true;
   }
 
-  saveNewPos() {
-    if (this.newPos.name && this.newPos.location) {
-      this.posList.push({
-        id: this.posList.length + 1,
-        name: this.newPos.name!,
-        location: this.newPos.location!,
-        openedAt: new Date().toLocaleString('ar-EG'),
-        user: 'Super Admin',
-        paymentMethods: this.newPos.paymentMethods || 'نقدي',
-        status: 'open',
-      });
-      this.filterPosList();
-      this.addDialogVisible = false;
-      this.newPos = {};
-    }
+saveNewPos() {
+  // تحقق من صحة البيانات
+  if (!this.newPos.name || !this.newPos.location) {
+    this.messageService.clear();
+    this.messageService.add({ 
+      severity: 'warn', 
+      summary: 'Validation', 
+      detail: 'Please check the POS data!' 
+    });
+    return; // أوقف العملية إذا البيانات غير مكتملة
   }
+
+  // إضافة POS جديد
+  this.posList.push({
+    id: this.posList.length + 1,
+    name: this.newPos.name!,
+    location: this.newPos.location!,
+    openedAt: new Date().toLocaleString('ar-EG'),
+    user: 'Super Admin',
+    paymentMethods: this.newPos.paymentMethods || 'نقدي',
+    status: 'open',
+  });
+
+  // عرض رسالة نجاح
+  this.messageService.clear();
+  this.messageService.add({ 
+    severity: 'success', 
+    summary: 'Saved', 
+    detail: 'POS added successfully!' 
+  });
+
+  // تحديث القائمة وإغلاق الـ dialog
+  this.filterPosList();
+  this.addDialogVisible = false;
+  this.newPos = {};
+}
+
 
 
   

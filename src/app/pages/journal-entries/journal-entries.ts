@@ -636,7 +636,7 @@ export class JournalEntriesComponent {
       costCenter: '',
       costCenterCode: '',
       tags: [],
-       isVendorEnabled: false 
+      isVendorEnabled: false
     };
 
     if (index === -1) {
@@ -724,7 +724,7 @@ export class JournalEntriesComponent {
       line.invalidAccount = !acc;
       if (!acc) valid = false;
 
-     
+
       // مركز التكلفة
       const cc = this.costCenters.find(c => c.code === line.costCenterCode || c.name === line.costCenter);
       line.invalidCostCenter = !cc;
@@ -734,13 +734,13 @@ export class JournalEntriesComponent {
     // تحقق من تساوي المدين والدائن
     this.calculateCurrentTotals();
     if (this.currentJournal.totalDebit !== this.currentJournal.totalCredit) {
-         this.messageService.clear();
+      this.messageService.clear();
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Total debit does not equal total credit' });
       valid = false;
     }
 
     if (!valid) {
-         this.messageService.clear();
+      this.messageService.clear();
       this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please correct highlighted fields before saving' });
       return; // لا يتم الحفظ
     }
@@ -754,7 +754,7 @@ export class JournalEntriesComponent {
     }
 
     this.displayDialog = false;
-       this.messageService.clear();
+    this.messageService.clear();
     this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Entry saved successfully' });
   }
 
@@ -765,7 +765,7 @@ export class JournalEntriesComponent {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.journalEntries.splice(index, 1);
-           this.messageService.clear();
+        this.messageService.clear();
         this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Entry deleted successfully' });
       }
     });
@@ -821,31 +821,31 @@ export class JournalEntriesComponent {
 
   // الكتابة المباشرة
   handleAccountInput(event: any, rowIndex: number) {
-  const inputValue = event.target.value.trim();
-  const found = this.accounts.find(a => a.code === inputValue || a.name === inputValue);
-  const line = this.currentJournal.entries[rowIndex];
+    const inputValue = event.target.value.trim();
+    const found = this.accounts.find(a => a.code === inputValue || a.name === inputValue);
+    const line = this.currentJournal.entries[rowIndex];
 
-  if (found) {
-    line.account = found.name;
-    line.accountCode = found.code;
-    line.invalidAccount = false;
+    if (found) {
+      line.account = found.name;
+      line.accountCode = found.code;
+      line.invalidAccount = false;
 
-    // ✅ التحقق إذا الحساب من الموردين
-    if (found.name.toLowerCase().includes('vendor') || found.code.startsWith('201')) {
-      line.isVendorEnabled = true;
+      // ✅ التحقق إذا الحساب من الموردين
+      if (found.name.toLowerCase().includes('vendor') || found.code.startsWith('201')) {
+        line.isVendorEnabled = true;
+      } else {
+        line.isVendorEnabled = false;
+        line.vendor = '';           // مسح قيمة المورد عند تعطيله
+        line.vendorAccount = '';
+      }
+
     } else {
+      line.invalidAccount = inputValue !== '';
       line.isVendorEnabled = false;
-      line.vendor = '';           // مسح قيمة المورد عند تعطيله
+      line.vendor = '';
       line.vendorAccount = '';
     }
-
-  } else {
-    line.invalidAccount = inputValue !== '';
-    line.isVendorEnabled = false;
-    line.vendor = '';
-    line.vendorAccount = '';
   }
-}
 
 
 
@@ -888,27 +888,27 @@ export class JournalEntriesComponent {
     }
   }
 
-  
-filteredJournals(filterText: string) {
-  if (!this.journalEntries) return [];
 
-  // تحويل الفلتر لأي نوع إلى نص وتجاهل المسافات
-  const filter = filterText != null ? filterText.toString().trim().toLowerCase() : '';
+  filteredJournals(filterText: string) {
+    if (!this.journalEntries) return [];
 
-  if (!filter) return this.journalEntries;
+    // تحويل الفلتر لأي نوع إلى نص وتجاهل المسافات
+    const filter = filterText != null ? filterText.toString().trim().toLowerCase() : '';
 
-  return this.journalEntries.filter(j => {
-    // نحول كل قيمة من السجلات إلى نص لمطابقتها مع الفلتر
-    const id = j.id?.toString().toLowerCase() || '';
-    const date = j.date?.toString().toLowerCase() || '';
-    const totalDebit = j.totalDebit?.toString().toLowerCase() || '';
-    const totalCredit = j.totalCredit?.toString().toLowerCase() || '';
+    if (!filter) return this.journalEntries;
 
-    // تحقق إذا أي عمود يحتوي على النص المطلوب
-    return id.includes(filter) || date.includes(filter) || totalDebit.includes(filter) || totalCredit.includes(filter);
-  });
-}
- // 🟢 الفلاتر
+    return this.journalEntries.filter(j => {
+      // نحول كل قيمة من السجلات إلى نص لمطابقتها مع الفلتر
+      const id = j.id?.toString().toLowerCase() || '';
+      const date = j.date?.toString().toLowerCase() || '';
+      const totalDebit = j.totalDebit?.toString().toLowerCase() || '';
+      const totalCredit = j.totalCredit?.toString().toLowerCase() || '';
+
+      // تحقق إذا أي عمود يحتوي على النص المطلوب
+      return id.includes(filter) || date.includes(filter) || totalDebit.includes(filter) || totalCredit.includes(filter);
+    });
+  }
+  // 🟢 الفلاتر
   filteredAccounts() {
     const filter = this.accountFilter.trim();
     if (!filter) return this.accounts;
@@ -918,18 +918,18 @@ filteredJournals(filterText: string) {
     );
   }
 
-selectAccount(acc: any) {
-  if (this.selectedRowIndex >= 0) {
-    const line = this.currentJournal.entries[this.selectedRowIndex];
-    line.account = acc.name;
-    line.accountCode = acc.code;
+  selectAccount(acc: any) {
+    if (this.selectedRowIndex >= 0) {
+      const line = this.currentJournal.entries[this.selectedRowIndex];
+      line.account = acc.name;
+      line.accountCode = acc.code;
 
-    // 🔹 لو الحساب مورّد، فعّل حقل المورد
-    line.isVendorEnabled = acc.name.toLowerCase().includes('vendor') || acc.code.startsWith('10101');
-    
-    this.accountDialog = false;
+      // 🔹 لو الحساب مورّد، فعّل حقل المورد
+      line.isVendorEnabled = acc.name.toLowerCase().includes('vendor') || acc.code.startsWith('10101');
+
+      this.accountDialog = false;
+    }
   }
-}
 
 
 
@@ -999,11 +999,19 @@ selectAccount(acc: any) {
 
 
   // 🟢 نسخ / لصق
-  copyLine() { if (this.selectedRowIndex >= 0) { this.copiedLine = { ...this.currentJournal.entries[this.selectedRowIndex] };
-    this.messageService.clear(); this.messageService.add({ severity: 'info', summary: 'Copied', detail: 'Line copied' }); } }
-  pasteLine() { if (this.copiedLine) { this.currentJournal.entries.splice(this.selectedRowIndex + 1, 0, { ...this.copiedLine }); 
-   this.messageService.clear(); this.messageService.add({ severity: 'success', summary: 'Pasted', detail: 'Line pasted' }); 
-   this.calculateCurrentTotals(); this.pushUndo(); } }
+  copyLine() {
+    if (this.selectedRowIndex >= 0) {
+      this.copiedLine = { ...this.currentJournal.entries[this.selectedRowIndex] };
+      this.messageService.clear(); this.messageService.add({ severity: 'info', summary: 'Copied', detail: 'Line copied' });
+    }
+  }
+  pasteLine() {
+    if (this.copiedLine) {
+      this.currentJournal.entries.splice(this.selectedRowIndex + 1, 0, { ...this.copiedLine });
+      this.messageService.clear(); this.messageService.add({ severity: 'success', summary: 'Pasted', detail: 'Line pasted' });
+      this.calculateCurrentTotals(); this.pushUndo();
+    }
+  }
 
   // 🟢 Undo / Redo
   pushUndo() { this.undoStack.push(JSON.stringify(this.currentJournal.entries)); if (this.undoStack.length > 50) this.undoStack.shift(); }

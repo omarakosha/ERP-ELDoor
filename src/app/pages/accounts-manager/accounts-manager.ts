@@ -115,19 +115,25 @@ export class AccountsManager implements OnInit {
 
   searchTerm: string = '';
 
-  constructor(private messageService: MessageService, private confirmationService: ConfirmationService) {}
+  constructor(private messageService: MessageService, private confirmationService: ConfirmationService) { }
 
   ngOnInit() {
     this.accountsTree = [
-      { key: '1', label: 'Assets', data: { code: '1000' }, children: [
-        { key: '1-1', label: 'Cash', data: { code: '10001' }, children: [
-          { key: '1-1-1', label: 'Petty Cash', data: { code: '1000101' } }
-        ]},
-        { key: '1-2', label: 'Bank', data: { code: '10002' } }
-      ]},
-      { key: '2', label: 'Liabilities', data: { code: '2000' }, children: [
-        { key: '2-1', label: 'Suppliers', data: { code: '20001' } }
-      ]}
+      {
+        key: '1', label: 'Assets', data: { code: '1000' }, children: [
+          {
+            key: '1-1', label: 'Cash', data: { code: '10001' }, children: [
+              { key: '1-1-1', label: 'Petty Cash', data: { code: '1000101' } }
+            ]
+          },
+          { key: '1-2', label: 'Bank', data: { code: '10002' } }
+        ]
+      },
+      {
+        key: '2', label: 'Liabilities', data: { code: '2000' }, children: [
+          { key: '2-1', label: 'Suppliers', data: { code: '20001' } }
+        ]
+      }
     ];
     this.filteredTree = [...this.accountsTree];
   }
@@ -135,12 +141,12 @@ export class AccountsManager implements OnInit {
   private generateAccountCode(parent: TreeNode | null): string {
     if (!parent) {
       const lastCode = this.accountsTree.length > 0 ? Math.max(...this.accountsTree.map(a => +a.data.code)) : 0;
-      return (Math.floor(lastCode/1000)+1)*1000 + '';
+      return (Math.floor(lastCode / 1000) + 1) * 1000 + '';
     } else {
       const children = parent.children ?? [];
       const parentCode = +parent.data.code;
-      const lastChildCode = children.length > 0 ? Math.max(...children.map(c => +c.data.code)) : parentCode*10;
-      return (lastChildCode+1).toString();
+      const lastChildCode = children.length > 0 ? Math.max(...children.map(c => +c.data.code)) : parentCode * 10;
+      return (lastChildCode + 1).toString();
     }
   }
 
@@ -192,7 +198,7 @@ export class AccountsManager implements OnInit {
 
   saveAccount() {
     if (!this.currentNode || !this.currentNode.label || !this.currentNode.data?.code) {
-        this.messageService.clear();
+      this.messageService.clear();
       this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please enter name and code' });
       return;
     }
@@ -202,7 +208,7 @@ export class AccountsManager implements OnInit {
         this.selectedNode.label = this.currentNode.label;
         this.selectedNode.data = { ...this.currentNode.data };
         this.selectedNode.children = this.currentNode.children ? [...this.currentNode.children] : [];
-          this.messageService.clear();
+        this.messageService.clear();
         this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Account updated' });
       }
     } else {
@@ -217,7 +223,7 @@ export class AccountsManager implements OnInit {
       } else {
         this.accountsTree.push(newNode);
       }
-        this.messageService.clear();
+      this.messageService.clear();
       this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Account added' });
     }
 
@@ -239,7 +245,7 @@ export class AccountsManager implements OnInit {
       accept: () => {
         this.removeNode(this.accountsTree, node);
         this.filteredTree = [...this.accountsTree];
-          this.messageService.clear();
+        this.messageService.clear();
         this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Account deleted' });
         this.selectedNode = null;
       }
