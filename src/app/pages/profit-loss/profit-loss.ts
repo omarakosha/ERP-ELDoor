@@ -39,7 +39,7 @@ interface MultiSelectOption {
   providers: [MessageService],
   template: `
 <div class="card">
-  <p-toast></p-toast>
+   <p-toast position="top-center" class="custom-toast"></p-toast>
   <h2 class="text-3xl font-bold mb-6">Profit & Loss Statement</h2>
 
  
@@ -175,6 +175,7 @@ export class ProfitLossComponent {
 
   exportExcel() {
     if (!this.filteredData.length) {
+        this.messageService.clear();
       this.messageService.add({severity:'warn', summary:'Export', detail:'No data to export'});
       return;
     }

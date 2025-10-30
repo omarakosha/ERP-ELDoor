@@ -28,7 +28,7 @@ import { TooltipModule } from 'primeng/tooltip';
   providers: [ConfirmationService, MessageService],
   template: `
  <div class="card">
-  <p-toast></p-toast>
+ <p-toast position="top-center" class="custom-toast"></p-toast>
   <h2 class="text-3xl font-bold mb-6">Accounts Management</h2>
 
   <!-- Search -->
@@ -192,6 +192,7 @@ export class AccountsManager implements OnInit {
 
   saveAccount() {
     if (!this.currentNode || !this.currentNode.label || !this.currentNode.data?.code) {
+        this.messageService.clear();
       this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please enter name and code' });
       return;
     }
@@ -201,6 +202,7 @@ export class AccountsManager implements OnInit {
         this.selectedNode.label = this.currentNode.label;
         this.selectedNode.data = { ...this.currentNode.data };
         this.selectedNode.children = this.currentNode.children ? [...this.currentNode.children] : [];
+          this.messageService.clear();
         this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Account updated' });
       }
     } else {
@@ -215,6 +217,7 @@ export class AccountsManager implements OnInit {
       } else {
         this.accountsTree.push(newNode);
       }
+        this.messageService.clear();
       this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Account added' });
     }
 
@@ -236,6 +239,7 @@ export class AccountsManager implements OnInit {
       accept: () => {
         this.removeNode(this.accountsTree, node);
         this.filteredTree = [...this.accountsTree];
+          this.messageService.clear();
         this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Account deleted' });
         this.selectedNode = null;
       }

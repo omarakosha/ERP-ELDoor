@@ -34,7 +34,8 @@ interface PurchaseOrder {
   providers: [ConfirmationService, MessageService],
   template: `
 <div class="card p-6 bg-white shadow-md rounded-lg">
-  <p-toast></p-toast>
+ <p-toast position="top-center" class="custom-toast"></p-toast>
+
   <h2 class="text-3xl font-bold mb-6 text-center md:text-left">📦 Purchase Orders</h2>
 
   <!-- Toolbar Filters -->
@@ -234,6 +235,7 @@ export class PurchaseOrdersComponent {
 
   deletePO(po: PurchaseOrder) {
     this.purchaseOrders = this.purchaseOrders.filter(p => p.id !== po.id);
+      this.messageService.clear();
     this.messageService.add({severity:'success', summary:'Deleted', detail:`PO #${po.id} deleted.`});
   }
 
@@ -253,6 +255,7 @@ export class PurchaseOrdersComponent {
 
   savePO() {
     if(!this.newPO.supplier){
+        this.messageService.clear();
       this.messageService.add({severity:'warn', summary:'Validation', detail:'Please select a supplier!'});
       return;
     }
@@ -260,10 +263,12 @@ export class PurchaseOrdersComponent {
     if(!this.isEdit){
       this.newPO.id = 'PO-' + (1000 + this.purchaseOrders.length + 1);
       this.purchaseOrders.push({...this.newPO});
+        this.messageService.clear();
       this.messageService.add({severity:'success', summary:'Saved', detail:`PO #${this.newPO.id} added.`});
     } else {
       const idx = this.purchaseOrders.findIndex(p=>p.id===this.newPO.id);
       if(idx!==-1) this.purchaseOrders[idx] = {...this.newPO};
+        this.messageService.clear();
       this.messageService.add({severity:'success', summary:'Updated', detail:`PO #${this.newPO.id} updated.`});
     }
     this.displayDialog=false;

@@ -47,8 +47,10 @@ interface expandedRows {
         IconFieldModule,
         DialogModule,
     ],
+    
     template: `
     <div class="card">
+     <p-toast position="top-center" class="custom-toast"></p-toast>
         <div class="font-semibold text-xl mb-4">Orders</div>
         
         <p-table 
@@ -215,7 +217,8 @@ export class Orders implements OnInit {
 
     constructor(
         private customerService: CustomerService,
-        private productService: ProductService
+        private productService: ProductService,
+        private messageService: MessageService
     ) { }
 
     ngOnInit() {
@@ -314,27 +317,56 @@ export class Orders implements OnInit {
         }
     }
 
-    // ✅ أزرار التحكم
-    onEdit(item: any) {
-        alert(`✏️ تعديل العنصر: ${item.name || item.id}`);
-    }
-
+   
     onDelete(item: any) {
         this.selectedItem = item;
         this.displayConfirmation = true;
     }
 
-    onPrint(item: any) {
-        alert(`🖨️ طباعة بيانات العنصر: ${item.name || item.id}`);
-    }
+  
 
-    closeConfirmation() {
-        this.displayConfirmation = false;
-        this.selectedItem = null;
-    }
+    // ✏️ تعديل عنصر
+onEdit(item: any) {
+    this.messageService.clear();
+    this.messageService.add({
+        severity: 'info',
+        summary: 'تعديل عنصر',
+        detail: ` تعديل العنصر: ${item.name || item.id}`,
+        life: 3000,
+        closable: false
+    });
+}
 
-    confirmDelete() {
-        alert(`🗑️ تم حذف العنصر: ${this.selectedItem?.name || this.selectedItem?.id}`);
+// 🖨️ طباعة عنصر
+onPrint(item: any) {
+    this.messageService.clear();
+    this.messageService.add({
+        severity: 'success',
+        summary: 'طباعة عنصر',
+        detail: ` طباعة بيانات العنصر: ${item.name || item.id}`,
+        life: 3000,
+        closable: false
+    });
+}
+
+// 🗑️ حذف عنصر بعد التأكيد
+confirmDelete() {
+    if (!this.selectedItem) return;
+
+    this.messageService.clear();
+    this.messageService.add({
+        severity: 'error',
+        summary: 'حذف عنصر',
+        detail: ` تم حذف العنصر: ${this.selectedItem.name || this.selectedItem.id}`,
+        life: 3000,
+        closable: false
+    });
+
+    this.displayConfirmation = false;
+    this.selectedItem = null;
+}
+
+ closeConfirmation() {
         this.displayConfirmation = false;
         this.selectedItem = null;
     }

@@ -44,7 +44,7 @@ interface Sale {
   providers: [ConfirmationService, MessageService],
   template: `
 <div class="card p-6 bg-white shadow-md rounded-lg">
-  <p-toast></p-toast>
+   <p-toast position="top-center" class="custom-toast"></p-toast>
   <h2 class="text-3xl font-bold mb-6 text-center md:text-left">💰 Sales</h2>
 
   <!-- Toolbar Filters -->
@@ -231,6 +231,7 @@ export class SalesInvoicesComponent {
 
   deleteSale(sale: Sale) {
     this.sales = this.sales.filter(s => s.invoiceNo !== sale.invoiceNo);
+      this.messageService.clear();
     this.messageService.add({severity:'success', summary:'Deleted', detail:`Invoice #${sale.invoiceNo} deleted.`});
   }
 
@@ -250,6 +251,7 @@ export class SalesInvoicesComponent {
 
   saveSale() {
     if(!this.newSale.customer){
+        this.messageService.clear();
       this.messageService.add({severity:'warn', summary:'Validation', detail:'Please select a customer!'});
       return;
     }
@@ -257,10 +259,12 @@ export class SalesInvoicesComponent {
     if(!this.isEdit){
       this.newSale.invoiceNo = 'S' + (20250000 + this.sales.length + 1);
       this.sales.push({...this.newSale});
+        this.messageService.clear();
       this.messageService.add({severity:'success', summary:'Saved', detail:`Invoice #${this.newSale.invoiceNo} added.`});
     } else {
       const idx = this.sales.findIndex(s=>s.invoiceNo===this.newSale.invoiceNo);
       if(idx!==-1) this.sales[idx] = {...this.newSale};
+        this.messageService.clear();
       this.messageService.add({severity:'success', summary:'Updated', detail:`Invoice #${this.newSale.invoiceNo} updated.`});
     }
     this.displayDialog=false;

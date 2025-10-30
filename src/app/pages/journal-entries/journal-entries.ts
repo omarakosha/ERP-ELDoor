@@ -33,7 +33,7 @@ import { PaginatorModule } from 'primeng/paginator';
   providers: [ConfirmationService, MessageService],
   template: `
  <div class="card">
-  <p-toast></p-toast>
+ <p-toast position="top-center" class="custom-toast"></p-toast>
   <h2 class="text-3xl font-bold mb-6">Journal Entries</h2>
 
   <!-- أزرار البحث والإضافة -->
@@ -101,7 +101,7 @@ import { PaginatorModule } from 'primeng/paginator';
     header="{{isEdit ? 'Edit Entry' : 'New Entry'}}"
     [(visible)]="displayDialog" 
     [modal]="true"
-    [style]="{width:'90vw', height:'100vh'}" 
+    [style]="{width:'90vw', height:'70vh'}" 
     [closable]="false">
 
   <div class="flex flex-col h-full bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
@@ -150,7 +150,7 @@ import { PaginatorModule } from 'primeng/paginator';
         <label class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Summary</label>
         <input type="text"
                [value]="(currentJournal.totalDebit + currentJournal.totalCredit) | number:'1.2-2'"
-               class="p-inputtext w-full text-right font-semibold text-blue-500 rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
+               class="p-inputtext w-full text-right font-semibold rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
                readonly>
       </div>
 
@@ -734,11 +734,13 @@ export class JournalEntriesComponent {
     // تحقق من تساوي المدين والدائن
     this.calculateCurrentTotals();
     if (this.currentJournal.totalDebit !== this.currentJournal.totalCredit) {
+         this.messageService.clear();
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Total debit does not equal total credit' });
       valid = false;
     }
 
     if (!valid) {
+         this.messageService.clear();
       this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please correct highlighted fields before saving' });
       return; // لا يتم الحفظ
     }
@@ -752,6 +754,7 @@ export class JournalEntriesComponent {
     }
 
     this.displayDialog = false;
+       this.messageService.clear();
     this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Entry saved successfully' });
   }
 
@@ -762,6 +765,7 @@ export class JournalEntriesComponent {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.journalEntries.splice(index, 1);
+           this.messageService.clear();
         this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Entry deleted successfully' });
       }
     });
@@ -995,8 +999,11 @@ selectAccount(acc: any) {
 
 
   // 🟢 نسخ / لصق
-  copyLine() { if (this.selectedRowIndex >= 0) { this.copiedLine = { ...this.currentJournal.entries[this.selectedRowIndex] }; this.messageService.add({ severity: 'info', summary: 'Copied', detail: 'Line copied' }); } }
-  pasteLine() { if (this.copiedLine) { this.currentJournal.entries.splice(this.selectedRowIndex + 1, 0, { ...this.copiedLine }); this.messageService.add({ severity: 'success', summary: 'Pasted', detail: 'Line pasted' }); this.calculateCurrentTotals(); this.pushUndo(); } }
+  copyLine() { if (this.selectedRowIndex >= 0) { this.copiedLine = { ...this.currentJournal.entries[this.selectedRowIndex] };
+    this.messageService.clear(); this.messageService.add({ severity: 'info', summary: 'Copied', detail: 'Line copied' }); } }
+  pasteLine() { if (this.copiedLine) { this.currentJournal.entries.splice(this.selectedRowIndex + 1, 0, { ...this.copiedLine }); 
+   this.messageService.clear(); this.messageService.add({ severity: 'success', summary: 'Pasted', detail: 'Line pasted' }); 
+   this.calculateCurrentTotals(); this.pushUndo(); } }
 
   // 🟢 Undo / Redo
   pushUndo() { this.undoStack.push(JSON.stringify(this.currentJournal.entries)); if (this.undoStack.length > 50) this.undoStack.shift(); }
