@@ -246,7 +246,7 @@ export class AccountsManager implements OnInit {
         this.removeNode(this.accountsTree, node);
         this.filteredTree = [...this.accountsTree];
         this.messageService.clear();
-        this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Account deleted' });
+        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Account deleted' });
         this.selectedNode = null;
       }
     });

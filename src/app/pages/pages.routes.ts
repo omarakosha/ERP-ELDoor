@@ -15,7 +15,7 @@ import { ReportsComponent } from './reports/reports';
 import { FinancialReportComponent } from './financial-report/financial-report.component';
 import { PosComponent } from './pos/pos';
 import { PosManagementComponent } from './pos-management/pos-management-component';
-import { PaymentsComponent } from './payments-component/payments-component';
+import { PaymentsComponent } from './payments/payments-component';
 import { StockTransferComponent } from './stock-transfer/stock-transfer.component';
 import { PurchaseReturnsComponent } from './purchase-returns/purchase-returns.component';
 import { SuppliersComponent } from './suppliers/suppliers.component';
@@ -35,7 +35,7 @@ export default [
   { path: 'financial-report', component: FinancialReportComponent },
    { path: 'pos', component: PosComponent },
     { path: 'pos-management', component: PosManagementComponent },
-    { path: 'payments-component', component: PaymentsComponent },
+    { path: 'payments', component: PaymentsComponent },
     { path: 'stock-transfer', component: StockTransferComponent },
     { path: 'purchase-returns', component: PurchaseReturnsComponent },
      { path: 'suppliers', component: SuppliersComponent },

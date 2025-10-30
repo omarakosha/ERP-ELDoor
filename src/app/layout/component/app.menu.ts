@@ -39,7 +39,8 @@ export class AppMenu {
                             { label: 'Sales Invoices', icon: 'pi pi-file', routerLink: ['/pages/sales-invoices'] },
                             { label: 'Store Orders', icon: 'pi pi-shopping-bag', routerLink: ['/pages/orders'] },
                             { label: 'Customers', icon: 'pi pi-users', routerLink: ['/pages/CRM'] },
-                            { label: 'Customer Payments', icon: 'pi pi-credit-card', routerLink: ['/pages/payments-component'] },
+                              { label: 'Customer Payments', icon: 'pi pi-users', routerLink: ['/pages/payments'] },
+                       
                         ]
                     }
                 ]

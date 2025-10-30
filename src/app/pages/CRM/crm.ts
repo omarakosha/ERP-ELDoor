@@ -269,7 +269,7 @@ export class CRMComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.customers = this.customers.filter(c => c.id !== customer.id);
-        this.messageService.add({ severity: 'info', summary: 'Deleted', detail: `Customer "${customer.name}" deleted.`, life: 3000 });
+        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: `Customer "${customer.name}" deleted.`, life: 3000 });
       }
     });
   }

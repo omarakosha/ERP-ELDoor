@@ -766,7 +766,7 @@ export class JournalEntriesComponent {
       accept: () => {
         this.journalEntries.splice(index, 1);
         this.messageService.clear();
-        this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Entry deleted successfully' });
+        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Entry deleted successfully' });
       }
     });
   }

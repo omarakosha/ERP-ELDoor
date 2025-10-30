@@ -329,7 +329,7 @@ export class Orders implements OnInit {
 onEdit(item: any) {
     this.messageService.clear();
     this.messageService.add({
-        severity: 'info',
+        severity: 'success',
         summary: 'تعديل عنصر',
         detail: ` تعديل العنصر: ${item.name || item.id}`,
         life: 3000,
@@ -355,7 +355,7 @@ confirmDelete() {
 
     this.messageService.clear();
     this.messageService.add({
-        severity: 'error',
+        severity: 'success',
         summary: 'حذف عنصر',
         detail: ` تم حذف العنصر: ${this.selectedItem.name || this.selectedItem.id}`,
         life: 3000,

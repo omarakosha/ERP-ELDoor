@@ -116,7 +116,7 @@ export class CasherposComponent implements OnInit, OnDestroy {
     this.products.splice(index, 1);
     this.calculateTotals();
      this.messageService.clear();
-    this.messageService.add({ severity: 'warn', summary: 'تم الحذف', detail: 'تم حذف المنتج من القائمة' });
+    this.messageService.add({ severity: 'success', summary: 'تم الحذف', detail: 'تم حذف المنتج من القائمة' });
 
   }
 
@@ -143,7 +143,7 @@ export class CasherposComponent implements OnInit, OnDestroy {
     this.products = [];
     this.calculateTotals();
      this.messageService.clear();
-    this.messageService.add({ severity: 'info', summary: 'تم المسح', detail: 'تم حذف جميع العناصر' });
+    this.messageService.add({ severity: 'success', summary: 'تم المسح', detail: 'تم حذف جميع العناصر' });
   }
 
   trackByIndex(index: number, item: Product) {

@@ -128,7 +128,7 @@ export class PosManagementComponent {
 
         this.messageService.clear();
         this.messageService.add({
-          severity: 'info',
+          severity: 'success',
           summary: 'Closed',
           detail: `تم إغلاق الصندوق "${box.name}" بتاريخ ${box.closeDate.toLocaleString('ar-EG')}`
         });

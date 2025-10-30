@@ -1,0 +1,260 @@
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Table } from 'primeng/table';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { ConfirmationService, MessageService } from 'primeng/api';
+
+interface Payment {
+  receiptNo: string;
+  date: Date;
+  customer: string;
+  amount: number;
+  paymentMethod: string;
+  cashBox: string;
+}
+
+@Component({
+  selector: 'app-payments',
+  standalone: true,
+  providers: [ConfirmationService, MessageService],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    DialogModule,
+    ToastModule
+  ],
+  template: `
+<div class="card">
+ <p-toast position="top-center" class="custom-toast" [baseZIndex]="10000"></p-toast>
+ <div class="font-semibold text-xl mb-4">Customer Payments</div>
+
+ <!-- Toolbar -->
+ <div class="flex flex-wrap gap-2 mb-3">
+     <button pButton label="Clear Filters" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+     <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
+     <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"></button>
+     <input pInputText #filterInput placeholder="Search..." (input)="onGlobalFilter(dt, $event)" class="ml-auto">
+     <button pButton label="Add Payment" icon="pi pi-plus" class="p-button-primary" (click)="openNew()"></button>
+ </div>
+
+ <!-- Payments Table -->
+ <p-table
+     #dt
+     [value]="payments"
+     dataKey="receiptNo"
+     [rows]="10"
+     [rowHover]="true"
+     [paginator]="true"
+     [loading]="loading"
+     [globalFilterFields]="['receiptNo','customer','paymentMethod','cashBox']"
+   
+     responsiveLayout="scroll"
+ >
+     <ng-template #header>
+         <tr>
+             <th>
+                 Receipt No
+                 <p-columnFilter type="text" field="receiptNo" display="menu" placeholder="Search by receipt #"></p-columnFilter>
+             </th>
+             <th>
+                 Date
+                 <p-columnFilter type="date" field="date" display="menu" placeholder="Search by date"></p-columnFilter>
+             </th>
+             <th>
+                 Customer Name
+                 <p-columnFilter type="text" field="customer" display="menu" placeholder="Search by customer"></p-columnFilter>
+             </th>
+             <th>
+                 Amount
+                 <p-columnFilter type="numeric" field="amount" display="menu" placeholder="Search by amount"></p-columnFilter>
+             </th>
+             <th>
+                 Payment Method
+                 <p-columnFilter type="text" field="paymentMethod" display="menu" placeholder="Search by method"></p-columnFilter>
+             </th>
+             <th>
+                 Cash Box
+                 <p-columnFilter type="text" field="cashBox" display="menu" placeholder="Search by cash box"></p-columnFilter>
+             </th>
+             <th>Actions</th>
+         </tr>
+     </ng-template>
+
+     <ng-template #body let-p>
+         <tr>
+             <td>{{p.receiptNo}}</td>
+             <td>{{p.date | date:'MM/dd/yyyy'}}</td>
+             <td>{{p.customer}}</td>
+             <td>{{p.amount | currency:'USD'}}</td>
+             <td>{{p.paymentMethod}}</td>
+             <td>{{p.cashBox}}</td>
+             <td>
+                 <button pButton icon="pi pi-pencil" class="p-button p-button-info" (click)="editPayment(p)"></button>
+             </td>
+         </tr>
+     </ng-template>
+
+     <ng-template #emptymessage>
+         <tr>
+             <td colspan="7">No results. Please adjust your search or filters to find what you're looking for.</td>
+         </tr>
+     </ng-template>
+ </p-table>
+
+ <!-- Add/Edit Payment Dialog -->
+ <p-dialog header="{{isEdit ? 'Edit Payment' : 'Add Payment'}}" [(visible)]="displayDialog" [modal]="true" [closable]="false" [style]="{width: '450px'}">
+     <div class="grid gap-3">
+         <div>
+             <label>Receipt No</label>
+             <input pInputText [(ngModel)]="newPayment.receiptNo" class="w-full">
+         </div>
+         <div>
+             <label>Date</label>
+             <input pInputText type="date" [(ngModel)]="newPayment.date" class="w-full">
+         </div>
+         <div>
+             <label>Customer Name</label>
+             <input pInputText [(ngModel)]="newPayment.customer" class="w-full">
+         </div>
+         <div>
+             <label>Amount</label>
+             <input pInputText type="number" [(ngModel)]="newPayment.amount" class="w-full">
+         </div>
+         <div>
+             <label>Payment Method</label>
+             <input pInputText [(ngModel)]="newPayment.paymentMethod" class="w-full">
+         </div>
+         <div>
+             <label>Cash Box</label>
+             <input pInputText [(ngModel)]="newPayment.cashBox" class="w-full">
+         </div>
+     </div>
+     <ng-template pTemplate="footer">
+         <button pButton label="Cancel" icon="pi pi-times" (click)="displayDialog=false" class="p-button-secondary"></button>
+         <button pButton label="Save" icon="pi pi-check" (click)="savePayment()" class="p-button-success"></button>
+     </ng-template>
+ </p-dialog>
+</div>
+`
+})
+export class PaymentsComponent implements OnInit {
+  constructor(
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
+  ) {}
+
+  @ViewChild('filterInput') filterInput!: ElementRef;
+
+  payments: Payment[] = [];
+  displayDialog = false;
+  isEdit = false;
+  newPayment: Payment = {receiptNo:'', date:new Date(), customer:'', amount:0, paymentMethod:'', cashBox:''};
+  loading = true;
+
+  ngOnInit() {
+    this.payments = [
+      {receiptNo:'RCPT-1001', date:new Date(), customer:'أحمد علي', amount:5000, paymentMethod:'نقدي', cashBox:'صندوق رئيسي'}
+    ];
+    this.loading = false;
+  }
+
+  onGlobalFilter(table: Table, event: Event) {
+    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  clear(table: Table) {
+    table.clear();
+    this.filterInput.nativeElement.value = '';
+  }
+
+  openNew() {
+    this.newPayment = {receiptNo:'', date:new Date(), customer:'', amount:0, paymentMethod:'', cashBox:''};
+    this.isEdit = false;
+    this.displayDialog = true;
+  }
+
+  editPayment(payment: Payment) {
+    this.newPayment = {...payment};
+    this.isEdit = true;
+    this.displayDialog = true;
+  }
+
+  savePayment() {
+    // Validation
+    if(!this.newPayment.receiptNo || !this.newPayment.customer || !this.newPayment.amount){
+      this.showMessage('warn','Validation','Please fill all required fields.');
+      return;
+    }
+
+    if (!this.isEdit) {
+      // إضافة دفعة جديدة
+      this.payments.push({ ...this.newPayment });
+      this.showMessage('success','Added',`Payment for customer "${this.newPayment.customer}" added successfully.`);
+    } else {
+      // تعديل دفعة موجودة
+      const idx = this.payments.findIndex(p => p.receiptNo === this.newPayment.receiptNo);
+      if (idx !== -1) {
+        this.payments[idx] = { ...this.newPayment };
+        this.showMessage('success','Updated',`Payment for customer "${this.newPayment.customer}" updated successfully.`);
+      } else {
+        this.showMessage('error','Not Found',`Payment with receipt #${this.newPayment.receiptNo} not found.`);
+      }
+    }
+
+    this.displayDialog = false;
+  }
+
+  showMessage(severity: string, summary: string, detail: string) {
+    this.messageService.clear();
+    this.messageService.add({severity, summary, detail, life:3000});
+  }
+
+  exportExcel() {
+    const ws = XLSX.utils.json_to_sheet(this.payments.map(p => ({
+      'Receipt No': p.receiptNo,
+      'Date': p.date instanceof Date ? p.date.toLocaleDateString() : p.date,
+      'Customer': p.customer,
+      'Amount': p.amount,
+      'Payment Method': p.paymentMethod,
+      'Cash Box': p.cashBox
+    })));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Payments');
+    XLSX.writeFile(wb, 'Payments.xlsx');
+  }
+
+  exportPDF() {
+    const doc = new jsPDF({orientation: 'landscape'});
+    doc.text('مدفوعات العملاء', 14, 10);
+    autoTable(doc, {
+      head:[['رقم سند القبض','تاريخ الاستلام','اسم العميل','المبلغ','طريقة الدفع','اسم الصندوق']],
+      body: this.payments.map(p => [
+        p.receiptNo,
+        p.date instanceof Date ? p.date.toLocaleDateString() : p.date,
+        p.customer,
+        p.amount,
+        p.paymentMethod,
+        p.cashBox
+      ])
+    });
+    doc.save('Payments.pdf');
+  }
+
+  rowClass(payment: Payment) {
+    return {
+      'bg-green-100': payment.paymentMethod === 'نقدي',
+      'bg-yellow-100': payment.paymentMethod === 'شيك'
+    };
+  }
+}
