@@ -12,6 +12,12 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PaginatorModule } from 'primeng/paginator';
+import { AccountsService, Account } from '../../apiservice/accounts.service';
+import { JournalDto, JournalService } from '@/apiservice/journal.service';
+import { EntitiesService, EntityRecord } from '@/apiservice/Entities.service';
+
+
+
 
 @Component({
   selector: 'app-journal-entries',
@@ -31,504 +37,32 @@ import { PaginatorModule } from 'primeng/paginator';
     MultiSelectModule
   ],
   providers: [ConfirmationService, MessageService],
-  template: `
- <div class="card">
-  <p-toast></p-toast>
-  <h2 class="text-3xl font-bold mb-6">Journal Entries</h2>
-
-  <!-- أزرار البحث والإضافة -->
-  <div class="flex flex-wrap items-center gap-4 mb-4">
-    <button pButton label="New Entry" icon="pi pi-plus" class="p-button-success"
-            (click)="openNewJournal()"></button>
-
-    <div class="flex items-center gap-2">
-      <input type="text" pInputText placeholder="Search her...."
-             [(ngModel)]="journalIdFilter"
-             class="p-inputtext w-40">
-    </div>
-    
-  </div>
-<p-table 
-  [value]="filteredJournals(journalIdFilter)" 
-  [paginator]="true" 
-  [rows]="10" 
-  [responsiveLayout]="'scroll'" 
-  [scrollable]="true" 
-  scrollHeight="400px">
-
-  <ng-template pTemplate="header">
-    <tr class="bg-gray-100 sticky top-0 z-10">
-      <th>#</th>
-      <th>Date</th>
-      <th>Total Debit</th>
-      <th>Total Credit</th>
-      <th>Actions</th>
-    </tr>
-  </ng-template>
-
-  <ng-template pTemplate="body" let-journal let-i="rowIndex">
-    <tr>
-      <td>{{journal.id}}</td>
-      <td>{{journal.date | date:'yyyy-MM-dd'}}</td>
-      <td>{{journal.totalDebit | number:'1.2-2'}}</td>
-      <td>{{journal.totalCredit | number:'1.2-2'}}</td>
-      <td class="flex gap-2">
-        <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editJournal(journal)"></button>
-        <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteJournal(i)"></button>
-        <button pButton icon="pi pi-print" class="p-button-warning p-button-sm" (click)="printEntry(journal)"></button>
-      </td>
-    </tr>
-  </ng-template>
-
-  <ng-template pTemplate="emptymessage">
-    <tr>
-      <td colspan="5">
-        <div class="flex flex-col items-center justify-center h-full py-10">
-          <i class="pi pi-database" style="font-size: 2rem"></i>
-          <span class="text-gray-500 text-lg text-center">
-            {{ filteredJournals(journalIdFilter).length ? 'No results found for your search' : 'No Data Available' }}
-          </span>
-        </div>
-      </td>
-    </tr>
-  </ng-template>
-
-</p-table>
-
-
-
-<p-dialog 
-    header="{{isEdit ? 'Edit Entry' : 'New Entry'}}"
-    [(visible)]="displayDialog" 
-    [modal]="true"
-    [style]="{width:'90vw', height:'100vh'}" 
-    [closable]="false">
-
-  <div class="flex flex-col h-full bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-
-    <!-- ======= الهيدر ======= -->
-    <div class="border-b border-gray-200 dark:border-gray-700  grid grid-cols-12 gap-6 items-center">
-
-      <div class="col-span-3 flex flex-col">
-        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-1">Entry No.</label>
-        
-        <input type="text"
-               [(ngModel)]="currentJournal.id"
-               class="p-inputtext w-full rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
-               readonly>
-      </div>
-
-      <div class="col-span-2 flex flex-col">
-        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Date</label>
-        <p-datepicker [(ngModel)]="currentJournal.date"
-                      [showIcon]="true"
-                      inputStyleClass="w-full px-3 py-2 rounded-md bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"></p-datepicker>
-      </div>
-
-      <div class="col-span-2 flex flex-col">
-        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Status</label>
-        <select [(ngModel)]="currentJournal.status"
-                class="p-inputtext w-full rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
-          <option value="Pending">Pending</option>
-          <option value="Approved">Approved</option>
-          <option value="Rejected">Rejected</option>
-          <option value="Closed">Closed</option>
-        </select>
-      </div>
-
-      <div class="col-span-2 flex flex-col">
-        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Entry Type</label>
-        <select [(ngModel)]="currentJournal.type"
-                class="p-inputtext w-full rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
-          <option value="Daily">Daily</option>
-          <option value="Adjustment">Adjustment</option>
-          <option value="Closing">Closing</option>
-        </select>
-      </div>
-
-      <div class="col-span-3 flex flex-col">
-        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Summary</label>
-        <input type="text"
-               [value]="(currentJournal.totalDebit + currentJournal.totalCredit) | number:'1.2-2'"
-               class="p-inputtext w-full text-right font-semibold text-blue-500 rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
-               readonly>
-      </div>
-
-      <div class="col-span-12 mt-4 flex flex-col">
-        <label class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Notes</label>
-        <textarea [(ngModel)]="currentJournal.notes"
-                  class="p-inputtext w-full rounded-md px-3 py-2 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
-                  rows="3"
-                  placeholder="Add notes..."></textarea>
-      </div>
-
-    </div>
-
-    <!-- ======= الجدول ======= -->
-    <div class="flex-1 overflow-auto min-h-[320px] mt-2">
-      <p-table [value]="currentJournal.entries"
-               [scrollable]="true"
-               scrollHeight="100%"
-               selectionMode="single"
-               [(contextMenuSelection)]="selectedLine"
-               [contextMenu]="cm"
-               class="fixed-rows-table w-full">
-
-        <ng-template pTemplate="header">
-          <tr class="bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
-            <th>#</th>
-            <th>Account</th>
-            <th>Vendor</th>
-            <th>Description</th>
-            <th>Debit</th>
-            <th>Credit</th>
-            <th>Cost Center</th>
-            <th>Tags</th>
-            <th>Action</th>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="body" let-line let-i="rowIndex">
-          <tr (click)="selectedRowIndex=i" class="hover:bg-gray-200 dark:hover:bg-gray-600">
-            <td>{{ i + 1 }}</td>
-
-            <td>
-              <input type="text" [(ngModel)]="line.account"
-                     (input)="handleAccountInput($event, i)"
-                     (keydown)="openAccountSearch($event, i)"
-                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
-                     [class.p-invalid]="line.invalidAccount"
-                     [id]="'account-' + i"
-                     placeholder="Account No. or F9 to Search"
-                     class="p-inputtext w-full bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
-            </td>
-
-            <td>
-              <input type="text" [(ngModel)]="line.vendor"
-                     (input)="handleVendorInput($event,i)"
-                     (keydown)="openVendorDialog($event,i)"
-                     [disabled]="!line.isVendorEnabled"
-                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
-                     [class.p-invalid]="line.invalidVendor"
-                     placeholder="Vendor No. or F9 to Search"
-                     class="p-inputtext w-full bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
-            </td>
-
-            <td>
-              <input type="text" [(ngModel)]="line.description"
-                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
-                     class="p-inputtext w-full bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
-                     placeholder="Description"
-                     style="width: 300px;">
-            </td>
-
-            <td>
-              <input type="text"
-                     [(ngModel)]="line.debit"
-                     (focus)="formatWithCommas(line, 'debit')"
-                     (input)="formatWithCommas(line, 'debit'); updateTotals()"
-                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
-                     class="p-inputtext w-full text-right bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
-                     placeholder="0.00">
-            </td>
-
-            <td>
-              <input type="text"
-                     [(ngModel)]="line.credit"
-                     (focus)="formatWithCommas(line, 'credit')"
-                     (input)="formatWithCommas(line, 'credit'); updateTotals()"
-                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
-                     class="p-inputtext w-full text-right bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200"
-                     placeholder="0.00">
-            </td>
-
-            <td>
-              <input type="text" [(ngModel)]="line.costCenter"
-                     (input)="handleCostCenterInput($event,i)"
-                     (keydown)="openCostCenterSearch($event,i)"
-                     (keydown.enter)="addNewLine(i); $event.preventDefault()"
-                     [class.p-invalid]="line.invalidCostCenter"
-                     placeholder="CostCenter No. or F9 to Search"
-                     class="p-inputtext w-full bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-200">
-            </td>
-
-            <td>
-              <p-multiSelect [options]="tags" [(ngModel)]="line.tags"
-                             optionLabel="name" display="chip"
-                             defaultLabel="Select tags" [filter]="true"
-                             styleClass="dark:text-white dark:bg-gray-700"
-                             (keydown.enter)="addNewLine(i); $event.preventDefault()"></p-multiSelect>
-            </td>
-
-            <td>
-              <button pButton icon="pi pi-trash" class="p-button p-button-danger p-button-sm"
-                      (click)="removeJournalLine(i)"></button>
-            </td>
-          </tr>
-        </ng-template>
-
-      </p-table>
-    </div>
-
-    <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
-
-    <!-- ======= الفوتر ======= -->
-    <div class="border-t border-gray-200 dark:border-gray-700 pt-4 pb-4 px-5 flex flex-col gap-3 bg-gray-50 dark:bg-gray-800">
-
-      <div class="h-6 flex items-center justify-center">
-        <div *ngIf="!isBalanced()" class="text-red-600 font-bold text-center mb-2">
-          ⚠️ Debit and Credit must be equal
-        </div>
-      </div>
-
-      <div class="flex justify-between items-start">
-        <div class="flex flex-col text-left font-bold text-gray-700 dark:text-gray-300">
-          <div>Total Debit.: {{currentJournal.totalDebit | number:'1.2-2'}}</div>
-          <div>Total Credit: {{currentJournal.totalCredit | number:'1.2-2'}}</div>
-        </div>
-
-        <div class="flex gap-2">
-          <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary"
-                  (click)="displayDialog=false"></button>
-          <button pButton label="Save" icon="pi pi-check" class="p-button-success"
-                  (click)="saveJournal()"></button>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-</p-dialog>
-
-
-
-
-<!-- Dialog الموردين -->
-<p-dialog header="Vendors" [(visible)]="vendorDialog" [modal]="true"
-          [style]="{'width':'50vw','height':'450px'}" [resizable]="false"
-          [breakpoints]="{'960px':'90vw'}">
-
-  <div class="flex flex-col h-full">
-
-    <!-- الهيدر ثابت -->
-    <div class="flex gap-2 mb-2 flex-shrink-0">
-      <input type="text" pInputText [(ngModel)]="vendorFilter"
-             placeholder="Search vendor..." class="flex-1"
-             (input)="filteredVendors()">
-      <button pButton label="Add Vendor" icon="pi pi-plus"
-              class="p-button-success" (click)="openAddVendor()"></button>
-    </div>
-
-    <!-- الجدول scrollable -->
-    <div class="flex-1 overflow-auto min-h-[250px]">
-      <p-table [value]="filteredVendors()" [scrollable]="true" scrollHeight="100%">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>#</th>
-            <th>Vendor Name</th>
-            <th>Account No</th>
-            <th>Actions</th>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="body" let-vn let-i="rowIndex">
-          <tr style="height:50px" (click)="selectVendor(vn)" class="cursor-pointer hover:bg-gray-200">
-            <td>{{i + 1}}</td>
-            <td>{{vn.name}}</td>
-            <td>{{vn.account}}</td>
-            <td class="flex gap-2">
-              <button pButton icon="pi pi-pencil"
-                      class="p-button-sm p-button-info"
-                      (click)="openEditVendor(vn); $event.stopPropagation()"></button>
-            </td>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="4">
-              <div class="flex flex-col items-center justify-center h-full py-10">
-                <i class="pi pi-database " style="font-size: 2rem"></i>
-                <span class="text-gray-500 text-lg">No Data Available</span>
-              </div>
-            </td>
-          </tr>
-        </ng-template>
-
-      </p-table>
-    </div>
-
-    <!-- الفوتر ثابت -->
- <div class="flex-shrink-0 mt-2 border-t pt-2 
-            bg-white border-gray-200 
-            dark:bg-[#18181b] dark:border-gray-700">
-  <p-paginator 
-    [rows]="5" 
-    [totalRecords]="filteredVendors().length || 0"
-   >
-  </p-paginator>
-</div>
-
-
-  </div>
-</p-dialog>
-
-<!-- Dialog الحسابات -->
-<p-dialog header="Select Account" [(visible)]="accountDialog" [modal]="true"
-          [style]="{'width':'50vw','height':'450px'}" [resizable]="false"
-          [breakpoints]="{'960px':'90vw'}">
-
-  <div class="flex flex-col h-full">
-
-    <!-- الهيدر ثابت -->
-    <div class="mb-2 flex-shrink-0">
-      <input type="text" pInputText [(ngModel)]="accountFilter"
-             placeholder="Search account..." class="w-full"
-             (input)="filteredAccounts()">
-    </div>
-
-    <!-- الجدول scrollable -->
-    <div class="flex-1 overflow-auto min-h-[250px]">
-      <p-table [value]="filteredAccounts()" [scrollable]="true" scrollHeight="100%">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>#</th>
-            <th>Account Name</th>
-            <th>Account No</th>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="body" let-acc let-i="rowIndex">
-          <tr style="height:50px" (click)="selectAccount(acc)" class="cursor-pointer hover:bg-gray-200">
-            <td>{{i + 1}}</td>
-            <td>{{acc.name}}</td>
-            <td>{{acc.code}}</td>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="3">
-              <div class="flex flex-col items-center justify-center h-full py-10">
-                <i class="pi pi-database " style="font-size: 2rem"></i>
-                <span class="text-gray-500 text-lg">No Data Available</span>
-              </div>
-            </td>
-          </tr>
-        </ng-template>
-
-      </p-table>
-    </div>
-
-    <!-- الفوتر ثابت -->
-   <div class="flex-shrink-0 mt-2 border-t pt-2 
-            bg-white border-gray-200 
-            dark:bg-[#18181b] dark:border-gray-700">
-  <p-paginator 
-    [rows]="5" 
-    [totalRecords]="filteredVendors().length || 0"
-   >
-  </p-paginator>
-</div>
-
-
-  </div>
-</p-dialog>
-
-<!-- Dialog مراكز التكلفة -->
-<p-dialog header="Select Cost Center" [(visible)]="costCenterDialog" [modal]="true"
-          [style]="{'width':'50vw','height':'450px'}" [resizable]="false"
-          [breakpoints]="{'960px':'90vw'}">
-
-  <div class="flex flex-col h-full">
-
-    <!-- الهيدر ثابت -->
-    <div class="mb-2 flex-shrink-0">
-      <input type="text" pInputText [(ngModel)]="costCenterFilter"
-             placeholder="Search cost center..." class="w-full"
-             (input)="filteredCostCenters()">
-    </div>
-
-    <!-- الجدول scrollable -->
-    <div class="flex-1 overflow-auto min-h-[250px]">
-      <p-table [value]="filteredCostCenters()" [scrollable]="true" scrollHeight="100%">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>#</th>
-            <th>Cost Center Name</th>
-            <th>Cost Center No</th>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="body" let-cc let-i="rowIndex">
-          <tr style="height:50px" (click)="selectCostCenter(cc)" class="cursor-pointer hover:bg-gray-200">
-            <td>{{i + 1}}</td>
-            <td>{{cc.name}}</td>
-            <td>{{cc.code}}</td>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="3">
-              <div class="flex flex-col items-center justify-center h-full py-10">
-              
-                <i class="pi pi-database " style="font-size: 2rem"></i>
-                <span class="text-gray-500 text-lg">No Data Available</span>
-              </div>
-            </td>
-          </tr>
-        </ng-template>
-
-      </p-table>
-    </div>
-
-    <!-- الفوتر ثابت -->
-    <div class="flex-shrink-0 mt-2 border-t pt-2 
-            bg-white border-gray-200 
-            dark:bg-[#18181b] dark:border-gray-700">
-  <p-paginator 
-    [rows]="5" 
-    [totalRecords]="filteredVendors().length || 0"
-   >
-  </p-paginator>
-</div>
-
-
-  </div>
-</p-dialog>
-
-<!-- Dialog إضافة / تعديل مورد -->
-<p-dialog header="{{isEditVendor ? 'Edit Vendor' : 'Add Vendor'}}"
-          [(visible)]="vendorFormDialog" [modal]="true" [style]="{width:'40vw'}"
-          [resizable]="true" [breakpoints]="{'960px':'90vw'}">
-
-  <div class="flex flex-col h-full">
-
-    <!-- محتوى الفورم -->
-    <div class="flex-1 overflow-auto">
-      <label class="block mb-1 font-semibold">Vendor Name</label>
-      <input type="text" pInputText [(ngModel)]="currentVendor.name" class="w-full mb-2">
-
-      <label class="block mb-1 font-semibold">Account No</label>
-      <input type="text" pInputText [(ngModel)]="currentVendor.account" class="w-full mb-2">
-    </div>
-
-    <!-- الفوتر ثابت -->
-    <div class="flex-shrink-0 mt-2 flex justify-end gap-2">
-      <button pButton label="Cancel" class="p-button-secondary" (click)="cancelVendor()"></button>
-      <button pButton label="Save" class="p-button-success" (click)="saveVendor()"></button>
-    </div>
-
-  </div>
-</p-dialog>
-
-
-<p-confirmDialog></p-confirmDialog>
-</div>
-  `,
+  templateUrl: './journal-entries.html',
 })
 export class JournalEntriesComponent {
+
+  // مصفوفة لتخزين كل الحسابات من API
+  accounts: Account[] = [];
+
+  // مصفوفة لتخزين نتائج الفلترة
+  filteredAccountsList: Account[] = [];
+
+  // نص الفلترة
+  accountFilter: string = '';
+  childAccounts: EntityRecord[] = []; // بدلاً من Account[]
+filteredVendorList: EntityRecord[] = [];
+
+
+
+  filteredChildAccounts: Account[] = [];
+  selectedParentCode: string = '';
+
+  childCostCenters: Account[] = [];
+  filteredCostCentersList: Account[] = [];
+  costCenterFilter: string = '';
+
+  vendorFilter: string = '';
+ 
 
   journalEntries: any[] = [];
   displayDialog = false;
@@ -537,55 +71,41 @@ export class JournalEntriesComponent {
 
   currentJournal: any = {
     entries: [
-      { account: '', debit: null, credit: null, description: '', costCenter: '', currency: 'SAR' }
-    ],
+      {
+        account: '',
+        accountCode: '',
+        accountName: '', // أضف هذا
+         entityId: 0,
+         entityType: '',
+        vendor: '',
+        vendorAccount: '',
+        description: '',
+        debit: 0,
+        credit: 0,
+        costCenter: '',
+        costCenterCode: '',
+        tags: [],
+        isVendorEnabled: false
+      }
+    ]
+    ,
     totalDebit: 0,
     totalCredit: 0
   };
 
 
-  accounts = [
-    { name: 'vendor', code: '10101' },
-    { name: 'Bank', code: '10102' },
-    { name: 'Sales', code: '40101' },
-    { name: 'Purchases', code: '50101' },
-    { name: 'rjh', code: '10120' },
-    { name: 'enma', code: '10130' },
-    { name: 'belad', code: '40140' },
-    { name: 'riadh', code: '50120' },
-    { name: 'Cash', code: '60101' }
+  costCenters = [
+    { id: 1, name: 'Main', code: '1001' },
   ];
 
-  costCenters = [
-    { name: 'Main', code: '1001' },
-    { name: 'Branch1', code: '1002' },
-    { name: 'Branch2', code: '1003' },
-    { name: 'Branch1', code: '1002' },
-    { name: 'Branch2', code: '1003' },
-    { name: 'Branch1', code: '1002' },
-    { name: 'Branch2', code: '1003' },
-    { name: 'ProjectX', code: '2001' }
-  ];
 
   tags = [{ name: 'Urgent' }, { name: 'Internal' }, { name: 'External' }, { name: 'Follow-up' }];
 
-  vendors = [
-    { id: 1, name: 'Vendor A', account: '20101' },
-    { id: 2, name: 'Vendor A', account: '20102' },
-    { id: 3, name: 'Vendor A', account: '20103' },
-    { id: 4, name: 'Vendor A', account: '20104' },
-    { id: 5, name: 'Vendor A', account: '20105' },
-    { id: 6, name: 'Vendor A', account: '20106' },
-    { id: 7, name: 'Vendor A', account: '20107' },
-    { id: 8, name: 'Vendor B', account: '20108' }
-  ];
 
   accountDialog = false;
   costCenterDialog = false;
   vendorDialog = false;
-  accountFilter = '';
-  costCenterFilter = '';
-  vendorFilter = '';
+
   editingRowIndex = 0;
   editingField: 'account' | 'costCenter' | 'vendor' = 'account';
 
@@ -607,18 +127,183 @@ export class JournalEntriesComponent {
     { label: 'Paste Line', icon: 'pi pi-clone', command: () => this.pasteLine() },
     { label: 'Delete Line', icon: 'pi pi-trash', command: () => this.removeJournalLine(this.selectedRowIndex) }
   ];
-  constructor(private messageService: MessageService, private confirmationService: ConfirmationService) {
-    this.journalEntries = [
-      {
-        id: 1,
-        date: new Date().toISOString().substring(0, 10),
-        entries: [{ account: 'Cash', description: 'Opening', debit: 1000, credit: 0, costCenter: 'Main', tags: ['Internal'] }],
-        totalDebit: 1000,
-        totalCredit: 0
-      }
-    ];
+  constructor(
+
+    private messageService: MessageService,
+    private entitiesService: EntitiesService,
+    private confirmationService: ConfirmationService,
+    private accountsService: AccountsService,
+    private journalService: JournalService,
+
+  ) {
   }
 
+
+  ngOnInit(): void {
+    this.loadAccounts();
+    this.loadCostCenters();
+    this.loadJournals();
+
+
+
+  }
+
+
+  loadCostCenters() {
+    this.accountsService.getAllCostCenters().subscribe({
+      next: (res: Account[]) => {
+        // تصفية فقط الحسابات من نوع Cost Centers
+        this.childCostCenters = res.filter(a => a.type === 'Cost_Centers');
+        this.filteredCostCentersList = [...this.childCostCenters]; // للفلترة السريعة
+      },
+      error: (err) => console.error('Failed to load cost centers', err)
+    });
+  }
+
+  loadJournals() {
+    this.journalService.getJournals().subscribe({
+      next: (data) => {
+        this.journalEntries = data;
+
+        // لكل قيد، اربط costCenterId بالاسم من القائمة
+        this.journalEntries.forEach(journal => {
+          if (journal.entries) {
+            journal.entries.forEach((line: any) => {
+              if (line.costCenterId != null && this.childCostCenters.length > 0) {
+                const cc = this.childCostCenters.find(c => c.id === line.costCenterId);
+                if (cc) {
+                  line.costCenterName = cc.name; // الاسم للعرض
+                  line.costCenterCode = cc.code; // الكود للعرض/تحديث
+                }
+              }
+            });
+          }
+        });
+
+        console.log('Loaded journals:', this.journalEntries);
+      },
+      error: (err) => {
+        console.error('Failed to load journals', err);
+      }
+    });
+  }
+
+  updateFilteredAccounts() {
+    const filter = this.accountFilter?.trim().toLowerCase() || '';
+
+    // تحويل الشجرة إلى قائمة مسطحة
+    let allChildren = this.flattenAccounts(this.accounts);
+
+    // فلترة بالبحث
+    if (filter) {
+      allChildren = allChildren.filter(a =>
+        a.name?.toLowerCase().includes(filter) || a.code.includes(filter)
+      );
+    }
+
+    this.filteredAccountsList = allChildren;
+  }
+
+
+
+
+  flattenAccounts(accounts: any[]): any[] {
+    let result: any[] = [];
+    accounts.forEach(acc => {
+      if (acc.children && acc.children.length > 0) {
+        result = result.concat(this.flattenAccounts(acc.children));
+      }
+      if (acc.parentId != null) { // فقط الحسابات الفرعية
+        result.push(acc);
+      }
+    });
+    return result;
+  }
+
+
+
+  loadAccounts() {
+    this.accountsService.getAccounts().subscribe({
+      next: (res: Account[]) => {
+        this.accounts = res;               // بيانات الشجرة
+        this.filteredAccountsList = this.getAllChildAccounts(res); // استخراج كل الحسابات الفرعية
+      },
+      error: (err) => console.error('Error loading accounts', err)
+    });
+  }
+
+
+  // استخراج كل الحسابات الفرعية مع تجاهل مراكز التكلفة
+  getAllChildAccounts(accounts: Account[]): Account[] {
+    let children: Account[] = [];
+
+    accounts.forEach(acc => {
+      if (acc.type === 'Cost_Centers') return; // تجاهل مراكز التكلفة
+
+      if (acc.children && acc.children.length > 0) {
+        // إضافة الأبناء مباشرة إذا ليس مركز تكلفة
+        children.push(...acc.children.filter(c => c.type !== 'Cost_Centers'));
+        // استدعاء إعادة للطريقة للأبناء
+        children.push(...this.getAllChildAccounts(acc.children));
+      }
+    });
+
+    return children;
+  }
+
+  // فلترة أثناء البحث في الـ Dialog
+  filterChildAccounts() {
+    const filter = this.accountFilter?.trim().toLowerCase() || '';
+    let childAccounts = this.getAllChildAccounts(this.accounts); // جميع الأبناء
+
+    if (filter) {
+      childAccounts = childAccounts.filter(a =>
+        a.name.toLowerCase().includes(filter) ||
+        a.code.includes(filter)
+      );
+    }
+
+    this.filteredAccountsList = childAccounts;
+  }
+
+
+
+
+
+
+
+  // تحويل الشجرة إلى قائمة مسطحة بالحسابات الفرعية فقط (تجاهل الحسابات الأب والمراكز)
+  flattenChildAccounts(accounts: Account[]): Account[] {
+    let result: Account[] = [];
+
+    accounts.forEach(acc => {
+      if (acc.type === 'Cost_Centers') return; // تجاهل مراكز التكلفة
+
+      if (acc.children && acc.children.length > 0) {
+        result = result.concat(this.flattenChildAccounts(acc.children));
+      }
+
+      if (acc.parentId != null) { // الحسابات الأبناء فقط
+        result.push(acc);
+      }
+    });
+
+    return result;
+  }
+
+  // تحديث filteredAccountsList عند الضغط على F9
+  openAccountSearch(event: KeyboardEvent, rowIndex: number) {
+    if (event.key === 'F9') {
+      event.preventDefault();
+      this.editingRowIndex = rowIndex;
+
+      // تحديث القائمة لتظهر الحسابات الفرعية فقط
+      this.filteredAccountsList = this.flattenChildAccounts(this.accounts);
+
+      // فتح الـ Dialog
+      this.accountDialog = true;
+    }
+  }
 
   addNewLine(index: number) {
     if (!this.currentJournal.entries) {
@@ -636,7 +321,7 @@ export class JournalEntriesComponent {
       costCenter: '',
       costCenterCode: '',
       tags: [],
-       isVendorEnabled: false 
+      isVendorEnabled: false
     };
 
     if (index === -1) {
@@ -647,11 +332,11 @@ export class JournalEntriesComponent {
   }
 
 
-
-
   isBalanced(): boolean {
     return this.currentJournal.totalDebit === this.currentJournal.totalCredit;
   }
+
+
 
   // عند أي تغيير في مدين أو دائن، يحدث حساب الإجماليات
   updateTotals() {
@@ -669,36 +354,136 @@ export class JournalEntriesComponent {
     this.currentJournal.totalCredit = totalCredit;
   }
 
+  generateRandomEntryNumber(): string {
+    const randomPart = Math.floor(100000 + Math.random() * 900000); // رقم عشوائي من 6 خانات
+    return `JE-${randomPart}`;
+  }
+
 
   // 🟢 إضافة / تعديل / حذف
   openNewJournal() {
     this.isEdit = false;
     this.currentJournal = {
-      id: 'JE-' + new Date().getTime(), // توليد رقم تلقائي
-      date: new Date().toISOString().substring(0, 10),
-      status: 'Pending',               // الحالة الافتراضية
-      type: 'Daily',                   // نوع القيد الافتراضي
+      entryNumber: this.generateRandomEntryNumber(), // 
+      date: new Date(), // ✅ هذا هو التعديل المهم
+      status: 'Pending',
+      type: 'Daily',
       entries: [
         { account: '', accountCode: '', vendor: '', vendorAccount: '', description: '', debit: 0, credit: 0, costCenter: '', costCenterCode: '', tags: [] }
       ],
       totalDebit: 0,
       totalCredit: 0,
-      notes: ''
+      description: ''
     };
+
+
     this.displayDialog = true;
   }
 
 
   editJournal(journal: any) {
     this.isEdit = true;
+
+    // نسخ عميق للقيد
     this.currentJournal = JSON.parse(JSON.stringify(journal));
+
+    // التأكد من تحويل الحقول القديمة إلى entries
+    if (this.currentJournal.lines) {
+     this.currentJournal.entries = this.currentJournal.lines.map((line: any) => {
+  let ccName = '';
+  let ccCode = '';
+  if (line.costCenterId != null && this.childCostCenters?.length) {
+    const cc = this.childCostCenters.find(c => c.id === line.costCenterId);
+    if (cc) {
+      ccName = cc.name;
+      ccCode = cc.code;
+    }
+  }
+
+  const entry = {
+    id: line.id ?? 0,
+    accountId: line.accountId ?? null,
+    accountCode: line.account?.code ?? line.accountCode ?? '',
+    accountName: line.account?.name ?? line.accountName ?? '',
+    description: line.description ?? '',
+    debit: line.debit ?? 0,
+    credit: line.credit ?? 0,
+    costCenterId: line.costCenterId ?? null,
+    costCenter: ccName,
+    costCenterCode: ccCode,
+    costCenterName: ccName,
+    tags: line.tags ?? [],
+    isVendorEnabled: line.isVendorEnabled ?? false,
+    entityId: line.entityId ?? null,
+    entityType: line.entityType ?? null,
+    vendor: '',        // سيتم تعبئتها بعد التحميل
+    vendorAccount: ''  // سيتم تعبئتها بعد التحميل
+  };
+
+  // إذا كان هناك entityId و entityType، قم بتحميل بيانات الانتتى
+  if (entry.entityId && entry.entityType) {
+   this.entitiesService.getById(entry.entityId).subscribe({
+  next: (entity) => {
+    entry.vendor = entity.name ?? '';
+    entry.vendorAccount = entity.code ?? '';
+  }
+});
+
+  }
+
+  return entry;
+});
+
+
+    } else if (!this.currentJournal.entries) {
+      
+      this.currentJournal.entries = [];
+    }
+
+    // تأكد من وجود التاريخ
+    if (!this.currentJournal.date) {
+      this.currentJournal.date = new Date();
+    } else {
+      this.currentJournal.date = new Date(this.currentJournal.date);
+    }
+
+    // حساب الإجماليات بعد التحويل
+    this.calculateCurrentTotals();
+
+    // عرض نافذة التعديل
     this.displayDialog = true;
   }
 
+
+
   addJournalLine() {
-    this.currentJournal.entries.push({ account: '', accountCode: '', vendor: '', vendorAccount: '', description: '', debit: 0, credit: 0, costCenter: '', costCenterCode: '', tags: [] });
-    this.pushUndo();
+    this.currentJournal.entries.push({
+      id: 0,
+      account: null,           // كائن الحساب كامل (للعرض)
+      accountId: null,         // معرف الحساب
+      accountCode: '',         // كود الحساب
+      accountName: '',         // اسم الحساب للعرض
+      vendor: '',              // اسم المورد
+      vendorAccount: '',       // كود المورد
+      description: '',         // الوصف
+      debit: 0,                // المدين
+      credit: 0,               // الدائن
+      costCenter: '',          // اسم مركز التكلفة للعرض
+      costCenterCode: '',      // كود مركز التكلفة
+      costCenterId: null,      // معرف مركز التكلفة
+      costCenterName: '',      // اسم مركز التكلفة للإرسال للـ backend
+      tags: [],                // العلامات
+      entityId: null,          // معرف الفاندور أو مركز التكلفة
+      entityType: null,        // 'Vendor' أو 'CostCenter'
+      invalidAccount: false,   // للتحقق من صحة الحساب
+      invalidVendor: false,    // للتحقق من المورد
+      invalidCostCenter: false // للتحقق من مركز التكلفة
+    });
+
+    this.pushUndo(); // لتسجيل الخطوة في undo إذا كانت موجودة
   }
+
+
 
   removeJournalLine(index: number) {
     if (index >= 0) {
@@ -713,59 +498,161 @@ export class JournalEntriesComponent {
       .reduce((sum: any, l: any) => sum + (Number(l.debit || 0) + Number(l.credit || 0)), 0);
   }
 
-
   saveJournal() {
     let valid = true;
 
     // تحقق من كل سطر
     this.currentJournal.entries.forEach((line: any) => {
-      // الحساب
-      const acc = this.accounts.find(a => a.code === line.accountCode || a.name === line.account);
-      line.invalidAccount = !acc;
-      if (!acc) valid = false;
+      line.invalidAccount = !line.accountCode && !line.accountId;
+      if (line.invalidAccount) valid = false;
 
-     
-      // مركز التكلفة
-      const cc = this.costCenters.find(c => c.code === line.costCenterCode || c.name === line.costCenter);
-      line.invalidCostCenter = !cc;
-      if (!cc) valid = false;
+      line.invalidCostCenter = line.costCenterId === undefined || line.costCenterId === null;
+
+      line.debit = line.debit ?? 0;
+      line.credit = line.credit ?? 0;
     });
 
     // تحقق من تساوي المدين والدائن
     this.calculateCurrentTotals();
     if (this.currentJournal.totalDebit !== this.currentJournal.totalCredit) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Total debit does not equal total credit' });
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Total debit does not equal total credit'
+      });
       valid = false;
     }
 
     if (!valid) {
-      this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please correct highlighted fields before saving' });
-      return; // لا يتم الحفظ
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation',
+        detail: 'Please correct highlighted fields before saving'
+      });
+      return;
     }
 
-    // إذا كل شيء صحيح
-    if (this.isEdit) {
-      const index = this.journalEntries.findIndex(j => j.id === this.currentJournal.id);
-      if (index > -1) this.journalEntries[index] = JSON.parse(JSON.stringify(this.currentJournal));
-    } else {
-      this.journalEntries.push(JSON.parse(JSON.stringify(this.currentJournal)));
+    if (!this.currentJournal.entries || this.currentJournal.entries.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation',
+        detail: 'Journal must have at least one line'
+      });
+      return;
     }
 
-    this.displayDialog = false;
-    this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Entry saved successfully' });
+    // تجهيز payload مطابق للـ JournalDto
+    const journalPayload: JournalDto = {
+      id: this.currentJournal.id ?? 0, // ← Id القيد وليس AccountId
+      journalNumber: this.currentJournal.entryNumber?.trim() || `JE-${Date.now()}`,
+      date: this.currentJournal.date ?? new Date(),
+      description: this.currentJournal.notes ?? '',
+      totalDebit: this.currentJournal.totalDebit ?? 0,
+      totalCredit: this.currentJournal.totalCredit ?? 0,
+      status: 'Draft',
+      createdBy: this.currentJournal.createdBy ?? '',
+      entries: this.currentJournal.entries.map((line: any) => ({
+        id: line.id ?? 0,
+        accountId: line.accountId ?? 0,          // رقم الحساب إن وجد
+        accountCode: line.accountCode ?? null,   // كود الحساب إن وجد
+        accountName: line.accountName ?? '',
+        debit: line.debit ?? 0,
+        credit: line.credit ?? 0,
+        entityId: line.entityId ?? null,
+        entityType: line.entityType?.trim() || '',
+        description: line.description?.trim() || '',
+        costCenterId: line.costCenterId ?? null,
+        costCenterName: line.costCenterName ?? null,
+        journalId: this.currentJournal.id ?? 0
+      }))
+    };
+
+    // تحديد إذا القيد جديد أو موجود
+    const isNew = !this.currentJournal.id || this.currentJournal.id === 0;
+
+    const saveObservable = isNew
+      ? this.journalService.createJournal(journalPayload)
+      : this.journalService.updateJournal(this.currentJournal.id, journalPayload);
+
+    saveObservable.subscribe({
+      next: (savedJournal: JournalDto) => {
+        this.displayDialog = false;
+        this.messageService.clear();
+        this.loadJournals();
+        this.messageService.add({
+          severity: 'success',
+          summary: isNew ? 'Saved' : 'Updated',
+          detail: isNew ? 'Entry created successfully' : 'Entry updated successfully'
+        });
+
+        // استخدام Id القيد وليس AccountId
+        this.currentJournal.id = savedJournal.id;
+
+        if (isNew) {
+          this.journalEntries.push({ ...this.currentJournal });
+        } else {
+          const index = this.journalEntries.findIndex(j => j.id === savedJournal.id);
+          if (index !== -1) {
+            this.journalEntries[index] = { ...this.currentJournal };
+          }
+        }
+      },
+      error: (err) => {
+        console.error('Failed to save journal', err);
+
+        let detailMsg = 'Failed to save entry';
+
+        if (err?.error?.message) {
+          detailMsg = err.error.message;
+          if (err.error.missingAccounts && err.error.missingAccounts.length > 0) {
+            const missing = err.error.missingAccounts
+              .filter((x: string) => x && x.trim() !== '')
+              .join(', ');
+            if (missing) detailMsg += `: ${missing}`;
+          }
+        }
+
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: detailMsg
+        });
+      }
+    });
   }
 
-  deleteJournal(index: number) {
+
+  deleteJournal(index: number, journalId: number) {
     this.confirmationService.confirm({
       message: 'Do you want to delete this entry?',
       header: 'Confirm Delete',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.journalEntries.splice(index, 1);
-        this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Entry deleted successfully' });
+        this.journalService.deleteJournal(journalId).subscribe({
+          next: () => {
+            this.journalEntries.splice(index, 1);
+            this.messageService.clear();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Deleted',
+              detail: 'Entry deleted successfully'
+            });
+          },
+          error: (err) => {
+            console.error('Failed to delete journal', err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to delete entry'
+            });
+          }
+        });
       }
     });
   }
+
 
 
   formatWithCommas(line: any, field: 'debit' | 'credit') {
@@ -807,104 +694,308 @@ export class JournalEntriesComponent {
 
 
 
-  // للـ F9 كما كان
-  openAccountSearch(event: any, rowIndex: number) {
-    this.editingRowIndex = rowIndex;
-    if (event.key === 'F9') {
-      this.accountDialog = true;
-    }
-  }
 
-  // الكتابة المباشرة
+
   handleAccountInput(event: any, rowIndex: number) {
-  const inputValue = event.target.value.trim();
-  const found = this.accounts.find(a => a.code === inputValue || a.name === inputValue);
-  const line = this.currentJournal.entries[rowIndex];
+    const inputValue = event.target.value.trim();
+    const line = this.currentJournal.entries[rowIndex];
 
-  if (found) {
-    line.account = found.name;
-    line.accountCode = found.code;
-    line.invalidAccount = false;
+    const found = this.filteredAccountsList.find(
+      a => a.code === inputValue || a.name === inputValue
+    );
 
-    // ✅ التحقق إذا الحساب من الموردين
-    if (found.name.toLowerCase().includes('vendor') || found.code.startsWith('201')) {
-      line.isVendorEnabled = true;
+    if (found) {
+      line.accountCode = found.code;
+      line.accountName = found.name;
+      line.accountId = found.id;      // 🔹 إضافة الـ ID الرقمي هنا
+      line.invalidAccount = false;
+
+      if (
+        found.name.toLowerCase().includes('vendor') ||
+        found.code.startsWith('201')
+      ) {
+        line.isVendorEnabled = true;
+      } else {
+        line.isVendorEnabled = false;
+        line.vendor = '';
+        line.vendorAccount = '';
+      }
+
     } else {
+      line.accountId = 0;              // 🔹 لم يتم العثور على الحساب
+      line.invalidAccount = inputValue !== '';
+      line.accountName = '';
+      line.accountCode = inputValue;
       line.isVendorEnabled = false;
-      line.vendor = '';           // مسح قيمة المورد عند تعطيله
+      line.vendor = '';
       line.vendorAccount = '';
     }
-
-  } else {
-    line.invalidAccount = inputValue !== '';
-    line.isVendorEnabled = false;
-    line.vendor = '';
-    line.vendorAccount = '';
-  }
-}
-
-
-
-  openCostCenterSearch(event: any, rowIndex: number) {
-    this.editingRowIndex = rowIndex;
-    if (event.key === 'F9') { this.costCenterDialog = true; }
-  }
-
-  handleCostCenterInput(event: any, rowIndex: number) {
-    const inputValue = event.target.value.trim();
-    const found = this.costCenters.find(c => c.code === inputValue || c.name === inputValue);
-
-    const line = this.currentJournal.entries[rowIndex];
-    if (found) {
-      line.costCenter = found.name;
-      line.costCenterCode = found.code;
-      line.invalidCostCenter = false;
-    } else {
-      line.invalidCostCenter = inputValue !== '';
-    }
   }
 
 
-  openVendorDialog(event: any, rowIndex: number) {
-    this.editingRowIndex = rowIndex;
-    if (event.key === 'F9') { this.vendorDialog = true; }
-  }
 
-  handleVendorInput(event: any, rowIndex: number) {
-    const inputValue = event.target.value.trim();
-    const found = this.vendors.find(v => v.account === inputValue || v.name === inputValue);
 
-    const line = this.currentJournal.entries[rowIndex];
-    if (found) {
-      line.vendor = found.name;
-      line.vendorAccount = found.account;
-      line.invalidVendor = false;
-    } else {
-      line.invalidVendor = inputValue !== '';
-    }
-  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // -------------------- Vendor Dialog / CRUD --------------------
 
   
-filteredJournals(filterText: string) {
-  if (!this.journalEntries) return [];
 
-  // تحويل الفلتر لأي نوع إلى نص وتجاهل المسافات
-  const filter = filterText != null ? filterText.toString().trim().toLowerCase() : '';
 
-  if (!filter) return this.journalEntries;
 
-  return this.journalEntries.filter(j => {
-    // نحول كل قيمة من السجلات إلى نص لمطابقتها مع الفلتر
-    const id = j.id?.toString().toLowerCase() || '';
-    const date = j.date?.toString().toLowerCase() || '';
-    const totalDebit = j.totalDebit?.toString().toLowerCase() || '';
-    const totalCredit = j.totalCredit?.toString().toLowerCase() || '';
+  loadChildAccounts(parentCode: string) {
+    this.selectedParentCode = parentCode;
 
-    // تحقق إذا أي عمود يحتوي على النص المطلوب
-    return id.includes(filter) || date.includes(filter) || totalDebit.includes(filter) || totalCredit.includes(filter);
+    this.entitiesService.getEntityTypeAccounts().subscribe({
+      next: (res: Account[]) => {
+        this.childAccounts = res;
+        this.filteredVendorList = [...res]; // عرض جميع الحسابات الابنة
+      },
+      error: (err) => console.error('Failed to load child accounts', err)
+    });
+  }
+
+// -------------------- Load Entities by Account --------------------
+loadEntitiesByAccount(accountId: number, type?: string) {
+  if (!accountId) return;
+
+  this.entitiesService.getByAccount(accountId, type).subscribe({
+    next: (res: EntityRecord[]) => {
+      this.childAccounts = res;           // تحديث قائمة الحسابات
+      this.filteredVendorList = [...res]; // تحديث القائمة المعروضة في الفلتر
+    },
+    error: (err) => {
+      console.error('Failed to load entities', err);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to load entities for the selected account'
+      });
+    }
   });
 }
- // 🟢 الفلاتر
+
+openVendorDialog(event: any, rowIndex: number) {
+  this.editingRowIndex = rowIndex;
+
+  if (event.key === 'F9') {
+    const line = this.currentJournal.entries[rowIndex];
+
+    if (!line.accountId) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'تحذير',
+        detail: 'الرجاء إدخال الحساب أولاً'
+      });
+      return;
+    }
+
+    // فتح نافذة الاختيار
+    this.vendorDialog = true;
+
+    // تحميل الـ Entities المرتبطة بالحساب
+    // النوع هنا لا يمرّر ثابتاً، بل يتم جلبه من الحساب نفسه عبر API
+    this.loadEntitiesByAccount(line.accountId);
+  }
+}
+
+
+  openAddVendor() {
+    this.isEditVendor = false;
+    // نستخدم الحساب الأب الحالي لإنشاء مورد جديد
+    const line = this.currentJournal.entries[this.editingRowIndex];
+    this.currentVendor = {
+      id: this.childAccounts.length + 1, // رقم جديد بناءً على الحسابات الابنة
+      name: '',
+      account: line.accountCode || ''    // ربطه بالحساب الأب
+    };
+    this.vendorFormDialog = true;
+  }
+
+  openEditVendor(vendor: Account) {
+    this.isEditVendor = true;
+    this.currentVendor = JSON.parse(JSON.stringify(vendor));
+    this.vendorFormDialog = true;
+  }
+
+  saveVendor() {
+    if (this.isEditVendor) {
+      const index = this.childAccounts.findIndex(v => v.id === this.currentVendor.id);
+      if (index > -1) this.childAccounts[index] = JSON.parse(JSON.stringify(this.currentVendor));
+    } else {
+      this.childAccounts.push(JSON.parse(JSON.stringify(this.currentVendor)));
+    }
+    this.vendorFormDialog = false;
+    this.updateFilteredVendors();
+  }
+
+  cancelVendor() {
+    this.vendorFormDialog = false;
+  }
+
+
+  // --------------------  Vendors --------------------
+
+updateFilteredVendors() {
+  const filter = this.vendorFilter.trim().toLowerCase();
+
+  if (!filter) {
+    this.filteredVendorList = [...this.childAccounts]; // استخدام الحسابات الابنة كما هي
+  } else {
+    this.filteredVendorList = this.childAccounts.filter(v =>
+  v.name?.toLowerCase().includes(filter) || (v.code ?? '').includes(filter)
+);
+  }
+}
+
+
+  handleVendorFilterInput(event: any) {
+    this.vendorFilter = event.target.value;
+    this.updateFilteredVendors();
+  }
+
+  // -------------------- Handle Vendor Input in Journal Line --------------------
+handleVendorInput(event: any, rowIndex: number) {
+  const inputValue = event.target.value.trim().toLowerCase();
+  const line = this.currentJournal.entries[rowIndex];
+
+  // فلترة قائمة الـ Entities حسب الاسم أو الكود
+  this.filteredVendorList = this.childAccounts.filter(v =>
+    v.name?.toLowerCase().includes(inputValue) ||
+    (v.code ?? '').toLowerCase().includes(inputValue)
+  );
+
+  // محاولة إيجاد مطابق كامل (اسم أو كود)
+  const found = this.childAccounts.find(v =>
+    v.name?.toLowerCase() === inputValue ||
+    (v.code ?? '').toLowerCase() === inputValue
+  );
+
+  if (found) {
+    // عند إيجاد الكيان
+    line.vendor = found.name ?? '';
+    line.vendorAccount = found.code ?? '';
+    line.entityId = found.id ?? null;
+    line.entityType = found.entityType ?? null;
+    line.invalidVendor = false;
+  } else {
+    // في حالة عدم إيجاد كيان مطابق
+    line.vendor = '';
+    line.vendorAccount = '';
+    line.entityId = null;
+    line.entityType = null;
+    line.invalidVendor = inputValue !== '';
+  }
+}
+
+  // -------------------- Select Vendor from Dialog --------------------
+selectVendor(vn: any) {
+  if (this.editingRowIndex !== null && this.editingRowIndex >= 0) {
+    const line = this.currentJournal.entries[this.editingRowIndex];
+
+    // تعبئة معلومات الكيان المختار (Supplier / Customer / Contractor / ... )
+    line.vendor = vn.name;              // الاسم للعرض
+    line.vendorAccount = vn.code;       // رقم الحساب
+    line.entityId = vn.id ?? null;      // ID الخاص بالكيان
+    line.entityType = vn.entityType;    // النوع الحقيقي من الداتا
+
+    line.invalidVendor = false;
+
+    // إغلاق نافذة الاختيار
+    this.vendorDialog = false;
+    this.vendorFilter = '';
+  }
+}
+
+
+
+
+
+  // -------------------- Optional: Auto-update Filtered List --------------------
+  onVendorFilterChange(value: string) {
+    this.vendorFilter = value;
+    this.updateFilteredVendors();
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  // 🟢 الفلاتر
+
+  filteredJournals(filterText: string) {
+    if (!this.journalEntries) return [];
+
+    // تحويل الفلتر لأي نوع إلى نص وتجاهل المسافات
+    const filter = filterText != null ? filterText.toString().trim().toLowerCase() : '';
+
+    if (!filter) return this.journalEntries;
+
+    return this.journalEntries.filter(j => {
+      // نحول كل قيمة من السجلات إلى نص لمطابقتها مع الفلتر
+      const id = j.entryNumber?.toString().toLowerCase() || '';
+      const date = j.date?.toString().toLowerCase() || '';
+      const totalDebit = j.totalDebit?.toString().toLowerCase() || '';
+      const totalCredit = j.totalCredit?.toString().toLowerCase() || '';
+
+      // تحقق إذا أي عمود يحتوي على النص المطلوب
+      return id.includes(filter) || date.includes(filter) || totalDebit.includes(filter) || totalCredit.includes(filter);
+    });
+  }
+
+
   filteredAccounts() {
     const filter = this.accountFilter.trim();
     if (!filter) return this.accounts;
@@ -914,89 +1005,140 @@ filteredJournals(filterText: string) {
     );
   }
 
-selectAccount(acc: any) {
-  if (this.selectedRowIndex >= 0) {
-    const line = this.currentJournal.entries[this.selectedRowIndex];
-    line.account = acc.name;
-    line.accountCode = acc.code;
 
-    // 🔹 لو الحساب مورّد، فعّل حقل المورد
-    line.isVendorEnabled = acc.name.toLowerCase().includes('vendor') || acc.code.startsWith('10101');
-    
-    this.accountDialog = false;
+  selectAccount(acc: any) {
+    if (this.editingRowIndex >= 0) {
+      const line = this.currentJournal.entries[this.editingRowIndex];
+
+      line.account = acc.code;       // عرض رقم الحساب في الحقل
+      line.accountCode = acc.code;   // إذا كنت تستخدم هذا الحقل أيضاً في الـ payload
+      line.accountName = acc.name;   // عرض اسم الحساب
+      line.accountId = acc.id;       // حفظ الـ ID
+      line.invalidAccount = false;
+
+      // تحقق إذا الحساب مرتبط بمورد
+      line.isVendorEnabled = acc.name.toLowerCase().includes('vendor') || acc.code.startsWith('201');
+      if (!line.isVendorEnabled) {
+        line.vendor = '';
+        line.vendorAccount = '';
+      }
+
+      this.accountDialog = false;    // اغلاق الديالوج
+    }
   }
-}
+
 
 
 
   filteredCostCenters() {
-    const filter = this.costCenterFilter.trim();
-    if (!filter) return this.costCenters;
-    return this.costCenters.filter(c =>
-      c.name.toLowerCase().includes(filter.toLowerCase()) ||
-      c.code.includes(filter)
-    );
-  }
-
-  selectCostCenter(cc: any) {
-    const line = this.currentJournal.entries[this.editingRowIndex];
-    line.costCenter = cc.name;
-    line.costCenterCode = cc.code;
-    this.costCenterDialog = false;
-    line.invalidAccount = false;
-    this.costCenterFilter = '';
-  }
-
-  filteredVendors() {
-    const filter = this.vendorFilter.trim();
-    if (!filter) return this.vendors;
-    return this.vendors.filter(v =>
-      v.name.toLowerCase().includes(filter.toLowerCase()) ||
-      v.account.includes(filter)
-    );
-  }
-
-  selectVendor(vn: any) {
-    const line = this.currentJournal.entries[this.editingRowIndex];
-    line.vendor = vn.name;
-    line.vendorAccount = vn.account;
-    this.vendorDialog = false;
-    line.invalidAccount = false;
-    this.vendorFilter = '';
-  }
-
-  // 🟢 Vendor form
-  openAddVendor() {
-    this.isEditVendor = false;
-    this.currentVendor = { id: this.vendors.length + 1, name: '', account: '' };
-    this.vendorFormDialog = true;
-  }
-
-  openEditVendor(vendor: any) {
-    this.isEditVendor = true;
-    this.currentVendor = JSON.parse(JSON.stringify(vendor));
-    this.vendorFormDialog = true;
-  }
-
-  saveVendor() {
-    if (this.isEditVendor) {
-      const index = this.vendors.findIndex(v => v.id === this.currentVendor.id);
-      if (index > -1) this.vendors[index] = JSON.parse(JSON.stringify(this.currentVendor));
+    const filter = this.costCenterFilter.trim().toLowerCase();
+    if (!filter) {
+      this.filteredCostCentersList = [...this.childCostCenters];
     } else {
-      this.vendors.push(JSON.parse(JSON.stringify(this.currentVendor)));
+      this.filteredCostCentersList = this.childCostCenters.filter(cc =>
+        cc.name.toLowerCase().includes(filter) || cc.code.toLowerCase().includes(filter)
+      );
     }
-    this.vendorFormDialog = false;
+  }
+  // فتح نافذة البحث عند الضغط F9
+  openCostCenterSearch(event: KeyboardEvent, rowIndex: number) {
+    this.editingRowIndex = rowIndex;
+
+    if (event.key === 'F9') {
+      this.accountsService.getAllCostCenters().subscribe({
+        next: (res: Account[]) => {
+          this.childCostCenters = res;
+          this.filteredCostCenters(); // فلترة أولية
+          this.costCenterDialog = true;
+        },
+        error: (err) => console.error('Failed to load cost centers', err)
+      });
+    }
   }
 
-  cancelVendor() {
-    this.vendorFormDialog = false;
+  loadChildCostCenters(parentCode: string) {
+    this.accountsService.getAllCostCenters().subscribe({
+      next: (res: Account[]) => {
+        this.childCostCenters = res; // جميع مراكز التكلفة الفرعية
+        this.filteredCostCenters(); // فلترة أولية لعرضها في الجدول
+      },
+      error: (err) => console.error('Failed to load child cost centers', err)
+    });
+  }
+
+
+  // اختيار مركز تكلفة
+  selectCostCenter(cc: any) {
+    if (this.editingRowIndex !== null && this.editingRowIndex >= 0) {
+      const line = this.currentJournal.entries[this.editingRowIndex];
+
+      // تعبئة معلومات مركز التكلفة
+      line.costCenter = cc.name;           // الاسم للعرض
+      line.costCenterCode = cc.code;       // الكود
+      line.costCenterId = cc.id ?? null;   // معرف مركز التكلفة
+      line.costCenterName = cc.name;       // الاسم لإرساله للـ backend
+      line.entityId = cc.id ?? null;       // يمكن استخدامه إذا كان مرتبطًا بنفس الحقل العام
+      line.entityType = 'CostCenter';      // النوع
+      line.invalidCostCenter = false;
+
+      // إغلاق نافذة اختيار مركز التكلفة
+      this.costCenterDialog = false;
+      this.costCenterFilter = '';
+    }
+  }
+
+
+  handleCostCenterInput(event: any, rowIndex: number) {
+    const inputValue = event.target.value.trim();
+    const line = this.currentJournal.entries[rowIndex];
+
+    const found = this.filteredCostCentersList.find(
+      a => a.code === inputValue || a.name === inputValue
+    );
+
+    if (found) {
+      line.costCenterCode = found.code;
+      line.costCenterName = found.name;
+      line.costCenterId = found.id;      // 🔹 إضافة الـ ID الرقمي هنا
+      line.invalidAccount = false;
+
+      if (
+        found.name.toLowerCase().includes('vendor') ||
+        found.code.startsWith('201')
+      ) {
+        line.isVendorEnabled = true;
+      } else {
+        line.isVendorEnabled = false;
+        line.vendor = '';
+        line.vendorAccount = '';
+      }
+
+    } else {
+      line.costCenterId = 0;              // 🔹 لم يتم العثور على الحساب
+      line.invalidAccount = inputValue !== '';
+      line.costCenterName = '';
+      line.costCenterCode = inputValue;
+      line.isVendorEnabled = false;
+
+    }
   }
 
 
 
   // 🟢 نسخ / لصق
-  copyLine() { if (this.selectedRowIndex >= 0) { this.copiedLine = { ...this.currentJournal.entries[this.selectedRowIndex] }; this.messageService.add({ severity: 'info', summary: 'Copied', detail: 'Line copied' }); } }
-  pasteLine() { if (this.copiedLine) { this.currentJournal.entries.splice(this.selectedRowIndex + 1, 0, { ...this.copiedLine }); this.messageService.add({ severity: 'success', summary: 'Pasted', detail: 'Line pasted' }); this.calculateCurrentTotals(); this.pushUndo(); } }
+  copyLine() {
+    if (this.selectedRowIndex >= 0) {
+      this.copiedLine = { ...this.currentJournal.entries[this.selectedRowIndex] };
+      this.messageService.clear(); this.messageService.add({ severity: 'info', summary: 'Copied', detail: 'Line copied' });
+    }
+  }
+  pasteLine() {
+    if (this.copiedLine) {
+      this.currentJournal.entries.splice(this.selectedRowIndex + 1, 0, { ...this.copiedLine });
+      this.messageService.clear(); this.messageService.add({ severity: 'success', summary: 'Pasted', detail: 'Line pasted' });
+      this.calculateCurrentTotals(); this.pushUndo();
+    }
+  }
 
   // 🟢 Undo / Redo
   pushUndo() { this.undoStack.push(JSON.stringify(this.currentJournal.entries)); if (this.undoStack.length > 50) this.undoStack.shift(); }
@@ -1023,55 +1165,69 @@ selectAccount(acc: any) {
 
   // 🟢 الطباعة
   printEntry(journal: any) {
+    if (!journal || !journal.entries || !journal.entries.length) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'No entries to print'
+      });
+      return;
+    }
+
     const lines = journal.entries.map((line: any) => `
-        <tr>
-          <td>${line.account}</td>
-          <td>${line.description}</td>
-          <td>${line.debit}</td>
-          <td>${line.credit}</td>
-          <td>${line.costCenter}</td>
-          <td>${line.tags?.join(', ')}</td>
-        </tr>
-      `).join('');
+    <tr>
+      <td>${line.account ?? line.accountCode ?? ''}</td>
+      <td>${line.description ?? ''}</td>
+      <td>${line.debit ?? 0}</td>
+      <td>${line.credit ?? 0}</td>
+      <td>${line.costCenter ?? ''}</td>
+      <td>${line.tags?.join(', ') ?? ''}</td>
+    </tr>
+  `).join('');
+
     const html = `
-        <html>
-        <head>
-          <title>Entry #${journal.id}</title>
-          <style>
-            body {font-family: Arial, sans-serif;}
-            h2 {text-align:center;}
-            table {width:100%; border-collapse: collapse; margin-bottom:10px;}
-            th, td {border: 1px solid #000; padding: 5px; text-align: left;}
-            th {background: #eee;}
-            .footer {margin-top:20px; display:flex; justify-content:space-between;}
-          </style>
-        </head>
-        <body>
-          <h2>Company Name</h2>
-          <h3>Journal Entry #${journal.id} - ${journal.date}</h3>
-          <table>
-            <tr>
-              <th>Account</th><th>Description</th><th>Debit</th><th>Credit</th><th>Cost Center</th><th>Tags</th>
-            </tr>
-            ${lines}
-            <tr>
-              <td colspan="2" style="text-align:right"><strong>Total:</strong></td>
-              <td>${journal.totalDebit}</td>
-              <td>${journal.totalCredit}</td>
-              <td></td>
-              <td></td>
-            </tr>
-          </table>
-          <div class="footer">
-            <span>Prepared By: __________</span>
-            <span>Approved By: __________</span>
-          </div>
-        </body>
-        </html>
-      `;
+    <html>
+    <head>
+      <title>Entry #${journal.id}</title>
+      <style>
+        body {font-family: Arial, sans-serif;}
+        h2 {text-align:center;}
+        table {width:100%; border-collapse: collapse; margin-bottom:10px;}
+        th, td {border: 1px solid #000; padding: 5px; text-align: left;}
+        th {background: #eee;}
+        .footer {margin-top:20px; display:flex; justify-content:space-between;}
+      </style>
+    </head>
+    <body onload="window.print();window.close();">
+      <h2>Company Name</h2>
+      <h3>Journal Entry #${journal.id} - ${journal.date}</h3>
+      <table>
+        <tr>
+          <th>Account</th><th>Description</th><th>Debit</th><th>Credit</th><th>Cost Center</th><th>Tags</th>
+        </tr>
+        ${lines}
+        <tr>
+          <td colspan="2" style="text-align:right"><strong>Total:</strong></td>
+          <td>${journal.totalDebit ?? 0}</td>
+          <td>${journal.totalCredit ?? 0}</td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+      <div class="footer">
+        <span>Prepared By: __________</span>
+        <span>Approved By: __________</span>
+      </div>
+    </body>
+    </html>
+  `;
+
     const newWindow = window.open('', '_blank');
-    newWindow?.document.write(html);
-    newWindow?.document.close();
-    newWindow?.print();
+    if (newWindow) {
+      newWindow.document.open();
+      newWindow.document.write(html);
+      newWindow.document.close();
+    }
   }
+
 }

@@ -1,0 +1,10 @@
+/* اللون الأحمر للزر النصي الصغير */
+.p-button-text.text-red {
+  color: #dc3545 !important;  /* اللون الأساسي */
+}
+
+/* عند المرور بالماوس */
+.p-button-text.text-red:hover,
+.p-button-text.text-red:hover .p-button-icon {
+  color: #a71d2a !important;  /* اللون عند hover */
+}

@@ -8,15 +8,9 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { DatePickerModule } from 'primeng/datepicker';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { TrialBalanceService, ProfitLossEntry, ProfitLossResponse } from '@/apiservice/trialbalance.service';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-
-interface ProfitLossEntry {
-  account: string;
-  type: 'Revenue' | 'Expense';
-  amount: number;
-  date: string;
-}
 
 interface MultiSelectOption {
   label: string;
@@ -39,12 +33,10 @@ interface MultiSelectOption {
   providers: [MessageService],
   template: `
 <div class="card">
-  <p-toast></p-toast>
+  <p-toast position="top-center"></p-toast>
   <h2 class="text-3xl font-bold mb-6">Profit & Loss Statement</h2>
 
- 
   <div class="flex gap-4 mb-4 flex-wrap">
-    <!-- فلترة التواريخ -->
     <p-datepicker
         [(ngModel)]="startDate"
         [showIcon]="true"
@@ -61,7 +53,6 @@ interface MultiSelectOption {
         (onSelect)="applyFilter()">
     </p-datepicker>
 
-    <!-- فلترة النوع -->
     <p-multiSelect
       [options]="typeOptions"
       [(ngModel)]="selectedTypes"
@@ -89,8 +80,9 @@ interface MultiSelectOption {
       <tr [ngClass]="{'bg-green-100': row.type==='Revenue','bg-red-100': row.type==='Expense'}">
         <td>{{row.account}}</td>
         <td>{{row.type}}</td>
-        <td>{{row.amount | currency}}</td>
-        <td>{{row.date}}</td>
+        <td>{{row.totalCredit - row.totalDebit | currency}}</td>
+        <td>{{row.entries[0]?.date | date:'yyyy-MM-dd'}}</td>
+        
       </tr>
     </ng-template>
 
@@ -122,47 +114,54 @@ interface MultiSelectOption {
   `
 })
 export class ProfitLossComponent {
-
-  entries: ProfitLossEntry[] = [
-    {account: 'Sales', type: 'Revenue', amount: 5000, date: '2025-09-01'},
-    {account: 'Service Income', type: 'Revenue', amount: 2000, date: '2025-09-10'},
-    {account: 'Rent', type: 'Expense', amount: 1000, date: '2025-09-05'},
-    {account: 'Utilities', type: 'Expense', amount: 300, date: '2025-09-15'},
-  ];
-
-  filteredData: ProfitLossEntry[] = [...this.entries];
+  entries: ProfitLossEntry[] = [];
+  filteredData: ProfitLossEntry[] = [];
   startDate: string | null = null;
   endDate: string | null = null;
+  selectedTypes: string[] = [];
+
+  totalRevenue = 0;
+  totalExpenses = 0;
+  netProfit = 0;
 
   typeOptions: MultiSelectOption[] = [
     {label: 'Revenue', value: 'Revenue'},
-    {label: 'Expense', value: 'Expense'}
+    {label: 'Expense', value: 'Expense'},
+    
   ];
-  selectedTypes: MultiSelectOption[] = [];
 
-  constructor(private messageService: MessageService) {}
+  constructor(private service: TrialBalanceService, private messageService: MessageService) {}
 
-  get totalRevenue() {
-    return this.filteredData.filter(e => e.type==='Revenue').reduce((sum,e)=>sum+e.amount,0);
+  ngOnInit() {
+    this.loadData();
   }
 
-  get totalExpenses() {
-    return this.filteredData.filter(e => e.type==='Expense').reduce((sum,e)=>sum+e.amount,0);
-  }
-
-  get netProfit() {
-    return this.totalRevenue - this.totalExpenses;
+  loadData() {
+    this.service.getProfitLoss().subscribe({
+      next: (res: ProfitLossResponse) => {
+        this.entries = res.accounts;
+        this.filteredData = [...this.entries];
+        this.totalRevenue = res.totalRevenue;
+        this.totalExpenses = res.totalExpense;
+        this.netProfit = res.netProfit;
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load data' });
+      }
+    });
   }
 
   applyFilter() {
-    const selectedValues = this.selectedTypes.map(t => t.value);
+    const afterStart = this.startDate ? new Date(this.startDate) : null;
+    const beforeEnd = this.endDate ? new Date(this.endDate) : null;
 
     this.filteredData = this.entries.filter(e => {
-      const entryDate = new Date(e.date);
-      const afterStart = this.startDate ? entryDate >= new Date(this.startDate) : true;
-      const beforeEnd = this.endDate ? entryDate <= new Date(this.endDate) : true;
-      const typeMatch = !selectedValues.length || selectedValues.includes(e.type);
-      return afterStart && beforeEnd && typeMatch;
+      const dateMatch = e.entries.some((en: ProfitLossEntry['entries'][0]) => {
+        const d = new Date(en.date);
+        return (!afterStart || d >= afterStart) && (!beforeEnd || d <= beforeEnd);
+      });
+      const typeMatch = !this.selectedTypes.length || this.selectedTypes.includes(e.type);
+      return dateMatch && typeMatch;
     });
   }
 
@@ -175,14 +174,19 @@ export class ProfitLossComponent {
 
   exportExcel() {
     if (!this.filteredData.length) {
+      this.messageService.clear();
       this.messageService.add({severity:'warn', summary:'Export', detail:'No data to export'});
       return;
     }
-    const worksheet = XLSX.utils.json_to_sheet(this.filteredData);
+    const worksheet = XLSX.utils.json_to_sheet(this.filteredData.map(e => ({
+      Account: e.account,
+      Type: e.type,
+      Amount: e.totalCredit - e.totalDebit,
+      Date: e.entries[0]?.date
+    })));
     const workbook = { Sheets: { 'ProfitLoss': worksheet }, SheetNames: ['ProfitLoss'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(data, 'ProfitLoss.xlsx');
   }
-
 }

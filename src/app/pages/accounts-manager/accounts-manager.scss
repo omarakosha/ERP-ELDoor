@@ -1,0 +1,53 @@
+/* متغير مستوى المسافة لكل level يتم تحكمه عبر inline style --level */
+.node-row {
+  position: relative;
+  /* نستخدم CSS variable لإزاحة موضع الخط */
+  --level: 0;
+}
+
+.node-row.has-level::before {
+  content: '';
+  position: absolute;
+  /* نحسب مكان الخط بناء على مستوى العقدة */
+  left: calc(var(--level) * 20px - 10px);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+/* ربط أفقي صغير للخط عند مستوى كل صف (يجعله يبدو متصلًا بالعنصر) */
+.node-row.has-level::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--level) * 20px - 10px);
+  top: 50%;
+  width: 10px;
+  height: 1px;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+/* تحسين العرض داخل الصف */
+.node-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ضبط النص والهوامش */
+.left-info .font-medium {
+  max-width: 60ch;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* تدرّج طفيف عند hover */
+.node-content:hover {
+  transform: translateY(-1px);
+  transition: transform 0.12s ease;
+}

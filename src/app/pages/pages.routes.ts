@@ -3,7 +3,7 @@ import { Documentation } from './documentation/documentation';
 import { Crud } from './crud/crud';
 import { Empty } from './empty/empty';
 import { Orders } from './orders/orders';
-import {  CRMComponent } from './CRM/crm';
+import { CRMComponent } from './CRM/crm';
 import { InventoryComponent } from './inventory/inventory';
 import { SalesInvoicesComponent } from './sales-invoices/sales-invoices';
 import { PurchaseOrdersComponent } from './Purchase-Invoices/Purchase-Invoices';
@@ -15,11 +15,13 @@ import { ReportsComponent } from './reports/reports';
 import { FinancialReportComponent } from './financial-report/financial-report.component';
 import { PosComponent } from './pos/pos';
 import { PosManagementComponent } from './pos-management/pos-management-component';
-import { PaymentsComponent } from './payments-component/payments-component';
+import { PaymentsComponent } from './payments/payments-component';
 import { StockTransferComponent } from './stock-transfer/stock-transfer.component';
 import { PurchaseReturnsComponent } from './purchase-returns/purchase-returns.component';
 import { SuppliersComponent } from './suppliers/suppliers.component';
 import { SupplierPaymentsComponent } from './supplier-payments/supplier-payments.component';
+import { BalanceSheetComponent } from './balancesheet/balancesheet';
+import { EntityComponent } from './entity/entity.component';
 export default [
   { path: 'documentation', component: Documentation },
   { path: 'crud', component: Crud },
@@ -30,17 +32,19 @@ export default [
   { path: 'purchase-invoices', component: PurchaseOrdersComponent },
   { path: 'journal-entries', component: JournalEntriesComponent },
   { path: 'trial-balance', component: TrialBalanceComponent },
+  { path: 'balancesheet', component: BalanceSheetComponent },
   { path: 'profit-loss', component: ProfitLossComponent },
   { path: 'accounts-manager', component: AccountsManager },
+  { path: 'entity', component: EntityComponent },
   { path: 'financial-report', component: FinancialReportComponent },
-   { path: 'pos', component: PosComponent },
-    { path: 'pos-management', component: PosManagementComponent },
-    { path: 'payments-component', component: PaymentsComponent },
-    { path: 'stock-transfer', component: StockTransferComponent },
-    { path: 'purchase-returns', component: PurchaseReturnsComponent },
-     { path: 'suppliers', component: SuppliersComponent },
-      { path: 'supplier-payments', component: SupplierPaymentsComponent },
+  { path: 'pos', component: PosComponent },
+  { path: 'pos-management', component: PosManagementComponent },
+  { path: 'payments', component: PaymentsComponent },
+  { path: 'stock-transfer', component: StockTransferComponent },
+  { path: 'purchase-returns', component: PurchaseReturnsComponent },
+  { path: 'suppliers', component: SuppliersComponent },
+  { path: 'supplier-payments', component: SupplierPaymentsComponent },
   { path: 'empty', component: Empty },
-  { path: 'reports', component:ReportsComponent },
+  { path: 'reports', component: ReportsComponent },
   { path: '**', redirectTo: '/notfound' }
 ] as Routes;

@@ -13,6 +13,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { debounceTime, fromEvent } from 'rxjs';
 
 interface Customer {
   id: number;
@@ -42,6 +43,8 @@ interface Customer {
   providers: [ConfirmationService, MessageService],
   template: `
 <div class="card p-5">
+  <p-toast position="top-center" class="custom-toast"></p-toast>
+
   <div class="flex flex-wrap justify-between items-center mb-5 gap-3">
     <h2 class="text-xl font-semibold text-gray-800">Customer Management</h2>
 
@@ -57,7 +60,6 @@ interface Customer {
           pInputText
           type="text"
           placeholder="Search..."
-          (input)="onGlobalFilter(dt, $event)"
           class="pl-10 pr-8 py-2 rounded-lg border border-gray-300 focus:border-primary w-64"
         />
       </span>
@@ -71,13 +73,12 @@ interface Customer {
     dataKey="id"
     [rows]="10"
     [paginator]="true"
-    [rowsPerPageOptions]="[10, 20, 50]"
+    [rowsPerPageOptions]="[10,20,50]"
     [loading]="loading"
     [globalFilterFields]="['id','name','email','phone','paid','balance']"
     responsiveLayout="scroll"
     class="rounded-xl overflow-hidden shadow-sm"
   >
-    <!-- Table Header -->
     <ng-template pTemplate="header">
       <tr class="bg-gray-100 text-gray-700 text-sm">
         <th *ngFor="let col of customerColumns" [style.min-width]="col.minWidth">
@@ -95,7 +96,6 @@ interface Customer {
       </tr>
     </ng-template>
 
-    <!-- Table Body -->
     <ng-template pTemplate="body" let-c>
       <tr class="hover:bg-gray-50">
         <td>{{ c.id }}</td>
@@ -117,23 +117,12 @@ interface Customer {
           </span>
         </td>
         <td class="flex gap-2 justify-center">
-          <button
-            pButton
-            icon="pi pi-pencil"
-            class="p-button-info p-button-sm"
-            (click)="editCustomer(c)"
-          ></button>
-          <button
-            pButton
-            icon="pi pi-trash"
-            class="p-button-danger p-button-sm"
-            (click)="deleteCustomer(c)"
-          ></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editCustomer(c)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteCustomer(c)"></button>
         </td>
       </tr>
     </ng-template>
 
-    <!-- Empty Message -->
     <ng-template pTemplate="emptymessage">
       <tr>
         <td colspan="8" class="text-center py-4 text-gray-500">
@@ -149,7 +138,7 @@ interface Customer {
     [(visible)]="displayDialog"
     [modal]="true"
     [closable]="true"
-    [style]="{ width: '450px' }"
+    [style]="{ width: '95vw', maxWidth: '450px' }"
   >
     <div class="p-fluid space-y-4">
       <div class="field">
@@ -190,11 +179,12 @@ interface Customer {
     </div>
   </p-dialog>
 </div>
-
   `
 })
 export class CRMComponent implements OnInit {
+
   @ViewChild('filterInput') filterInput!: ElementRef;
+@ViewChild('dt') dt!: Table; // أضف هذا فوق المتغيرات
 
   customers: Customer[] = [];
   displayDialog = false;
@@ -212,20 +202,22 @@ export class CRMComponent implements OnInit {
     { field: 'status', header: 'الحالة', filterType: 'text', filterPlaceholder: 'بحث...', minWidth: '100px' }
   ];
 
+  constructor(
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
+  ) {}
+
   ngOnInit() {
     this.customers = [
-      {
-        id: 6329206,
-        name: 'ليلى بنت عبد العالى بن عامر البنوى السلمي',
-        email: 'laila@example.com',
-        phone: '0540249700',
-        paid: 17500,
-        balance: 0,
-        status: 'نشط',
-        activity: 80
-      }
+      { id: 6329206, name: 'ليلى بنت عبد العالى بن عامر البنوى السلمي', email: 'laila@example.com', phone: '0540249700', paid: 17500, balance: 0, status: 'نشط', activity: 80 }
     ];
     this.loading = false;
+
+    // Debounce for search input
+   fromEvent(this.filterInput.nativeElement, 'input')
+  .pipe(debounceTime(300))
+  .subscribe(() => this.onGlobalFilter(this.dt, { target: this.filterInput.nativeElement } as any));
+
   }
 
   onGlobalFilter(table: Table, event: Event) {
@@ -250,17 +242,36 @@ export class CRMComponent implements OnInit {
   }
 
   saveCustomer() {
+    if (!this.newCustomer.name || !this.newCustomer.email) {
+      this.messageService.clear();
+      this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'يرجى تعبئة جميع الحقول المطلوبة', life: 3000 });
+      return;
+    }
+
     if (!this.isEdit) {
       this.customers.push({ ...this.newCustomer });
+      this.messageService.clear();
+      this.messageService.add({ severity: 'success', summary: 'Saved', detail: `Customer "${this.newCustomer.name}" added successfully`, life: 3000 });
     } else {
       const index = this.customers.findIndex(c => c.id === this.newCustomer.id);
       if (index !== -1) this.customers[index] = { ...this.newCustomer };
+      this.messageService.clear();
+      this.messageService.add({ severity: 'success', summary: 'Updated', detail: `Customer "${this.newCustomer.name}" updated successfully`, life: 3000 });
     }
+
     this.displayDialog = false;
   }
 
   deleteCustomer(customer: Customer) {
-    this.customers = this.customers.filter(c => c.id !== customer.id);
+    this.confirmationService.confirm({
+      message: `هل تريد حذف العميل "${customer.name}"؟`,
+      header: 'تأكيد الحذف',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.customers = this.customers.filter(c => c.id !== customer.id);
+        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: `Customer "${customer.name}" deleted.`, life: 3000 });
+      }
+    });
   }
 
   exportExcel() {
@@ -279,4 +290,5 @@ export class CRMComponent implements OnInit {
     });
     doc.save('Customers.pdf');
   }
+
 }

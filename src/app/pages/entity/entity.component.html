@@ -1,0 +1,109 @@
+<div class="card p-4">
+
+  <div class="flex justify-between items-center mb-3">
+    <h2>إدارة الحسابات</h2>
+    <button pButton label="إضافة" icon="pi pi-plus" (click)="new()"></button>
+  </div>
+
+  <p-table [value]="list" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>الاسم</th>
+        <th>الكود</th>
+        <th>النوع</th>
+        <th>الهاتف</th>
+        <th>الإيميل</th>
+        <th>العنوان</th>
+        <th>الرقم الضريبي</th>
+        <th>الحساب المرتبط</th>
+        <th>تحكم</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.name }}</td>
+        <td>{{ row.code }}</td>
+        <td>{{ row.entityType }}</td>
+        <td>{{ row.phone }}</td>
+        <td>{{ row.email }}</td>
+        <td>{{ row.address }}</td>
+        <td>{{ row.taxNumber }}</td>
+        <td>{{ row.accountCode }} - {{ row.accountName }}</td>
+        <td class="flex gap-2">
+          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="edit(row)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-sm p-button-danger" (click)="remove(row.id)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog header="بيانات الكيان" [(visible)]="displayDialog" [modal]="true" [style]="{ width: '650px' }">
+
+  <div class="grid grid-cols-2 p-4 gap-4">
+
+    <div>
+      <label>الاسم</label>
+      <input pInputText class="w-full" [(ngModel)]="model.name">
+    </div>
+
+    <div>
+      <label>الكود</label>
+      <input pInputText class="w-full" [(ngModel)]="model.code" readonly>
+    </div>
+<div>
+  <label>النوع</label>
+ <!-- النوع -->
+<p-select
+  [options]="types"
+  [(ngModel)]="model.entityType"
+  optionLabel="label"
+  optionValue="value"
+  class="w-full"
+  placeholder="اختر النوع"
+  (onChange)="onTypeManualChange()">
+</p-select>
+
+</div>
+
+<div>
+  <label>الحساب المرتبط</label>
+  <p-select
+    [options]="filteredAccounts"
+    [(ngModel)]="model.accountId"
+    optionLabel="fullName"
+    optionValue="id"
+    class="w-full"
+    placeholder="اختر الحساب"
+    (onChange)="onAccountChange()">
+  </p-select>
+</div>
+
+    <div>
+      <label>الهاتف</label>
+      <input pInputText class="w-full" [(ngModel)]="model.phone">
+    </div>
+
+    <div>
+      <label>الإيميل</label>
+      <input pInputText class="w-full" [(ngModel)]="model.email">
+    </div>
+
+    <div>
+      <label>العنوان</label>
+      <input pInputText class="w-full" [(ngModel)]="model.address">
+    </div>
+
+    <div>
+      <label>الرقم الضريبي</label>
+      <input pInputText class="w-full" [(ngModel)]="model.taxNumber">
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="حفظ" icon="pi pi-check" (click)="save()"></button>
+  </ng-template>
+
+</p-dialog>

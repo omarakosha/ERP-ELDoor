@@ -93,6 +93,7 @@ export class CasherposComponent implements OnInit, OnDestroy {
     this.updateDateTime();
     this.dateInterval = interval(60000).subscribe(() => this.updateDateTime());
   }
+  
 
   ngOnDestroy() {
     this.dateInterval.unsubscribe();
@@ -106,13 +107,17 @@ export class CasherposComponent implements OnInit, OnDestroy {
   addProduct() {
     this.products.push({ name: `منتج ${this.products.length + 1}`, qty: 1, price: 10 });
     this.calculateTotals();
-    this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تمت إضافة منتج جديد بنجاح' });
+     this.messageService.clear();
+    this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تمت إضافة منتج جديد بنجاح'  });
+     
   }
 
   removeProduct(index: number) {
     this.products.splice(index, 1);
     this.calculateTotals();
-    this.messageService.add({ severity: 'warn', summary: 'تم الحذف', detail: 'تم حذف المنتج من القائمة' });
+     this.messageService.clear();
+    this.messageService.add({ severity: 'success', summary: 'تم الحذف', detail: 'تم حذف المنتج من القائمة' });
+
   }
 
   calculateTotals() {
@@ -137,7 +142,8 @@ export class CasherposComponent implements OnInit, OnDestroy {
   clearAll() {
     this.products = [];
     this.calculateTotals();
-    this.messageService.add({ severity: 'info', summary: 'تم المسح', detail: 'تم حذف جميع العناصر' });
+     this.messageService.clear();
+    this.messageService.add({ severity: 'success', summary: 'تم المسح', detail: 'تم حذف جميع العناصر' });
   }
 
   trackByIndex(index: number, item: Product) {
@@ -158,6 +164,7 @@ export class CasherposComponent implements OnInit, OnDestroy {
       this.clients.push({ ...this.newClient });
       this.selectedClient = { ...this.newClient };
       this.showAddClientDialog = false;
+       this.messageService.clear();
       this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تمت إضافة العميل الجديد' });
     }
   }
@@ -165,6 +172,7 @@ export class CasherposComponent implements OnInit, OnDestroy {
   // ===== حفظ وطباعة الفاتورة =====
   payInvoice() {
     if (!this.selectedClient) {
+       this.messageService.clear();
       this.messageService.add({ severity: 'warn', summary: 'تنبيه', detail: 'الرجاء اختيار عميل أولاً!' });
       return;
     }
@@ -181,10 +189,12 @@ export class CasherposComponent implements OnInit, OnDestroy {
 
     this.invoiceService.saveInvoice(invoiceData).subscribe({
       next: (res: any) => {
+         this.messageService.clear();
         this.messageService.add({ severity: 'success', summary: 'تم الحفظ', detail: 'تم حفظ الفاتورة بنجاح!' });
         this.printInvoice(invoiceData, res.invoiceNumber || '0001');
       },
       error: (err: any) => {
+         this.messageService.clear();
         this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل حفظ الفاتورة!' });
         console.error('Invoice save error:', err);
       }

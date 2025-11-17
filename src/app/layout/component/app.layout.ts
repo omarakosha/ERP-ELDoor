@@ -6,22 +6,45 @@ import { AppTopbar } from './app.topbar';
 import { AppSidebar } from './app.sidebar';
 import { AppFooter } from './app.footer';
 import { LayoutService } from '../service/layout.service';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-layout',
     standalone: true,
-    imports: [CommonModule, AppTopbar, AppSidebar, RouterModule, AppFooter],
-    template: `<div class="layout-wrapper" [ngClass]="containerClass">
+    imports: [CommonModule, AppTopbar, AppSidebar, RouterModule, AppFooter,ToastModule,],
+    providers: [MessageService],
+    template: `
+   <div class="layout-wrapper" [ngClass]="containerClass">
         <app-topbar></app-topbar>
         <app-sidebar></app-sidebar>
+
         <div class="layout-main-container">
             <div class="layout-main">
                 <router-outlet></router-outlet>
             </div>
             <app-footer></app-footer>
         </div>
+
         <div class="layout-mask animate-fadein"></div>
-    </div> `
+
+        <!-- ✅ Toast هنا -->
+        <p-toast
+          position="top-center"
+          [baseZIndex]="9999"
+          [preventOpenDuplicates]="true"
+          [life]="5000"
+          [style]="{ width: '350px' }"
+          [breakpoints]="{'960px': { width: '90%', right: '5%', left: '5%' }}"
+          [showTransitionOptions]="'300ms'"
+          [hideTransitionOptions]="'300ms'"
+          [showTransformOptions]="'translateY(0) scale(1)'"
+          [hideTransformOptions]="'translateY(-100%) scale(0.9)'"
+          [styleClass]="'custom-toast'"
+        ></p-toast>
+    </div>
+    
+    `
 })
 export class AppLayout {
     overlayMenuOpenSubscription: Subscription;

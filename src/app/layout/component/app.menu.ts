@@ -39,7 +39,8 @@ export class AppMenu {
                             { label: 'Sales Invoices', icon: 'pi pi-file', routerLink: ['/pages/sales-invoices'] },
                             { label: 'Store Orders', icon: 'pi pi-shopping-bag', routerLink: ['/pages/orders'] },
                             { label: 'Customers', icon: 'pi pi-users', routerLink: ['/pages/CRM'] },
-                            { label: 'Customer Payments', icon: 'pi pi-credit-card', routerLink: ['/pages/payments-component'] },
+                              { label: 'Customer Payments', icon: 'pi pi-users', routerLink: ['/pages/payments'] },
+                       
                         ]
                     }
                 ]
@@ -79,10 +80,12 @@ export class AppMenu {
             {
                 label: 'Accounting',
                 items: [
+                     { label: 'Tree Accounts', icon: 'pi pi-sitemap', routerLink: ['/pages/accounts-manager'] },
                     { label: 'Journal Entries', icon: 'pi pi-list', routerLink: ['/pages/journal-entries'] },
                     { label: 'Trial Balance', icon: 'pi pi-chart-bar', routerLink: ['/pages/trial-balance'] },
                     { label: 'Profit & Loss', icon: 'pi pi-chart-line', routerLink: ['/pages/profit-loss'] },
-                    { label: 'Accounts Manager', icon: 'pi pi-sitemap', routerLink: ['/pages/accounts-manager'] },
+                    { label: 'Balance & Sheet', icon: 'pi pi-objects-column', routerLink: ['/pages/balancesheet'] },
+                    { label: 'Accounts manager', icon: 'pi pi-sitemap', routerLink: ['/pages/entity'] },
                 ]
             },
 

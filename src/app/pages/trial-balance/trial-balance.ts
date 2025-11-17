@@ -7,9 +7,11 @@ import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { TrialBalanceService, TrialBalanceEntry } from '@/apiservice/trialbalance.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+
 
 @Component({
   selector: 'app-trial-balance',
@@ -114,7 +116,7 @@ import { saveAs } from 'file-saver';
     </ng-template>
     <ng-template pTemplate="body" let-line>
       <tr>
-        <td>{{line.date}}</td>
+        <td>{{line.date | date:'yyyy-MM-dd'}}</td>
         <td>{{line.description}}</td>
         <td>{{line.debit | currency}}</td>
         <td>{{line.credit | currency}}</td>
@@ -138,104 +140,112 @@ import { saveAs } from 'file-saver';
   `
 })
 export class TrialBalanceComponent {
-  trialData = [
-    {account: 'Cash', debit: 1200, credit: 0, costCenter: 'Main', entries:[
-      {date:'2025-09-20', description:'Opening', debit:1200, credit:0, costCenter:'Main'},
-      {date:'2025-09-20', description:'Opening', debit:0, credit:200, costCenter:'Main'},
-      {date:'2025-09-21', description:'Opening', debit:0, credit:1000, costCenter:'Main'}
-    ]},
-    {account: 'Bank', debit: 500, credit: 0, costCenter: 'Branch1', entries:[
-      {date:'2025-09-21', description:'Deposit', debit:1000, credit:0, costCenter:'Branch1'},
-      {date:'2025-09-21', description:'Deposit', debit:0, credit:1000, costCenter:'Branch1'}
-    ]},
-    {account: 'Sales', debit:0, credit:1500, costCenter: 'Branch2', entries:[
-      {date:'2025-09-22', description:'Invoice #1001', debit:0, credit:1000, costCenter:'Branch2'},
-      {date:'2025-09-22', description:'Invoice #1004', debit:1000, credit:0, costCenter:'Branch2'}
-    ]}
-  ];
 
-  // MultiSelect options
-  accountsOptions = [
-    {name: 'Cash'}, {name: 'Bank'}, {name: 'Sales'}, {name: 'Purchases'}, {name: 'Expenses'}
-  ];
-  costCentersOptions = [
-    {name: 'Main'}, {name: 'Branch1'}, {name: 'Branch2'}, {name: 'ProjectX'}
-  ];
+  trialData: TrialBalanceEntry[] = [];
+  filteredData: TrialBalanceEntry[] = [];
 
-  // MultiSelect selected values
+  // MultiSelect
+  accountsOptions: any[] = [];
+  costCentersOptions: any[] = [];
   selectedAccounts: any[] = [];
   selectedCostCenters: any[] = [];
 
-  filteredData = [...this.trialData];
-
   detailsDialog = false;
   currentDetails: any[] = [];
-currentAccountName: string = '';
+  currentAccountName = '';
 
-  constructor(private messageService: MessageService){}
 
-  applyFilter(){
-    this.filteredData = this.trialData.filter(row=>{
-      const accountMatch = this.selectedAccounts.length ? this.selectedAccounts.some(a=>a.name === row.account) : true;
-      const centerMatch = this.selectedCostCenters.length ? this.selectedCostCenters.some(c=>c.name === row.costCenter) : true;
+
+
+  constructor(private service: TrialBalanceService, private messageService: MessageService) { }
+
+
+
+  ngOnInit() {
+    this.loadTrialBalance();
+  }
+
+  loadTrialBalance() {
+    this.service.getTrialBalance().subscribe({
+      next: (data) => {
+        // استبعاد الحسابات صفرية
+        this.trialData = data.filter(d => d.totalDebit !== 0 || d.totalCredit !== 0);
+        this.filteredData = [...this.trialData];
+
+        // ملء خيارات الحسابات و الـ cost centers
+        this.accountsOptions = this.trialData.map(d => ({ name: d.account }));
+        const costCentersSet = new Set<string>();
+        this.trialData.forEach(d => d.entries.forEach(e => costCentersSet.add(e.costCenter)));
+        this.costCentersOptions = Array.from(costCentersSet).map(c => ({ name: c }));
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load trial balance' });
+        console.error(err);
+      }
+    });
+  }
+
+  applyFilter() {
+    this.filteredData = this.trialData.filter(row => {
+      const accountMatch = this.selectedAccounts.length ? this.selectedAccounts.some(a => a.name === row.account) : true;
+      const centerMatch = this.selectedCostCenters.length ? this.selectedCostCenters.some(c => row.entries.some(e => e.costCenter === c.name)) : true;
       return accountMatch && centerMatch;
     });
   }
 
-  clearFilters(){
+  clearFilters() {
     this.selectedAccounts = [];
     this.selectedCostCenters = [];
     this.filteredData = [...this.trialData];
   }
 
-viewDetails(row: any) {
-  this.currentDetails = row.entries;
-  this.currentAccountName = row.account;   // نخزن اسم الحساب
-  this.detailsDialog = true;
-}
-
-  exportExcel() {
-  const worksheet = XLSX.utils.json_to_sheet(this.filteredData);
-  const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-  const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-  saveAs(data, 'TrialBalance.xlsx');
-}
-
-
-exportDetails() {
-  if (!this.currentDetails || this.currentDetails.length === 0) {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'No Data',
-      detail: 'No details available to export'
-    });
-    return;
+  viewDetails(row: TrialBalanceEntry) {
+    this.currentDetails = row.entries;
+    this.currentAccountName = row.account;
+    this.detailsDialog = true;
   }
 
-  const worksheet = XLSX.utils.json_to_sheet(this.currentDetails);
-  const sheetName = this.currentAccountName || 'Details';   // اسم الشيت حسب الحساب
-  const workbook = { Sheets: { [sheetName]: worksheet }, SheetNames: [sheetName] };
+  getTotal(type: 'debit' | 'credit') {
+    return this.filteredData.reduce((sum, row) => sum + row.entries.reduce((s, e) => s + e[type], 0), 0);
+  }
 
-  const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+  getRowTotal(row: TrialBalanceEntry, type: 'debit' | 'credit') {
+    return row.entries.reduce((sum, e) => sum + e[type], 0);
+  }
 
-  // اسم الملف برضو حسب الحساب
-  const fileName = `AccountDetails_${sheetName}.xlsx`;
-  saveAs(data, fileName);
-}
+  exportExcel() {
+    const worksheet = XLSX.utils.json_to_sheet(this.filteredData);
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, 'TrialBalance.xlsx');
+  }
 
 
-getTotal(type: 'debit' | 'credit') {
-  return this.filteredData.reduce((sum, row) => {
-    const rowTotal = row.entries?.reduce((entrySum: number, e: any) => entrySum + (e[type] || 0), 0) || 0;
-    return sum + rowTotal;
-  }, 0);
-}
+  exportDetails() {
+    if (!this.currentDetails || this.currentDetails.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'No Data',
+        detail: 'No details available to export'
+      });
+      return;
+    }
 
-getRowTotal(row: any, type: 'debit' | 'credit') {
-  return row.entries?.reduce((sum: number, e: any) => sum + (e[type] || 0), 0) || 0;
-}
+    const worksheet = XLSX.utils.json_to_sheet(this.currentDetails);
+    const sheetName = this.currentAccountName || 'Details';   // اسم الشيت حسب الحساب
+    const workbook = { Sheets: { [sheetName]: worksheet }, SheetNames: [sheetName] };
+
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    // اسم الملف برضو حسب الحساب
+    const fileName = `AccountDetails_${sheetName}.xlsx`;
+    saveAs(data, fileName);
+  }
+
+
+
 
 
 

@@ -56,6 +56,7 @@ interface ExportColumn {
     ],
     template: `
         <p-toolbar styleClass="mb-6">
+        <p-toast position="top-center" class="custom-toast" [baseZIndex]="10000"></p-toast>
             <ng-template #start>
                 <p-button label="New" icon="pi pi-plus" severity="success" class="mr-2" (onClick)="openNew()" />
                 
@@ -267,6 +268,13 @@ export class Crud implements OnInit {
 
         this.exportColumns = this.cols.map((col) => ({ title: col.header, dataKey: col.field }));
     }
+
+    // إضافة دالة مساعدة لعرض الرسائل
+showMessage(severity: 'success' | 'info' | 'warn' | 'error', summary: string, detail: string) {
+    this.messageService.clear();
+    this.messageService.add({ severity, summary, detail, life: 3000 });
+}
+
 
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');

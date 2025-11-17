@@ -1,0 +1,144 @@
+<div class="card p-4 bg-gray-900 text-gray-100 rounded-lg shadow-lg">
+
+  <p-toast></p-toast>
+  <h2 class="text-3xl font-bold mb-6">Accounts Management</h2>
+
+  <!-- Search -->
+  <div class="mb-4">
+    <input type="text" pInputText placeholder="Search by name or code..." [(ngModel)]="searchTerm"
+           class="w-full border p-2 rounded" (input)="filterAccounts()" />
+  </div>
+
+  <!-- Buttons -->
+  <div class="flex flex-wrap gap-3 mb-4">
+    <button pButton icon="pi pi-plus" class="p-button-success" (click)="openNewAccount(null)"
+            pTooltip="إضافة حساب رئيسي جديد" tooltipPosition="top"></button>
+
+    <button pButton icon="pi pi-plus-circle" class="p-button-warning" [disabled]="!selectedNode"
+            (click)="openNewAccount(selectedNode)" pTooltip="إضافة حساب فرعي للحساب المحدد"
+            tooltipPosition="top"></button>
+
+    <button pButton icon="pi pi-pencil" class="p-button-info" [disabled]="!selectedNode"
+            (click)="openEditAccount(selectedNode)" pTooltip="تعديل الحساب المحدد" tooltipPosition="top"></button>
+
+    <button pButton icon="pi pi-trash" class="p-button-danger" [disabled]="!selectedNode"
+            (click)="deleteAccount(selectedNode)" pTooltip="حذف الحساب المحدد" tooltipPosition="top"></button>
+  </div>
+
+  <!-- Tree -->
+  <div class="bg-gray-800 shadow-lg rounded-lg overflow-hidden border border-gray-700">
+    <div class="max-h-[400px] overflow-y-auto custom-scroll">
+      <p-tree [value]="filteredTree" selectionMode="single" [(selection)]="selectedNode"
+              (onNodeSelect)="onNodeSelect($event)" (onNodeExpand)="onNodeExpand($event)" [style]="{ width: '100%' }">
+
+        <ng-template let-node pTemplate="default">
+          <div class="node-row" [class.has-level]="(node.level ?? 0) > 0" [style.--level]="node.level"
+               [ngStyle]="{'padding-left.px': (node.level ?? 0) * 20}">
+            <div class="node-content flex justify-between items-center p-2 transition-all rounded cursor-pointer"
+                 [ngClass]="{
+                    'bg-gray-700 text-white': selectedNode === node,
+                    'hover:bg-gray-600 hover:text-white': selectedNode !== node
+                 }">
+              <div class="left-info flex items-center gap-2">
+                <span class="font-medium">{{ node.label ?? '' }}</span>
+                <span class="ml-2 text-sm text-gray-400 font-semibold">[{{ node.data?.type || '-' }}]</span>
+              </div>
+
+              <span class="font-mono text-gray-400"> - {{ node.data?.code ?? '-' }}</span>
+            </div>
+          </div>
+        </ng-template>
+
+      </p-tree>
+    </div>
+  </div>
+
+  <!-- Dialog -->
+  <p-dialog *ngIf="currentNode" header="{{isEdit ? 'Edit Account' : 'New Account'}}" [(visible)]="displayDialog"
+            [modal]="true" [closable]="false" [style]="{width:'700px'}">
+
+    <div class="grid grid-cols-2 gap-4">
+
+      <!-- Account Name -->
+      <div class="col-span-2">
+        <label class="block mb-1 font-semibold text-gray-700">Account Name</label>
+        <input type="text" pInputText [(ngModel)]="currentNode.label" class="w-full border p-2 rounded" />
+      </div>
+
+      <!-- Account Code (readonly) -->
+      <div>
+        <label class="block mb-1 font-semibold text-gray-700">Account Code</label>
+        <input type="text" pInputText [(ngModel)]="currentNode.data.code" class="w-full border p-2 rounded"
+               readonly />
+      </div>
+
+      <!-- Currency -->
+      <div>
+        <label class="block mb-1 font-semibold text-gray-700">Currency</label>
+        <input type="text" pInputText [(ngModel)]="currentNode.data.currency"
+               class="w-full border p-2 rounded" placeholder="SAR" />
+      </div>
+
+      <!-- Account Type -->
+      <div>
+        <label class="block mb-1 font-semibold text-gray-700">Account Type</label>
+        <p-select [options]="accountTypes" [(ngModel)]="currentNode.data.type" optionLabel="label"
+                  optionValue="value" placeholder="Select type" [disabled]="isTypeDisabled" class="w-full"></p-select>
+      </div>
+
+      <!-- Balance Type -->
+      <div>
+        <label class="block mb-1 font-semibold text-gray-700">Balance Type</label>
+        <p-select [options]="balanceTypes" [(ngModel)]="currentNode.data.balanceType" optionLabel="label"
+                  optionValue="value" placeholder="Select balance type" class="w-full"></p-select>
+      </div>
+
+        <!-- entity Type -->
+      <div>
+        <label class="block mb-1 font-semibold text-gray-700">Entity Type</label>
+        <p-select [options]="entityTypes" [(ngModel)]="currentNode.data.entityType" optionLabel="label"
+                  optionValue="value" placeholder="Select entity type"  class="w-full"></p-select>
+      </div>
+
+         <!-- Default Tax Id -->
+      <div>
+        <label class="block mb-1 font-semibold text-gray-700">Default Tax Id</label>
+        <input type="number" pInputText [(ngModel)]="currentNode.data.defaultTaxId"
+               class="w-full border p-2 rounded" placeholder="Leave empty if not applicable" />
+      </div>
+
+      <!-- Description -->
+      <div class="col-span-2">
+        <label class="block mb-1 font-semibold text-gray-700">Description</label>
+        <input type="text" pInputText [(ngModel)]="currentNode.data.description" class="w-full border p-2 rounded" />
+      </div>
+
+ 
+  <div class="flex items-center gap-2">
+    <p-checkbox [(ngModel)]="currentNode.data.active" binary="true"></p-checkbox>
+    <label>Active</label>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <p-checkbox [(ngModel)]="currentNode.data.autoRollover" binary="true"></p-checkbox>
+    <label>Auto Rollover</label>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <p-checkbox [(ngModel)]="currentNode.data.allowTransactions" binary="true"></p-checkbox>
+    <label>Allow Transactions</label>
+  </div>
+</div>
+
+
+   
+    <!-- Dialog Actions -->
+    <div class="flex justify-end gap-3 mt-4">
+      <button pButton label="Cancel" class="p-button-secondary" (click)="cancelDialog()"></button>
+      <button pButton label="Save" class="p-button-success" (click)="saveAccount()"></button>
+    </div>
+
+  </p-dialog>
+
+  <p-confirmDialog></p-confirmDialog>
+</div>

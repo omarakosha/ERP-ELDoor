@@ -6,6 +6,10 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+
 
 @Component({
   selector: 'app-pos-management',
@@ -17,11 +21,15 @@ import { TooltipModule } from 'primeng/tooltip';
     DialogModule,
     ButtonModule,
     InputTextModule,
-    TooltipModule
+    TooltipModule,
+    ToastModule,
+    ConfirmDialogModule
   ],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './pos-management-component.html',
 })
 export class PosManagementComponent {
+  constructor(private messageService: MessageService, private confirmationService: ConfirmationService) { }
   addDialogVisible = false;
   searchTerm = '';
 
@@ -68,30 +76,68 @@ export class PosManagementComponent {
   }
 
   saveNewBox() {
-    if (this.newBox.name && this.newBox.location) {
-      const newEntry = {
-        id: this.boxes.length + 1,
-        ...this.newBox,
-        openedBy: 'Super Admin',
-        openDate: new Date(),
-        closeDate: null,
-        status: 'مفتوح'
-      };
-      this.boxes.push(newEntry);
-      this.filterBoxes();
-      this.addDialogVisible = false;
+    if (!this.newBox.name || !this.newBox.location) {
+      this.messageService.clear();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation',
+        detail: 'يرجى التحقق من بيانات الصندوق'
+      });
+      return;
     }
+
+    const newEntry = {
+      id: this.boxes.length + 1,
+      ...this.newBox,
+      openedBy: 'Super Admin',
+      openDate: new Date(),
+      closeDate: null,
+      status: 'مفتوح'
+    };
+    this.boxes.push(newEntry);
+
+    this.filterBoxes();
+    this.addDialogVisible = false;
+
+    this.messageService.clear();
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Saved',
+      detail: `تم إضافة الصندوق "${this.newBox.name}" بنجاح`
+    });
+
+    // إعادة تعيين النموذج بشكل صحيح
+    this.newBox = { name: '', location: '' };
   }
 
   viewBox(box: any) {
-    alert(`📦 تفاصيل الصندوق: ${box.name}`);
+    alert(`📦 تفاصيل الصندوق:\nاسم الصندوق: ${box.name}\nالموقع: ${box.location}\nالحالة: ${box.status}`);
   }
 
   closeBox(box: any) {
-    if (confirm(`هل تريد إغلاق الصندوق "${box.name}"؟`)) {
-      box.status = 'متوازن';
-      box.closeDate = new Date();
-      this.filterBoxes();
-    }
+    this.confirmationService.confirm({
+      message: `هل تريد إغلاق الصندوق "${box.name}"؟`,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        box.status = 'متوازن';
+        box.closeDate = new Date();
+
+        this.filterBoxes();
+
+        this.messageService.clear();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Closed',
+          detail: `تم إغلاق الصندوق "${box.name}" بتاريخ ${box.closeDate.toLocaleString('ar-EG')}`
+        });
+      },
+      reject: () => {
+        // عند الرفض يمكن تركه فارغ أو إضافة رسالة
+      }
+    });
   }
+
+
 }
