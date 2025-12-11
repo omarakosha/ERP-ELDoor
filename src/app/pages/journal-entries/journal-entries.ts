@@ -52,7 +52,7 @@ export class JournalEntriesComponent {
   childAccounts: EntityRecord[] = []; // بدلاً من Account[]
 filteredVendorList: EntityRecord[] = [];
 
-
+hoveredRowIndex: number = -1;
 
   filteredChildAccounts: Account[] = [];
   selectedParentCode: string = '';
@@ -148,17 +148,8 @@ filteredVendorList: EntityRecord[] = [];
 
   }
 
+  
 
-  loadCostCenters() {
-    this.accountsService.getAllCostCenters().subscribe({
-      next: (res: Account[]) => {
-        // تصفية فقط الحسابات من نوع Cost Centers
-        this.childCostCenters = res.filter(a => a.type === 'Cost_Centers');
-        this.filteredCostCentersList = [...this.childCostCenters]; // للفلترة السريعة
-      },
-      error: (err) => console.error('Failed to load cost centers', err)
-    });
-  }
 
   loadJournals() {
     this.journalService.getJournals().subscribe({
@@ -397,8 +388,7 @@ filteredVendorList: EntityRecord[] = [];
     if (cc) {
       ccName = cc.name;
       ccCode = cc.code;
-    }
-  }
+    } }
 
   const entry = {
     id: line.id ?? 0,
@@ -866,9 +856,7 @@ updateFilteredVendors() {
     this.filteredVendorList = [...this.childAccounts]; // استخدام الحسابات الابنة كما هي
   } else {
     this.filteredVendorList = this.childAccounts.filter(v =>
-  v.name?.toLowerCase().includes(filter) || (v.code ?? '').includes(filter)
-);
-  }
+  v.name?.toLowerCase().includes(filter) || (v.code ?? '').includes(filter));}
 }
 
 
@@ -942,37 +930,6 @@ selectVendor(vn: any) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
   // 🟢 الفلاتر
 
   filteredJournals(filterText: string) {
@@ -1030,16 +987,35 @@ selectVendor(vn: any) {
 
 
 
+ loadCostCenters() {
+  this.accountsService.getAllCostCenters().subscribe({
+    next: (res: Account[]) => {
+
+      // تحميل الأبناء فقط (الذين لديهم parentId)
+      this.childCostCenters = res.filter(a => 
+        a.type === 'Cost_Centers' && a.parentId
+      );
+
+      this.filteredCostCentersList = [...this.childCostCenters];
+    },
+
+    error: (err) => console.error('Failed to load cost centers', err)
+  });
+}
+
+
   filteredCostCenters() {
     const filter = this.costCenterFilter.trim().toLowerCase();
     if (!filter) {
       this.filteredCostCentersList = [...this.childCostCenters];
     } else {
       this.filteredCostCentersList = this.childCostCenters.filter(cc =>
-        cc.name.toLowerCase().includes(filter) || cc.code.toLowerCase().includes(filter)
+        cc.name.toLowerCase().includes(filter) || (cc.code ?? '').toLowerCase().includes(filter)
       );
     }
   }
+
+
   // فتح نافذة البحث عند الضغط F9
   openCostCenterSearch(event: KeyboardEvent, rowIndex: number) {
     this.editingRowIndex = rowIndex;
@@ -1048,7 +1024,7 @@ selectVendor(vn: any) {
       this.accountsService.getAllCostCenters().subscribe({
         next: (res: Account[]) => {
           this.childCostCenters = res;
-          this.filteredCostCenters(); // فلترة أولية
+          this.loadCostCenters(); // فلترة أولية
           this.costCenterDialog = true;
         },
         error: (err) => console.error('Failed to load cost centers', err)
@@ -1056,15 +1032,20 @@ selectVendor(vn: any) {
     }
   }
 
-  loadChildCostCenters(parentCode: string) {
-    this.accountsService.getAllCostCenters().subscribe({
-      next: (res: Account[]) => {
-        this.childCostCenters = res; // جميع مراكز التكلفة الفرعية
-        this.filteredCostCenters(); // فلترة أولية لعرضها في الجدول
-      },
-      error: (err) => console.error('Failed to load child cost centers', err)
-    });
-  }
+// تحميل مراكز التكلفة الأبناء فقط
+loadChildCostCenters(parentCode: string) {
+  this.accountsService.getAllCostCenters().subscribe({
+    next: (res: Account[]) => {
+      // ✔ فلترة الأبناء فقط المرتبطين بالكود الأب
+      this.childCostCenters = res.filter(a => a.code === parentCode);
+
+      // ✔ تحديث قائمة البحث
+      this.filteredCostCentersList = [...this.childCostCenters];
+    },
+    error: (err) => console.error('Failed to load child cost centers', err)
+  });
+}
+
 
 
   // اختيار مركز تكلفة
@@ -1126,12 +1107,24 @@ selectVendor(vn: any) {
 
 
   // 🟢 نسخ / لصق
-  copyLine() {
-    if (this.selectedRowIndex >= 0) {
-      this.copiedLine = { ...this.currentJournal.entries[this.selectedRowIndex] };
-      this.messageService.clear(); this.messageService.add({ severity: 'info', summary: 'Copied', detail: 'Line copied' });
-    }
+copyLine() {
+
+  let index = this.selectedRowIndex >= 0
+    ? this.selectedRowIndex
+    : this.hoveredRowIndex;
+
+  if (index >= 0) {
+    this.copiedLine = { ...this.currentJournal.entries[index] };
+    this.messageService.clear();
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Copied',
+      detail: 'Line copied'
+    });
   }
+}
+
+
   pasteLine() {
     if (this.copiedLine) {
       this.currentJournal.entries.splice(this.selectedRowIndex + 1, 0, { ...this.copiedLine });

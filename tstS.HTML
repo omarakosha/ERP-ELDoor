@@ -1090,3 +1090,42 @@ export class JournalEntriesComponent {
     newWindow?.print();
   }
 }
+
+
+
+
+
+
+
+
+
+
+  <div class="page-loader" *ngIf="loading" style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+  ">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"  class="loader-img" alt="Loading">
+        <!-- الصدفة -->
+        <path
+            d="M32 6C20 6 8 16 8 28c0 10 10 18 24 18s24-8 24-18C56 16 44 6 32 6z"
+            fill="var(--primary-color)"
+            opacity="0.8"
+        />
+        <!-- اللؤلؤة -->
+        <circle cx="32" cy="32" r="8" fill="white" stroke="var(--primary-color)" stroke-width="2" />
+        <!-- لمعة -->
+        <circle cx="30" cy="30" r="3" fill="rgba(255,255,255,0.7)" />
+    </svg>
+    <span style="font-weight:700; font-size:1.4rem; color:var(--primary-color); margin-right:0.5rem;">
+        الــدُّرّ
+    </span>
+  </div>

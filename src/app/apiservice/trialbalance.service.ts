@@ -88,4 +88,5 @@ export class TrialBalanceService {
 getBalanceSheet(): Observable<BalanceSheetResponse> {
   return this.http.get<BalanceSheetResponse>(`${this.apiUrl}/BalanceSheet`);
 }
+
 }

@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
-
+import { SkeletonModule } from 'primeng/skeleton';
 
 
 @Component({
@@ -17,6 +17,7 @@ import { Select } from 'primeng/select';
   styleUrls: ['./entity.component.scss'],
   imports: [
     CommonModule,
+    SkeletonModule,
     FormsModule,
     TableModule,
     ButtonModule,

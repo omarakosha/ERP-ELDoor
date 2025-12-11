@@ -16,6 +16,19 @@ export interface EntityRecord {
   accountCode?: string;
 }
 
+export interface JournalEntryDto {
+  journalId: number;      // رقم القيد
+  description: string;    // وصف القيد
+  date: string;           // تاريخ القيد
+  debit: number;          // مدين
+  credit: number;         // دائن
+  balanceAfter: number; 
+  costCenterId:number;  // الرصيد بعد القيد
+  entityId: number;       // معرف المقاول أو الجهة
+  entityType: string;     // نوع الكيان (مورد، عميل، إلخ)
+  entityName: string;  
+  accountId:number   // الاسم الكامل للكيان
+}
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +38,10 @@ export class EntitiesService {
   private api = 'https://localhost:7175/api/entities';
 
   constructor(private http: HttpClient) {}
+
+  getAllEntities(): Observable<EntityRecord[]> {
+    return this.http.get<EntityRecord[]>(`${this.api}/all`);
+  }
 
   getAll(type?: string): Observable<EntityRecord[]> {
     const url = type ? `${this.api}?type=${type}` : this.api;
@@ -57,4 +74,14 @@ export class EntitiesService {
   getEntityTypeAccounts() {
     return this.http.get<any[]>('https://localhost:7175/api/Accounts/entity-type');
   }
+
+getLedgerByEntity(entityId: number) {
+  return this.http.get<JournalEntryDto[]>(`https://localhost:7175/api/GenericEntities/entity/${entityId}`);
+}
+
+  // دالة جلب الحركات لمركز التكلفة
+  getCostCenterMovements(centerId: number) {
+    return this.http.get<JournalEntryDto[]>(`https://localhost:7175/api/GenericEntities/costcenter/${centerId}`);
+  }
+  
 }

@@ -424,21 +424,40 @@ private removeNode(nodes: MyTreeNode[], target: MyTreeNode): boolean {
     return false;
   }
 
-  private generateAccountCode(parent: MyTreeNode | null): string {
-    const allCodes = this.getAllCodes(this.accountsTree);
+private generateAccountCode(parent: MyTreeNode | null): string {
+  const allCodes = this.getAllCodes(this.accountsTree);
 
-    if (!parent) {
-      const mainCodes = allCodes.filter(c => c.length === 6).map(Number);
-      const lastCode = mainCodes.length > 0 ? Math.max(...mainCodes) : 100000;
-      return (lastCode + 1).toString();
-    } else {
-      const parentCode = Number(parent.data?.code);
-      const childCodes = allCodes
-        .filter(c => c.startsWith(parentCode.toString()) && c.length > parentCode.toString().length)
-        .map(Number);
-      const lastChildCode = childCodes.length > 0 ? Math.max(...childCodes) : parentCode * 10;
-      return (lastChildCode + 1).toString();
-    }
+  // إذا كان الحساب رئيسي (بدون أب)
+  if (!parent) {
+
+    // الحسابات الرئيسية يجب أن تبدأ من 1 ثم 2 ثم 3 ... بلا حدود
+    const mainCodes = allCodes
+      .filter(code => code.length === 1)
+      .map(code => Number(code));
+
+    const nextMain = mainCodes.length > 0 ? Math.max(...mainCodes) + 1 : 1;
+    return nextMain.toString();
+  }
+
+  // إذا كان الحساب فرعي ويملك أب
+  const parentCode = parent.data.code.toString();
+
+  // احضر أبناء هذا الأب فقط (وليس كل الشجرة)
+  const childCodes = allCodes
+    .filter(code =>
+      code.startsWith(parentCode) && code.length === parentCode.length + 1
+    )
+    .map(code => Number(code));
+
+  let nextChildNumber = 1;
+
+  if (childCodes.length > 0) {
+    const lastChild = Math.max(...childCodes).toString();
+    const lastDigit = Number(lastChild.replace(parentCode, ""));
+    nextChildNumber = lastDigit + 1;
+  }
+
+  return parentCode + nextChildNumber.toString();
 }
 
 private getAllCodes(nodes: MyTreeNode[]): string[] {

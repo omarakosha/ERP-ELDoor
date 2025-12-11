@@ -208,7 +208,7 @@ export class InventoryComponent implements OnInit {
       default: return 'info';
     }
   }
-
+  
   exportExcel() {
     const ws = XLSX.utils.json_to_sheet(this.inventories);
     const wb = XLSX.utils.book_new();
@@ -225,4 +225,6 @@ export class InventoryComponent implements OnInit {
     });
     doc.save('Inventory.pdf');
   }
+
+
 }

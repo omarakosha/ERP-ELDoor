@@ -125,7 +125,7 @@
             </div>
 
             <!-- ======= الجدول ======= -->
-            <div class="flex-1 overflow-auto min-h-[320px] mt-2">
+            <div class="flex-1 overflow-auto min-h-[345px] mt-2">
                 <p-table [value]="currentJournal.entries" [scrollable]="true" scrollHeight="100%" selectionMode="single"
                     [(contextMenuSelection)]="selectedLine" [contextMenu]="cm" class="fixed-rows-table w-full">
 
@@ -229,52 +229,55 @@
 
 
             <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
-            <!-- ======= الفوتر ======= -->
-            <div
-                class="border-t border-gray-200 dark:border-gray-700 pt-1 pb-0 px-5 flex flex-col gap-3 bg-gray-50 dark:bg-gray-800">
+            
+           <!-- ======= الفوتر ======= -->
+<div
+    class="border-t border-gray-200 dark:border-gray-700 pt-1 pb-1 px-5 
+           flex items-center justify-between bg-gray-50 dark:bg-gray-800">
 
-                <!-- تحذير التوازن -->
-                <div class="h-6 flex items-center justify-center">
-                    <div *ngIf="!isBalanced()" class="text-red-600 font-bold text-center mb-2">
-                        ⚠️ Debit and Credit must be equal
-                    </div>
-                </div>
+    <!-- يسار = القيم -->
+    <div class="flex-1 flex flex-col gap-1 text-left font-bold text-gray-700 dark:text-gray-300">
 
-                <!-- الفرق والإجماليات + الأزرار -->
-                <div class="flex justify-between items-center">
+        <div class="flex justify-between w-48">
+            <span>Difference:</span>
+            <span [ngClass]="{
+                'text-green-600': currentJournal.totalDebit > currentJournal.totalCredit,
+                'text-red-600': currentJournal.totalDebit < currentJournal.totalCredit,
+                'text-gray-700 dark:text-gray-300': currentJournal.totalDebit === currentJournal.totalCredit
+            }">
+                {{ (currentJournal.totalDebit - currentJournal.totalCredit) | number:'1.2-2' }}
+            </span>
+        </div>
 
-                    <!-- الفوارق والإجماليات -->
-                    <div class="flex flex-col gap-1 text-left font-bold text-gray-700 dark:text-gray-300">
-                        <div class="flex justify-between w-48">
-                            <span>Difference:</span>
-                            <span [ngClass]="{
-                    'text-green-600': currentJournal.totalDebit > currentJournal.totalCredit,
-                    'text-red-600': currentJournal.totalDebit < currentJournal.totalCredit,
-                    'text-gray-700 dark:text-gray-300': currentJournal.totalDebit === currentJournal.totalCredit
-                }">
-                                {{ (currentJournal.totalDebit - currentJournal.totalCredit) | number:'1.2-2' }}
-                            </span>
-                        </div>
-                        <div class="flex justify-between w-48">
-                            <span>Total Debit.:</span>
-                            <span>{{ currentJournal.totalDebit | number:'1.2-2' }}</span>
-                        </div>
-                        <div class="flex justify-between w-48">
-                            <span>Total Credit:</span>
-                            <span>{{ currentJournal.totalCredit | number:'1.2-2' }}</span>
-                        </div>
-                    </div>
+        <div class="flex justify-between w-48">
+            <span>Total Debit:</span>
+            <span>{{ currentJournal.totalDebit | number:'1.2-2' }}</span>
+        </div>
 
-                    <!-- الأزرار -->
-                    <div class="flex gap-2">
-                        <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary"
-                            (click)="displayDialog=false"></button>
-                        <button pButton label="Save" icon="pi pi-check" class="p-button-success"
-                            (click)="saveJournal()"></button>
-                    </div>
+        <div class="flex justify-between w-48">
+            <span>Total Credit:</span>
+            <span>{{ currentJournal.totalCredit | number:'1.2-2' }}</span>
+        </div>
 
-                </div>
-            </div>
+    </div>
+
+    <!-- وسط = الرسالة -->
+    <div class="flex-1 flex justify-center items-center">
+        <div *ngIf="!isBalanced()" class="text-red-600 font-bold text-center">
+            ⚠️ Debit and Credit must be equal
+        </div>
+    </div>
+
+    <!-- يمين = الأزرار -->
+    <div class="flex-1 flex justify-end gap-2">
+        <button pButton label="Cancel" icon="pi pi-times-circle" class="p-button-secondary"
+            (click)="displayDialog=false"></button>
+        <button pButton label="Save" icon="pi pi-save" class="p-button-success"
+            (click)="saveJournal()"></button>
+    </div>
+
+</div>
+
 
         </div>
     </p-dialog>
