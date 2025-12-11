@@ -11,6 +11,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { TrialBalanceService, ProfitLossEntry, ProfitLossResponse } from '@/apiservice/trialbalance.service';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { LoaderService } from '@/apiservice/loading.service';
 
 interface MultiSelectOption {
   label: string;
@@ -33,7 +34,7 @@ interface MultiSelectOption {
   providers: [MessageService],
   template: `
 <div class="card">
-  <p-toast position="top-center"></p-toast>
+     <p-toast position="top-center" class="custom-toast"></p-toast>
   <h2 class="text-3xl font-bold mb-6">Profit & Loss Statement</h2>
 
   <div class="flex gap-4 mb-4 flex-wrap">
@@ -114,6 +115,7 @@ interface MultiSelectOption {
   `
 })
 export class ProfitLossComponent {
+    loading: boolean = false;
   entries: ProfitLossEntry[] = [];
   filteredData: ProfitLossEntry[] = [];
   startDate: string | null = null;
@@ -130,13 +132,17 @@ export class ProfitLossComponent {
     
   ];
 
-  constructor(private service: TrialBalanceService, private messageService: MessageService) {}
+  constructor(
+    private service: TrialBalanceService,
+    private messageService: MessageService, 
+    public loaderService: LoaderService) {}
 
   ngOnInit() {
     this.loadData();
   }
 
   loadData() {
+    this.loaderService.show(); // 🟢 تشغيل اللودنق قبل الطلب
     this.service.getProfitLoss().subscribe({
       next: (res: ProfitLossResponse) => {
         this.entries = res.accounts;
@@ -144,10 +150,19 @@ export class ProfitLossComponent {
         this.totalRevenue = res.totalRevenue;
         this.totalExpenses = res.totalExpense;
         this.netProfit = res.netProfit;
+         this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load data' });
-      }
+      
+      
+       error: (err) => {
+      console.error('Failed to load journals', err);
+      this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: '  Internal Server Error Code 500'
+      });
+    }
     });
   }
 

@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { TrialBalanceService, BalanceSheetEntry, BalanceSheetResponse } from '@/apiservice/trialbalance.service';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { LoaderService } from '@/apiservice/loading.service';
 
 @Component({
   selector: 'app-balance-sheet',
@@ -21,7 +22,7 @@ import { saveAs } from 'file-saver';
   template: `
 <div class="card dark:bg-gray-900 dark:text-gray-200 transition-all">
 
-  <p-toast position="top-center"></p-toast>
+   <p-toast position="top-center" class="custom-toast"></p-toast>
 
 <!-- Header Row -->
 <div class="flex items-center justify-between mb-2 flex-wrap gap-3">
@@ -182,13 +183,14 @@ export class BalanceSheetComponent {
   totalEquity = 0;
   check = 0;
 
-  constructor(private service: TrialBalanceService, private msg: MessageService) {}
+  constructor(private service: TrialBalanceService, private msg: MessageService, public loaderService: LoaderService) {}
 
   ngOnInit() {
     this.loadData();
   }
 
   loadData() {
+     this.loaderService.show(); // 🟢 تشغيل اللودنق قبل الطلب
     this.service.getBalanceSheet().subscribe({
       next: (res: BalanceSheetResponse) => {
         this.accounts = res.accounts;
@@ -196,10 +198,17 @@ export class BalanceSheetComponent {
         this.totalLiabilities = res.totalLiabilities;
         this.totalEquity = res.totalEquity;
         this.check = res.check;
+          this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
       },
-      error: () => {
-        this.msg.add({ severity: 'error', summary: 'Error', detail: 'Failed to load balance sheet' });
-      }
+        error: (err) => {
+      console.error('Failed to load journals', err);
+      this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
+      this.msg.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: '  Internal Server Error Code 500'
+      });
+    }
     });
   }
 

@@ -15,6 +15,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { AccountsService, Account } from '../../apiservice/accounts.service';
 import { JournalDto, JournalService } from '@/apiservice/journal.service';
 import { EntitiesService, EntityRecord } from '@/apiservice/Entities.service';
+import { LoaderService } from '@/apiservice/loading.service';
 
 
 
@@ -40,7 +41,7 @@ import { EntitiesService, EntityRecord } from '@/apiservice/Entities.service';
   templateUrl: './journal-entries.html',
 })
 export class JournalEntriesComponent {
-
+  loading: boolean = false;
   // مصفوفة لتخزين كل الحسابات من API
   accounts: Account[] = [];
 
@@ -134,6 +135,7 @@ hoveredRowIndex: number = -1;
     private confirmationService: ConfirmationService,
     private accountsService: AccountsService,
     private journalService: JournalService,
+     public loaderService: LoaderService
 
   ) {
   }
@@ -151,33 +153,44 @@ hoveredRowIndex: number = -1;
   
 
 
-  loadJournals() {
-    this.journalService.getJournals().subscribe({
-      next: (data) => {
-        this.journalEntries = data;
+loadJournals() {
+  this.loaderService.show(); // 🟢 تشغيل اللودنق قبل الطلب
 
-        // لكل قيد، اربط costCenterId بالاسم من القائمة
-        this.journalEntries.forEach(journal => {
-          if (journal.entries) {
-            journal.entries.forEach((line: any) => {
-              if (line.costCenterId != null && this.childCostCenters.length > 0) {
-                const cc = this.childCostCenters.find(c => c.id === line.costCenterId);
-                if (cc) {
-                  line.costCenterName = cc.name; // الاسم للعرض
-                  line.costCenterCode = cc.code; // الكود للعرض/تحديث
-                }
+  this.journalService.getJournals().subscribe({
+    next: (data) => {
+      this.journalEntries = data;
+      this.loaderService.hide(); // إخفاء اللودنق بعد التحميل
+
+      // لكل قيد، اربط costCenterId بالاسم من القائمة
+      this.journalEntries.forEach(journal => {
+        if (journal.entries) {
+          journal.entries.forEach((line: any) => {
+            if (line.costCenterId != null && this.childCostCenters.length > 0) {
+              const cc = this.childCostCenters.find(c => c.id === line.costCenterId);
+              if (cc) {
+                line.costCenterName = cc.name; // الاسم للعرض
+                line.costCenterCode = cc.code; // الكود للعرض/تحديث
               }
-            });
-          }
-        });
+            }
+          });
+        }
+      });
 
-        console.log('Loaded journals:', this.journalEntries);
-      },
-      error: (err) => {
-        console.error('Failed to load journals', err);
-      }
-    });
-  }
+      console.log('Loaded journals:', this.journalEntries);
+
+      this.loaderService.hide(); // 🟢 إيقاف اللودنق بعد التحميل
+    },
+    error: (err) => {
+      console.error('Failed to load journals', err);
+      this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: '  Internal Server Error Code 500'
+      });
+    }
+  });
+}
 
   updateFilteredAccounts() {
     const filter = this.accountFilter?.trim().toLowerCase() || '';

@@ -13,6 +13,53 @@ import { ContextMenuModule } from 'primeng/contextmenu';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PaginatorModule } from 'primeng/paginator';
 
+
+
+
+
+
+
+
+loadAccounts() {
+  this.loaderService.show(); // 🟢 تشغيل اللودنق قبل الطلب
+    this.accountsService.getAccounts().subscribe((accounts: Account[]) => {
+
+      // ✅ إصلاح children = null → []
+      const normalizeChildren = (accs: Account[]) => {
+        accs.forEach(a => {
+          if (!Array.isArray(a.children)) a.children = []; // تحويل null إلى []
+          
+          normalizeChildren(a.children);
+        });
+      };
+      
+      normalizeChildren(accounts);
+
+      // ✅ تحويل البيانات إلى TreeNode
+      this.accountsTree = this.mapAccountsToTreeNodes(accounts);
+
+      // ✅ تحديث مستويات الشجرة
+      this.updateLevels(this.accountsTree);
+
+      // ✅ تحديث العرض
+      this.filteredTree = [...this.accountsTree];
+    });
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @Component({
   selector: 'app-journal-entries',
   standalone: true,

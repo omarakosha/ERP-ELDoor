@@ -11,6 +11,7 @@ import { TrialBalanceService, TrialBalanceEntry } from '@/apiservice/trialbalanc
 import { MultiSelectModule } from 'primeng/multiselect';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { LoaderService } from '@/apiservice/loading.service';
 
 
 @Component({
@@ -29,7 +30,7 @@ import { saveAs } from 'file-saver';
   providers: [MessageService, ConfirmationService],
   template: `
 <div class="card">
-  <p-toast></p-toast>
+      <p-toast position="top-center" class="custom-toast"></p-toast>
   <h2 class="text-3xl font-bold mb-6">Trial Balance </h2>
 
  <div class="flex flex-wrap gap-4 mb-4 items-center">
@@ -140,7 +141,7 @@ import { saveAs } from 'file-saver';
   `
 })
 export class TrialBalanceComponent {
-
+    loading: boolean = false;
   trialData: TrialBalanceEntry[] = [];
   filteredData: TrialBalanceEntry[] = [];
 
@@ -157,7 +158,10 @@ export class TrialBalanceComponent {
 
 
 
-  constructor(private service: TrialBalanceService, private messageService: MessageService) { }
+  constructor(
+    private service: TrialBalanceService,
+     private messageService: MessageService,
+     public loaderService: LoaderService) { }
 
 
 
@@ -166,6 +170,7 @@ export class TrialBalanceComponent {
   }
 
   loadTrialBalance() {
+      this.loaderService.show(); // 🟢 تشغيل اللودنق قبل الطلب
     this.service.getTrialBalance().subscribe({
       next: (data) => {
         // استبعاد الحسابات صفرية
@@ -177,11 +182,17 @@ export class TrialBalanceComponent {
         const costCentersSet = new Set<string>();
         this.trialData.forEach(d => d.entries.forEach(e => costCentersSet.add(e.costCenter)));
         this.costCentersOptions = Array.from(costCentersSet).map(c => ({ name: c }));
+          this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
       },
-      error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load trial balance' });
-        console.error(err);
-      }
+         error: (err) => {
+      console.error('Failed to load journals', err);
+      this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: '  Internal Server Error Code 500'
+      });
+    }
     });
   }
 

@@ -14,6 +14,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { Select } from "primeng/select";
+import { LoaderService } from '@/apiservice/loading.service';
 
 export interface MyTreeNode extends TreeNode {
   key: string;
@@ -82,11 +83,13 @@ entityTypes = [
   currentNode: MyTreeNode | null = null;
   parentNode: MyTreeNode | null = null;
   searchTerm: string = '';
+   loading: boolean = false;
 
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private accountsService: AccountsService
+    private accountsService: AccountsService,
+     public loaderService: LoaderService
   ) { }
 
   ngOnInit() {
@@ -94,7 +97,10 @@ entityTypes = [
   }
 
 loadAccounts() {
-    this.accountsService.getAccounts().subscribe((accounts: Account[]) => {
+  this.loaderService.show(); // 🟢 تشغيل اللودنق قبل الطلب
+
+  this.accountsService.getAccounts().subscribe({
+    next: (accounts: Account[]) => {
 
       // ✅ إصلاح children = null → []
       const normalizeChildren = (accs: Account[]) => {
@@ -103,6 +109,7 @@ loadAccounts() {
           normalizeChildren(a.children);
         });
       };
+      
       normalizeChildren(accounts);
 
       // ✅ تحويل البيانات إلى TreeNode
@@ -113,7 +120,19 @@ loadAccounts() {
 
       // ✅ تحديث العرض
       this.filteredTree = [...this.accountsTree];
-    });
+
+      this.loaderService.hide(); // 🟢 إخفاء اللودنق بعد التحميل
+    },
+           error: (err) => {
+      console.error('Failed to load journals', err);
+      this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: '  Internal Server Error Code 500'
+      });
+    }
+  });
 }
 
 

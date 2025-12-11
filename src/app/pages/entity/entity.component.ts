@@ -9,6 +9,9 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { LoaderService } from '@/apiservice/loading.service';
 
 
 @Component({
@@ -23,7 +26,8 @@ import { SkeletonModule } from 'primeng/skeleton';
     ButtonModule,
     DialogModule,
     InputTextModule,
-    Select
+    Select,
+     ToastModule,
   ],
 })
 export class EntityComponent implements OnInit {
@@ -59,7 +63,9 @@ export class EntityComponent implements OnInit {
 
   constructor(
     private service: EntitiesService,
-    private accountsService: AccountsService
+    private accountsService: AccountsService,
+     private msg: MessageService,
+     public loaderService: LoaderService
   ) { }
 
   ngOnInit() {
@@ -68,6 +74,7 @@ export class EntityComponent implements OnInit {
   }
 
   loadEntities() {
+    
     this.loading = true;
     this.service.getAll().subscribe(res => {
       this.list = res;
@@ -75,8 +82,10 @@ export class EntityComponent implements OnInit {
     });
   }
 
-  loadAccounts() {
-    this.accountsService.getEntityTypeAccounts().subscribe(res => {
+loadAccounts() {
+  this.loaderService.show(); // 🟢 تشغيل اللودنق قبل الطلب
+  this.accountsService.getEntityTypeAccounts().subscribe({
+    next: (res) => {
       this.accounts = res.map(a => ({
         ...a,
         fullName: `${a.code} - ${a.name}`
@@ -92,8 +101,21 @@ export class EntityComponent implements OnInit {
       typesSet.forEach(t => this.types.push({ label: t, value: t }));
 
       this.filteredAccounts = [...this.accounts];
-    });
-  }
+
+      this.loaderService.hide(); // 🟢 إخفاء اللودنق بعد التحميل
+    },
+    error: (err) => {
+      console.error('Failed to load accounts', err);
+      this.loaderService.hide(); // 🟢 إخفاء اللودنق عند الخطأ
+      this.msg.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Internal Server Error Code 500'
+      });
+    }
+  });
+}
+
 
 new() {
   this.model = { id: 0, name: '', code: '', entityType: '', phone: '', email: '', address: '', taxNumber: '', accountId: undefined };
