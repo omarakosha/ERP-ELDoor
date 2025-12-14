@@ -33,7 +33,7 @@ import { LoaderService } from '@/apiservice/loading.service';
 export class EntityComponent implements OnInit {
 
   list: EntityRecord[] = [];
-  loading = false;
+
 
   displayDialog = false;
 
@@ -75,10 +75,10 @@ export class EntityComponent implements OnInit {
 
   loadEntities() {
     
-    this.loading = true;
+
     this.service.getAll().subscribe(res => {
       this.list = res;
-      this.loading = false;
+
     });
   }
 
@@ -97,12 +97,13 @@ loadAccounts() {
         if (a.entityType?.trim()) typesSet.add(a.entityType.trim());
       });
 
+      
+      this.loaderService.hide(); // 🟢 إخفاء اللودنق بعد التحميل
       this.types = [{ label: 'جميع الأنواع', value: '' }];
       typesSet.forEach(t => this.types.push({ label: t, value: t }));
 
       this.filteredAccounts = [...this.accounts];
 
-      this.loaderService.hide(); // 🟢 إخفاء اللودنق بعد التحميل
     },
     error: (err) => {
       console.error('Failed to load accounts', err);

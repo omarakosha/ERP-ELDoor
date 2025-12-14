@@ -13,9 +13,11 @@ import { CommonModule } from '@angular/common';
     template: `
   <div class="main-content-wrapper"> <!-- الحاوية الرئيسية فقط -->
 
-<div class="global-loader" *ngIf="loaderService.loading$ | async">
-  <img src="assets/icons/rqm.png" class="loader-img">
+<div class="card-loader-wrapper" *ngIf="loaderService.loading$ | async">
+  <div class="card-loader-ring"></div>
+  <img src="assets/icons/rqm.png" class="card-loader-img">
 </div>
+
 
 
   <!-- باقي محتوى الصفحة -->

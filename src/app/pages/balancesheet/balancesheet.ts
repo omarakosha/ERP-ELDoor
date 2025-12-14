@@ -20,7 +20,7 @@ import { LoaderService } from '@/apiservice/loading.service';
   ],
   providers: [MessageService],
   template: `
-<div class="card dark:bg-gray-900 dark:text-gray-200 transition-all">
+<div class="card" style=" min-height: 77vh">
 
    <p-toast position="top-center" class="custom-toast"></p-toast>
 

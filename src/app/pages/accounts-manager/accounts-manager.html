@@ -1,4 +1,4 @@
-<div class="card p-4 bg-gray-900 text-gray-100 rounded-lg shadow-lg">
+<div class="card" style=" min-height: 77vh">
 
      <p-toast position="top-center" class="custom-toast"></p-toast>
 
@@ -28,7 +28,7 @@
   </div>
 
   <!-- Tree -->
-  <div class="bg-gray-800 shadow-lg rounded-lg overflow-hidden border border-gray-700">
+  <div class="bg-gray-800 overflow-hidden ">
     <div class="max-h-[400px] overflow-y-auto custom-scroll">
       <p-tree [value]="filteredTree" selectionMode="single" [(selection)]="selectedNode"
               (onNodeSelect)="onNodeSelect($event)" (onNodeExpand)="onNodeExpand($event)" [style]="{ width: '100%' }">

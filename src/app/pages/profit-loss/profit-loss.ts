@@ -33,7 +33,7 @@ interface MultiSelectOption {
   ],
   providers: [MessageService],
   template: `
-<div class="card">
+<div class="card" style=" min-height: 77vh">
      <p-toast position="top-center" class="custom-toast"></p-toast>
   <h2 class="text-3xl font-bold mb-6">Profit & Loss Statement</h2>
 
