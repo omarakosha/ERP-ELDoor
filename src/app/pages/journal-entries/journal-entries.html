@@ -211,7 +211,7 @@
                             <!-- Action -->
                             <td>
                                 <button pButton icon="pi pi-trash" class="p-button p-button-danger p-button-sm"
-                                    (click)="removeJournalLine(i)"></button>
+                                    (click)="removeJournalLine(i)"outlined></button>
                             </td>
                         </tr>
                     </ng-template>
@@ -262,9 +262,9 @@
 
     <!-- يمين = الأزرار -->
     <div class="flex-1 flex justify-end gap-2">
-        <button pButton label="Cancel" icon="pi pi-times-circle" class="p-button-secondary"
+        <button pButton label="Cancel" icon="pi pi-times-circle" class="p-button-danger"outlined
             (click)="displayDialog=false"></button>
-        <button pButton label="Save" icon="pi pi-save" class="p-button-success"
+        <button pButton label="Save" icon="pi pi-save" class="p-button-success"outlined
             (click)="saveJournal()"></button>
     </div>
 

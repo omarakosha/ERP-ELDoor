@@ -49,10 +49,10 @@ interface Customer {
     <h2 class="text-xl font-semibold text-gray-800">Customer Management</h2>
 
     <div class="flex flex-wrap gap-2">
-      <button pButton label="Clear Filters" icon="pi pi-filter-slash" class="p-button-outlined" (click)="clear(dt)"></button>
-      <button pButton label="Add Customer" icon="pi pi-plus" class="p-button-success" (click)="openNew()"></button>
-      <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
-      <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"></button>
+      <button pButton label="Clear Filters" icon="pi pi-filter-slash" class="p-button-outlined" (click)="clear(dt)"outlined></button>
+      <button pButton label="Add Customer" icon="pi pi-plus" class="p-button-success" (click)="openNew()"outlined></button>
+      <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"outlined></button>
+      <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"outlined></button>
       <span class="relative">
         <i class="pi pi-search absolute top-2.5 right-3 text-gray-400"></i>
         <input
@@ -117,8 +117,8 @@ interface Customer {
           </span>
         </td>
         <td class="flex gap-2 justify-center">
-          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editCustomer(c)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteCustomer(c)"></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editCustomer(c)"outlined></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteCustomer(c)"outlined></button>
         </td>
       </tr>
     </ng-template>
@@ -173,8 +173,8 @@ interface Customer {
       </div>
 
       <div class="flex justify-end gap-2 pt-4 border-t">
-        <button pButton label="Cancel" icon="pi pi-times" class="p-button-text" (click)="displayDialog = false"></button>
-        <button pButton label="Save" icon="pi pi-check" class="p-button-success" (click)="saveCustomer()"></button>
+        <button pButton label="Cancel" icon="pi pi-times-circle" class="p-button-danger" (click)="displayDialog = false"outlined></button>
+        <button pButton label="Save" icon="pi pi-save" class="p-button-success" (click)="saveCustomer()"outlined></button>
       </div>
     </div>
   </p-dialog>

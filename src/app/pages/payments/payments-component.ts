@@ -41,11 +41,11 @@ interface Payment {
 
  <!-- Toolbar -->
  <div class="flex flex-wrap gap-2 mb-3">
-     <button pButton label="Clear Filters" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
-     <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
-     <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"></button>
-     <input pInputText #filterInput placeholder="Search..." (input)="onGlobalFilter(dt, $event)" class="ml-auto">
-     <button pButton label="Add Payment" icon="pi pi-plus" class="p-button-primary" (click)="openNew()"></button>
+     <button pButton label="Clear Filters" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"outlined></button>
+     <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"outlined></button>
+     <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"outlined></button>
+     <input pInputText #filterInput placeholder="Search..." (input)="onGlobalFilter(dt, $event)" class="ml-auto"outlined>
+     <button pButton label="Add Payment" icon="pi pi-plus" class="p-button-primary" (click)="openNew()"outlined></button>
  </div>
 
  <!-- Payments Table -->
@@ -100,7 +100,7 @@ interface Payment {
              <td>{{p.paymentMethod}}</td>
              <td>{{p.cashBox}}</td>
              <td>
-                 <button pButton icon="pi pi-pencil" class="p-button p-button-info" (click)="editPayment(p)"></button>
+                 <button pButton icon="pi pi-pencil" class="p-button p-button-info" (click)="editPayment(p)"outlined></button>
              </td>
          </tr>
      </ng-template>
@@ -141,8 +141,8 @@ interface Payment {
          </div>
      </div>
      <ng-template pTemplate="footer">
-         <button pButton label="Cancel" icon="pi pi-times" (click)="displayDialog=false" class="p-button-secondary"></button>
-         <button pButton label="Save" icon="pi pi-check" (click)="savePayment()" class="p-button-success"></button>
+         <button pButton label="Cancel" icon="pi pi-times-circle" (click)="displayDialog=false" class="p-button-danger"outlined></button>
+         <button pButton label="Save" icon="pi pi-save" (click)="savePayment()" class="p-button-success"outlined></button>
      </ng-template>
  </p-dialog>
 </div>
