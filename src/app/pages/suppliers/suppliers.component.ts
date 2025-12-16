@@ -57,8 +57,8 @@ interface Supplier {
   <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
     <h2 class="text-xl font-semibold text-gray-700">Suppliers</h2>
     <div class="flex gap-2">
-      <button pButton label="Upload Suppliers" icon="pi pi-upload" class="p-button-warning" (click)="openSupplierUpload()"></button>
-      <button pButton label="Add Supplier" icon="pi pi-plus" class="p-button-success" (click)="openNewSupplier()"></button>
+      <button pButton label="Upload Suppliers" icon="pi pi-upload" class="p-button-sucsses" (click)="openSupplierUpload()"outlined></button>
+      <button pButton label="New Supplier" icon="pi pi-plus" class="p-button-success" (click)="openNewSupplier()"outlined></button>
     </div>
   </div>
 
@@ -96,8 +96,8 @@ interface Supplier {
         <td>{{s.balance}}</td>
         <td><p-tag [value]="s.status" [severity]="getSeverity(s.status)"></p-tag></td>
         <td class="flex gap-2 justify-center">
-          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editSupplier(s)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteSupplier(s)"></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editSupplier(s)"outlined></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteSupplier(s)"outlined></button>
         </td>
       </tr>
     </ng-template>
@@ -122,8 +122,8 @@ interface Supplier {
       </div>
     </div>
     <ng-template pTemplate="footer">
-      <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
-      <button pButton label="Save" icon="pi pi-check" class="p-button-success" (click)="saveSupplier()"
+      <button pButton label="Cancel" icon="pi pi-times-circle" class="p-button-secondary" (click)="displayDialog=false"outlined></button>
+      <button pButton label="Save" icon="pi pi-save" class="p-button-success" (click)="saveSupplier()"outlined
               [disabled]="isInvalidField(currentSupplier,'name') || isInvalidField(currentSupplier,'code')"></button>
     </ng-template>
   </p-dialog>

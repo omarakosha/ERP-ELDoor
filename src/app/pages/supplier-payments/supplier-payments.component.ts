@@ -86,8 +86,8 @@ interface SupplierPayment {
         <td>{{p.paymentMethod}}</td>
         <td>{{p.totalPaid | number:'1.2-2'}}</td>
         <td class="flex gap-2">
-          <button pButton icon="pi pi-eye" class="p-button-sm p-button-info" (click)="viewPayment(p)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-sm p-button-danger" (click)="deletePayment(p)"></button>
+          <button pButton icon="pi pi-eye" class="p-button-sm p-button-info" (click)="viewPayment(p)"outlined></button>
+          <button pButton icon="pi pi-trash" class="p-button-sm p-button-danger" (click)="deletePayment(p)"outlined></button>
         </td>
       </tr>
     </ng-template>
@@ -114,7 +114,7 @@ interface SupplierPayment {
     <p><strong>Total Paid:</strong> {{selectedPayment.totalPaid | number:'1.2-2'}}</p>
   </div>
   <ng-template pTemplate="footer">
-    <button pButton label="Close" (click)="displayDialog=false"></button>
+    <button pButton label="Close" (click)="displayDialog=false"outlined></button>
   </ng-template>
 </p-dialog>
 

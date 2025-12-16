@@ -58,9 +58,9 @@ interface ExportColumn {
         <p-toolbar styleClass="mb-6">
         <p-toast position="top-center" class="custom-toast" [baseZIndex]="10000"></p-toast>
             <ng-template #start>
-                <p-button label="New" icon="pi pi-plus" severity="success" class="mr-2" (onClick)="openNew()" />
+                <p-button label="New" icon="pi pi-plus" severity="success" class="mr-2" (onClick)="openNew()" outlined/>
                 
-                <p-button label="Delete" icon="pi pi-trash" severity="danger" [style]="{ width: 'auto' }" (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
+                <p-button label="Delete" icon="pi pi-trash" severity="danger" outlined [style]="{ width: 'auto' }" (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
               
             </ng-template>
 
@@ -143,8 +143,8 @@ interface ExportColumn {
                     </td>
                     <td>
 
-                        <p-button icon="pi pi-pencil" severity="info" class="mr-2" (click)="editProduct(product)" />
-                        <p-button icon="pi pi-trash" severity="danger"   (click)="deleteProduct(product)" />
+                        <p-button icon="pi pi-pencil" severity="info" class="mr-2" (click)="editProduct(product)"outlined />
+                        <p-button icon="pi pi-trash" severity="danger"   (click)="deleteProduct(product)" outlined/>
                     </td>
                 </tr>
             </ng-template>
@@ -205,8 +205,8 @@ interface ExportColumn {
             </ng-template>
 
             <ng-template #footer>
-                <p-button label="Cancel" icon="pi pi-times" severity="danger" text (click)="hideDialog()" />
-                <p-button label="Save" icon="pi pi-check" severity="info" (click)="saveProduct()" />
+                <p-button label="Cancel" icon="pi pi-times-circle" severity="danger"  (click)="hideDialog()" outlined />
+                <p-button label="Save" icon="pi pi-save" severity="info" (click)="saveProduct()" outlined/>
             </ng-template>
         </p-dialog>
 

@@ -41,9 +41,9 @@ interface PurchaseOrder {
   <!-- Toolbar Filters -->
   <div class="flex flex-wrap gap-2 justify-between p-2 rounded-t-lg mb-2">
     <div class="flex gap-2 flex-wrap">
-      <button pButton label="Add PO" icon="pi pi-plus" class="p-button-success" (click)="openNewPO()"></button>
-      <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
-      <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"></button>
+      <button pButton label="Add PO" icon="pi pi-plus" class="p-button-success" (click)="openNewPO()"outlined></button>
+      <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"outlined></button>
+      <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"outlined></button>
     </div>
     <div class="flex gap-2 flex-wrap items-center">
       <input pInputText type="text" placeholder="Search PO #" [(ngModel)]="filterPO" class="p-inputtext border rounded p-2 w-36 md:w-48">
@@ -74,9 +74,9 @@ interface PurchaseOrder {
         <td>{{po.total | currency:'SAR'}}</td>
         <td><span [ngClass]="statusClass(po.status)">{{po.status}}</span></td>
         <td class="flex gap-2 justify-center">
-          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editPO(po)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="confirmDelete(po)"></button>
-          <button pButton icon="pi pi-print" class="p-button-warning p-button-sm" (click)="printPO(po)"></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editPO(po)"outlined></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="confirmDelete(po)"outlined></button>
+          <button pButton icon="pi pi-print" class="p-button-warning p-button-sm" (click)="printPO(po)"outlined></button>
         </td>
       </tr>
     </ng-template>
@@ -140,7 +140,7 @@ interface PurchaseOrder {
             <td><input type="number" min="0" [(ngModel)]="item.price" (ngModelChange)="calculateTotal()" class="p-inputtext w-full border rounded p-1"></td>
             <td>{{item.quantity * item.price | currency:'SAR'}}</td>
             <td>
-              <button pButton icon="pi pi-times" class="p-button-rounded p-button-danger p-button-sm" (click)="removeItem(i)"></button>
+              <button pButton icon="pi pi-times" class="p-button-rounded p-button-danger p-button-sm" (click)="removeItem(i)"outlined></button>
             </td>
           </tr>
         </ng-template>
@@ -150,8 +150,8 @@ interface PurchaseOrder {
     <div class="text-right font-bold text-lg mb-2">Total: {{newPO.total | currency:'SAR'}}</div>
 
     <ng-template pTemplate="footer">
-      <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
-      <button pButton label="Save" icon="pi pi-check" class="p-button-success" (click)="savePO()"></button>
+      <button pButton label="Cancel" icon="pi pi-times-circle" class="p-button-danger" (click)="displayDialog=false"outlined></button>
+      <button pButton label="Save" icon="pi pi-save" class="p-button-success" (click)="savePO()"outlined></button>
     </ng-template>
   </p-dialog>
 

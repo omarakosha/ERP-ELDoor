@@ -46,10 +46,10 @@ interface Product {
       <h2 class="text-xl font-semibold text-gray-700">Stock Transfer</h2>
 
       <div class="flex gap-2">
-        <button pButton icon="pi pi-plus" label="New Transfer" class="p-button-success" (click)="openNewTransfer()"></button>
-        <button pButton icon="pi pi-send" label="Initial Stock Request" class="p-button-info" (click)="openInitialRequest()"></button>
-        <button pButton icon="pi pi-file-excel" label="Export Excel" class="p-button-success" (click)="exportExcel()"></button>
-        <button pButton icon="pi pi-file-pdf" label="Export PDF" class="p-button-danger" (click)="exportPDF()"></button>
+        <button pButton icon="pi pi-plus" label="New Transfer" class="p-button-success" (click)="openNewTransfer()"outlined></button>
+        <button pButton icon="pi pi-send" label="Initial Stock Request" class="p-button-info" (click)="openInitialRequest()"outlined></button>
+        <button pButton icon="pi pi-file-excel" label="Export Excel" class="p-button-success" (click)="exportExcel()"outlined></button>
+        <button pButton icon="pi pi-file-pdf" label="Export PDF" class="p-button-danger" (click)="exportPDF()"outlined></button>
       </div>
     </div>
 
@@ -87,8 +87,8 @@ interface Product {
           <td>{{t.updatedAt}}</td>
           <td><p-tag [value]="t.status" [severity]="getSeverity(t.status)"></p-tag></td>
           <td class="flex gap-2 justify-center">
-            <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editTransfer(t)"></button>
-            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteTransfer(t)"></button>
+            <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editTransfer(t)"outlined></button>
+            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteTransfer(t)"outlined></button>
           </td>
         </tr>
       </ng-template>

@@ -39,9 +39,9 @@ interface Inventory {
       <h2 class="text-xl font-semibold text-gray-700">Inventory Management</h2>
 
       <div class="flex gap-2">
-        <button pButton icon="pi pi-plus" label="Add New Inventory" class="p-button-success" (click)="openNew()"></button>
-        <button pButton icon="pi pi-file-excel" label="Export Excel" class="p-button-success" (click)="exportExcel()"></button>
-        <button pButton icon="pi pi-file-pdf" label="Export PDF" class="p-button-danger" (click)="exportPDF()"></button>
+        <button pButton icon="pi pi-plus" label=" New Inventory" class="p-button-success" (click)="openNew()"outlined></button>
+        <button pButton icon="pi pi-file-excel" label="Export Excel" class="p-button-success" (click)="exportExcel()"outlined></button>
+        <button pButton icon="pi pi-file-pdf" label="Export PDF" class="p-button-danger" (click)="exportPDF()"outlined></button>
       </div>
     </div>
 
@@ -106,8 +106,8 @@ interface Inventory {
           <td>{{item.totalCost | currency:'SAR':'symbol':'1.2-2'}}</td>
           <td><p-tag [value]="item.status" [severity]="getSeverity(item.status)"></p-tag></td>
           <td class="flex gap-2 justify-center">
-            <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editInventory(item)"></button>
-            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteInventory(item)"></button>
+            <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editInventory(item)"outlined></button>
+            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteInventory(item)"outlined></button>
           </td>
         </tr>
       </ng-template>
@@ -150,8 +150,8 @@ interface Inventory {
         </div>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton label="Cancel" icon="pi pi-times" (click)="displayDialog=false" class="p-button-secondary"></button>
-        <button pButton label="Save" icon="pi pi-check" (click)="saveInventory()" class="p-button-success"></button>
+        <button pButton label="Cancel" icon="pi pi-times-circle" (click)="displayDialog=false" class="p-button-danger"outlined></button>
+        <button pButton label="Save" icon="pi pi-save" (click)="saveInventory()" class="p-button-success"outlined></button>
       </ng-template>
     </p-dialog>
 </div>

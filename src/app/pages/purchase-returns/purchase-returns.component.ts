@@ -47,7 +47,7 @@ interface PurchaseReturn {
  <div class="card p-4 shadow-md rounded-xl bg-white">
     <div class="flex flex-wrap justify-between items-center mb-4">
       <h2 class="text-xl font-semibold text-gray-700">Purchase Returns</h2>
-      <button pButton icon="pi pi-plus" label="Add New Return" class="p-button-success" (click)="openNewReturn()"></button>
+      <button pButton icon="pi pi-plus" label=" New Return" class="p-button-success" (click)="openNewReturn()"outlined></button>
     </div>
 
     <!-- Search -->
@@ -85,8 +85,8 @@ interface PurchaseReturn {
           <td><p-tag [value]="r.status" [severity]="getSeverity(r.status)"></p-tag></td>
           <td><p-tag [value]="r.paymentStatus" [severity]="getPaymentSeverity(r.paymentStatus)"></p-tag></td>
           <td class="flex gap-2 justify-center">
-            <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editReturn(r)"></button>
-            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteReturn(r)"></button>
+            <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editReturn(r)"outlined></button>
+            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteReturn(r)"outlined></button>
           </td>
         </tr>
       </ng-template>
@@ -204,8 +204,8 @@ interface PurchaseReturn {
   </div>
 
   <ng-template pTemplate="footer">
-    <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
-    <button pButton label="Save" icon="pi pi-check" class="p-button-success" (click)="saveReturn()"></button>
+    <button pButton label="Cancel" icon="pi pi-times-circle" class="p-button-secondary" (click)="displayDialog=false"outlined></button>
+    <button pButton label="Save" icon="pi pi-save" class="p-button-success" (click)="saveReturn()"outlined></button>
   </ng-template>
 </p-dialog>
 
