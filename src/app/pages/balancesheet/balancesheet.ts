@@ -25,12 +25,13 @@ import { LoaderService } from '@/apiservice/loading.service';
    <p-toast position="top-center" class="custom-toast"></p-toast>
 
 <!-- Header Row -->
-<div class="flex items-center justify-between mb-2 flex-wrap gap-3">
+<div class="flex items-center justify-between mt-6 flex-wrap gap-3">
 
   <!-- Title -->
   <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100">
     Balance Sheet
   </h2>
+  
 
   <!-- Buttons -->
   <div>
@@ -39,7 +40,7 @@ import { LoaderService } from '@/apiservice/loading.service';
       label="Export Excel"
       icon="pi pi-file-excel"
       class="p-button-success p-button-sm"
-      (click)="exportExcel()">
+      (click)="exportExcel()" outlined>
     </button>
   </div>
 

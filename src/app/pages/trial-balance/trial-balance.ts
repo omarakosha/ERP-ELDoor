@@ -62,7 +62,7 @@ import { LoaderService } from '@/apiservice/loading.service';
   <!-- Clear Filters Button -->
   <button pButton label="Clear Filters" icon="pi pi-times" class="p-button-secondary" (click)="clearFilters()"></button>
 
-  <button pButton label="Export to Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
+  <button pButton label="Export to Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()" outlined></button>
 </div>
 
   <p-table [value]="filteredData"

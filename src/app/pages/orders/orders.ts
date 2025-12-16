@@ -74,7 +74,7 @@ interface expandedRows {
                         icon="pi pi-fw {{ isExpanded ? 'pi-minus' : 'pi-plus' }}"
                         label="{{ isExpanded ? 'Collapse All' : 'Expand All' }}" 
                         (click)="expandAll()" 
-                        class="ml-4">
+                        class="ml-4"outlined>
                 </button>
                 
                 <!-- حقل البحث -->

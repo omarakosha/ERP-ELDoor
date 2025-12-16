@@ -64,7 +64,7 @@ interface MultiSelectOption {
     </p-multiSelect>
 
     <button pButton label="Reset" icon="pi pi-refresh" class="p-button-secondary" (click)="resetFilter()"></button>
-    <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
+    <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()" outlined></button>
   </div>
 
   <p-table [value]="filteredData" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'">

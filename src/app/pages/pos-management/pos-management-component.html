@@ -8,8 +8,8 @@
     <div class="flex gap-2">
       <input type="text" pInputText placeholder="Search by box name or location" [(ngModel)]="searchTerm"
         (input)="filterBoxes()" class="w-64" />
-      <button pButton label="Add New Register" icon="pi pi-plus" class="p-button-success"
-        (click)="openAddDialog()"></button>
+      <button pButton label=" New Register" icon="pi pi-plus" class="p-button-success"
+        (click)="openAddDialog()"outlined></button>
     </div>
   </div>
 
@@ -45,10 +45,10 @@
         </td>
         <td class="text-center">
           <button pButton icon="pi pi-eye" class="p-button p-button-info p-button-sm mr-2" tooltip="View Details"
-            (click)="viewBox(box)" pTooltip=" Box Details"></button>
+            (click)="viewBox(box)" pTooltip=" Box Details"outlined></button>
 
           <button pButton icon="pi pi-times" class="p-button p-button-danger p-button-sm" tooltip="Close Register"
-            (click)="closeBox(box)" pTooltip="close Box" [disabled]="box.status !== 'Open'"></button>
+            (click)="closeBox(box)" pTooltip="close Box" [disabled]="box.status !== 'Open'"outlined></button>
         </td>
       </tr>
     </ng-template>

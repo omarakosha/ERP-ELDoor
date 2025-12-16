@@ -14,17 +14,17 @@
   <!-- Buttons -->
   <div class="flex flex-wrap gap-3 mb-4">
     <button pButton icon="pi pi-plus" class="p-button-success" (click)="openNewAccount(null)"
-            pTooltip="إضافة حساب رئيسي جديد" tooltipPosition="top"></button>
+            pTooltip="إضافة حساب رئيسي جديد" tooltipPosition="top"outlined></button>
 
     <button pButton icon="pi pi-plus-circle" class="p-button-warning" [disabled]="!selectedNode"
             (click)="openNewAccount(selectedNode)" pTooltip="إضافة حساب فرعي للحساب المحدد"
-            tooltipPosition="top"></button>
-
+            tooltipPosition="top" outlined></button>
+ 
     <button pButton icon="pi pi-pencil" class="p-button-info" [disabled]="!selectedNode"
-            (click)="openEditAccount(selectedNode)" pTooltip="تعديل الحساب المحدد" tooltipPosition="top"></button>
+            (click)="openEditAccount(selectedNode)" pTooltip="تعديل الحساب المحدد" tooltipPosition="top" outlined></button>
 
     <button pButton icon="pi pi-trash" class="p-button-danger" [disabled]="!selectedNode"
-            (click)="deleteAccount(selectedNode)" pTooltip="حذف الحساب المحدد" tooltipPosition="top"></button>
+            (click)="deleteAccount(selectedNode)" pTooltip="حذف الحساب المحدد" tooltipPosition="top"outlined></button>
   </div>
 
   <!-- Tree -->

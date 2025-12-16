@@ -45,14 +45,14 @@ interface Sale {
   template: `
 <div class="card p-6 bg-white shadow-md rounded-lg">
    <p-toast position="top-center" class="custom-toast"></p-toast>
-  <h2 class="text-3xl font-bold mb-6 text-center md:text-left">💰 Sales</h2>
+  <h2 class="text-3xl font-bold mb-6 text-center md:text-left"> Sales</h2>
 
   <!-- Toolbar Filters -->
   <div class="flex flex-wrap gap-2 justify-between p-2 rounded-t-lg mb-2">
     <div class="flex gap-2 flex-wrap">
-      <button pButton label="Add Sale" icon="pi pi-plus" class="p-button-success" (click)="openNewSale()"></button>
-      <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
-      <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"></button>
+      <button pButton label="Add Sale" icon="pi pi-plus" class="p-button-success" (click)="openNewSale()"outlined></button>
+      <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-info" (click)="exportExcel()"outlined></button>
+      <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"outlined></button>
     </div>
     <div class="flex gap-2 flex-wrap items-center">
       <input pInputText type="text" placeholder="Search Invoice #" [(ngModel)]="filterInvoice" class="p-inputtext border rounded p-2 w-36 md:w-48">
@@ -90,9 +90,9 @@ interface Sale {
         <td>{{sale.paid | currency:'SAR':'symbol':'1.2-2'}}</td>
         <td>{{sale.createdAt}}</td>
         <td class="flex gap-2 justify-center">
-          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editSale(sale)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="confirmDelete(sale)"></button>
-          <button pButton icon="pi pi-print" class="p-button-warning p-button-sm" (click)="printSale(sale)"></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm"outlined (click)="editSale(sale)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" outlined (click)="confirmDelete(sale)"></button>
+          <button pButton icon="pi pi-print" class="p-button-warning p-button-sm" outlined (click)="printSale(sale)"></button>
         </td>
       </tr>
     </ng-template>

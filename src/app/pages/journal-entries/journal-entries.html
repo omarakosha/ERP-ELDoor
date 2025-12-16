@@ -5,7 +5,7 @@
     <!-- أزرار البحث والإضافة -->
     <div class="flex flex-wrap items-center gap-4 mb-4">
         <button pButton label="New Entry" icon="pi pi-plus" class="p-button-success"
-            (click)="openNewJournal()"></button>
+            (click)="openNewJournal()"outlined></button>
 
         <div class="flex items-center gap-2">
             <input type="text" pInputText placeholder="Search her...." [(ngModel)]="journalIdFilter"
@@ -112,7 +112,12 @@
             </div>
 
             <!-- ======= الجدول ======= -->
-            <div class="flex-1 overflow-auto min-h-[345px] mt-2">
+          <div class="flex-1 overflow-auto
+            min-h-[40vh]
+            sm:min-h-[45vh]
+            md:min-h-[55vh]
+            lg:min-h-[57vh]">
+
                 <p-table [value]="currentJournal.entries" [scrollable]="true" scrollHeight="100%" selectionMode="single"
                     [(contextMenuSelection)]="selectedLine" [contextMenu]="cm" class="fixed-rows-table w-full">
 
@@ -220,7 +225,7 @@
            <!-- ======= الفوتر ======= -->
 <div
     class="border-t border-gray-200 dark:border-gray-700 pt-1 pb-1 px-5 
-           flex items-center justify-between bg-gray-50 dark:bg-gray-800">
+           flex items-center justify-between bg-gray-60 dark:bg-gray-800">
 
     <!-- يسار = القيم -->
     <div class="flex-1 flex flex-col gap-1 text-left font-bold text-gray-700 dark:text-gray-300">

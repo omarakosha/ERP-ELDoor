@@ -2,9 +2,9 @@
 
        <p-toast position="top-center" class="custom-toast"></p-toast>
 
-  <div class="flex justify-between items-center mb-3">
-    <h2>إدارة الحسابات</h2>
-    <button pButton label="إضافة" icon="pi pi-plus" (click)="new()"></button>
+  <div class="flex justify-between items-center mt-6">
+    <h2> Account maneger </h2>
+    <button pButton label="Add" icon="pi pi-plus" (click)="new()"outlined></button>
   </div>
 
   <p-table [value]="list" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]">
