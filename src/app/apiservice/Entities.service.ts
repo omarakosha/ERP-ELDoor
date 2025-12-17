@@ -17,18 +17,31 @@ export interface EntityRecord {
 }
 
 export interface JournalEntryDto {
-  journalId: number;      // رقم القيد
-  description: string;    // وصف القيد
-  date: string;           // تاريخ القيد
-  debit: number;          // مدين
-  credit: number;         // دائن
-  balanceAfter: number; 
-  costCenterId:number;  // الرصيد بعد القيد
-  entityId: number;       // معرف المقاول أو الجهة
-  entityType: string;     // نوع الكيان (مورد، عميل، إلخ)
-  entityName: string;  
-  accountId:number   // الاسم الكامل للكيان
+  journalId: number;
+  accountId: number;           // الحساب الرئيسي
+  subAccountId?: number;       // الحساب التحليلي (اختياري)
+  subAccountName?: string;     // اسم الحساب التحليلي
+  contractorId?: number;       // الكيان
+  date: string;
+  debit: number;
+  credit: number;
+  balanceAfter: number;
+  description?: string;
+  costCenterId?: number;
+  project?: string;
+  currency?: string;
 }
+
+
+export interface JournalFilterDto {
+  contractorId?: number;       // المقاول
+  centerId?: number;           // مركز معين
+  costCenterFrom?: number;     // من
+  costCenterTo?: number;       // إلى
+  mainAccountId?: number;      // الحساب الرئيسي
+  subAccountId?: number;       // الحساب الفرعي
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -83,5 +96,9 @@ getLedgerByEntity(entityId: number) {
   getCostCenterMovements(centerId: number) {
     return this.http.get<JournalEntryDto[]>(`https://localhost:7175/api/GenericEntities/costcenter/${centerId}`);
   }
-  
+
+journalFilter(filter: JournalFilterDto): Observable<JournalEntryDto[]> {
+  return this.http.post<JournalEntryDto[]>('https://localhost:7175/api/GenericEntities/journal/filter', filter);
+}
+
 }

@@ -42,7 +42,8 @@ interface Customer {
   ],
   providers: [ConfirmationService, MessageService],
   template: `
-<div class="card p-5">
+<div class="card" style=" min-height: 77vh">
+
   <p-toast position="top-center" class="custom-toast"></p-toast>
 
   <div class="flex flex-wrap justify-between items-center mb-5 gap-3">
@@ -178,12 +179,13 @@ interface Customer {
       </div>
     </div>
   </p-dialog>
+
 </div>
   `
 })
 export class CRMComponent implements OnInit {
 
-  @ViewChild('filterInput') filterInput!: ElementRef;
+@ViewChild('filterInput') filterInput!: ElementRef;
 @ViewChild('dt') dt!: Table; // أضف هذا فوق المتغيرات
 
   customers: Customer[] = [];
@@ -212,14 +214,9 @@ export class CRMComponent implements OnInit {
       { id: 6329206, name: 'ليلى بنت عبد العالى بن عامر البنوى السلمي', email: 'laila@example.com', phone: '0540249700', paid: 17500, balance: 0, status: 'نشط', activity: 80 }
     ];
     this.loading = false;
-
-    // Debounce for search input
-   fromEvent(this.filterInput.nativeElement, 'input')
-  .pipe(debounceTime(300))
-  .subscribe(() => this.onGlobalFilter(this.dt, { target: this.filterInput.nativeElement } as any));
-
   }
 
+  
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }

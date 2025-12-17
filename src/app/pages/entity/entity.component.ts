@@ -64,7 +64,7 @@ export class EntityComponent implements OnInit {
   constructor(
     private service: EntitiesService,
     private accountsService: AccountsService,
-     private msg: MessageService,
+        private messageService: MessageService,
      public loaderService: LoaderService
   ) { }
 
@@ -108,7 +108,7 @@ loadAccounts() {
     error: (err) => {
       console.error('Failed to load accounts', err);
       this.loaderService.hide(); // 🟢 إخفاء اللودنق عند الخطأ
-      this.msg.add({
+      this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'Internal Server Error Code 500'
@@ -157,9 +157,20 @@ compareAccount(a1: number, a2: number) {
       this.service.add(this.model).subscribe(() => {
         this.displayDialog = false;
         this.loadEntities();
+         this.messageService.add({
+          severity: 'success',
+          summary:  'success' ,
+          detail: 'Account created successfully'
+        });
+
       });
     } else {
       this.service.update(this.model).subscribe(() => {
+             this.messageService.add({
+          severity: 'success',
+          summary:  'success' ,
+          detail: 'Account update successfully'
+        });
         this.displayDialog = false;
         this.loadEntities();
       });

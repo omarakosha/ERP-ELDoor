@@ -8,31 +8,31 @@
   <!-- ====== لوحة الملخص ====== -->
   <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
 
-    <div class="p-4 bg-green-100 dark:bg-green-800 rounded-lg shadow-sm flex flex-col items-center">
+    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm flex flex-col items-center">
       <i class="pi pi-arrow-down text-green-600 text-2xl"></i>
       <span>إجمالي المدين</span>
       <strong>{{ totalDebit | number:'1.2-2' }}</strong>
     </div>
 
-    <div class="p-4 bg-red-100 dark:bg-red-800 rounded-lg shadow-sm flex flex-col items-center">
+    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm flex flex-col items-center">
       <i class="pi pi-arrow-up text-red-600 text-2xl"></i>
       <span>إجمالي الدائن</span>
       <strong>{{ totalCredit | number:'1.2-2' }}</strong>
     </div>
 
-    <div class="p-4 bg-blue-100 dark:bg-blue-800 rounded-lg shadow-sm flex flex-col items-center">
+    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm flex flex-col items-center">
       <i class="pi pi-wallet text-blue-600 text-2xl"></i>
       <span>الرصيد </span>
       <strong>{{ finalBalance | number:'1.2-2' }}</strong>
     </div>
 
-    <div class="p-4 bg-yellow-100 dark:bg-yellow-800 rounded-lg shadow-sm flex flex-col items-center">
+    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm flex flex-col items-center">
       <i class="pi pi-chart-line text-yellow-600 text-2xl"></i>
       <span>متوسط الحركة</span>
       <strong>{{ avgTransaction | number:'1.2-2' }}</strong>
     </div>
 
-    <div class="p-4 bg-purple-100 dark:bg-purple-800 rounded-lg shadow-sm flex flex-col items-center">
+    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm flex flex-col items-center">
       <i class="pi pi-list text-purple-600 text-2xl"></i>
       <span>عدد الحركات</span>
       <strong>{{ filteredTransactions.length }}</strong>
@@ -203,10 +203,10 @@
 
   <!-- ====== أزرار التصدير ====== -->
   <div class="flex flex-wrap justify-end gap-3 mt-4">
-    <button pButton label="PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportToPDF()"></button>
-    <button pButton label="Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"></button>
-    <button pButton label="CSV" icon="pi pi-file" class="p-button-warning" (click)="exportCSV()"></button>
-    <button pButton label="view" icon="pi pi-list" class="p-button-secondary" (click)="applyAccountFilter()"></button>
+    <button pButton label="PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportToPDF()"outlined></button>
+    <button pButton label="Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"outlined></button>
+    <button pButton label="CSV" icon="pi pi-file" class="p-button-warning" (click)="exportCSV()"outlined></button>
+    <button pButton label="view" icon="pi pi-list" class="p-button-secondary" (click)="applyAccountFilter()"outlined></button>
 
   </div>
 

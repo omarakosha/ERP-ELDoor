@@ -8,3 +8,23 @@
 .p-button-text.text-red:hover .p-button-icon {
   color: #a71d2a !important;  /* اللون عند hover */
 }
+
+
+/* يمنع تمدد الجدول */
+.table-fixed {
+  table-layout: fixed;
+}
+
+/* قص النص الطويل بنقاط */
+.truncate-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* تحسين عرض الجدول */
+.p-datatable td,
+.p-datatable th {
+  vertical-align: middle;
+}

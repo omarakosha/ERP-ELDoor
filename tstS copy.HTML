@@ -126,9 +126,8 @@ selectedMainAccount?: Account;
   displayAccountDialog = false;
   selectedTransaction: Transaction | null = null;
 
-filterData = {
+  filterData = {
     mainAccountId: 0,
-    subAccountId: 0, // ← أضف هذا
     startDate: null as Date | null,
     endDate: null as Date | null,
     accountNumber: '',
@@ -140,15 +139,13 @@ filterData = {
     costCenterTo: null as string | null,
     project: null as string | null,
     currency: null as string | null
-};
-
+  };
 
 
   clearFilters() {
   // إعادة تعيين بيانات الفلترة
   this.filterData = {
     mainAccountId: 0,
-    subAccountId: 0,
     startDate: null,
     endDate: null,
     accountNumber: '',
@@ -491,23 +488,25 @@ filterReport() {
   }
 
   this.filteredTransactions = this.transactions.filter(t => {
-    const matchMainAccount = !this.filterData.mainAccountId || t.mainAccountId === this.filterData.mainAccountId;
-    const matchSubAccount = !this.filterData.subAccountId || t.subAccountId === this.filterData.subAccountId;
+    const matchAccount =
+      (!this.filterData.accountNumber || t.accountNumber.includes(this.filterData.accountNumber)) &&
+      (!this.filterData.accountName || t.accountName.toLowerCase().includes(this.filterData.accountName.toLowerCase()));
+
     const matchCostCenter = selectedCostCenters.length === 0 || selectedCostCenters.includes(t.costCenterId?.toString() || '');
+
     const matchDate =
       (!this.filterData.startDate || new Date(t.date) >= new Date(this.filterData.startDate)) &&
       (!this.filterData.endDate || new Date(t.date) <= new Date(this.filterData.endDate));
+
     const matchType = !this.filterData.transactionType || t.type === this.filterData.transactionType;
     const matchProject = !this.filterData.project || (t.project?.toLowerCase().includes(this.filterData.project.toLowerCase()));
     const matchCurrency = !this.filterData.currency || t.currency === this.filterData.currency;
 
-    // ✅ إذا لم يُحدد أي فلتر للحساب أو مركز التكلفة، نعتبر كل شيء صالح
-    return matchMainAccount && matchSubAccount && matchCostCenter && matchDate && matchType && matchProject && matchCurrency;
+    return matchAccount && matchCostCenter && matchDate && matchType && matchProject && matchCurrency;
   });
 
   this.calculateTotals();
 }
-
 
 
 // ===== تطبيق اختيار الحساب =====
@@ -558,22 +557,20 @@ onGlobalFilter(event: Event) {
 }
 
 
+
 selectParentAccount(account: Account) {
     if (this.currentFocus === 'mainAccount') {
-      this.filterData.mainAccount = account.name; 
-      this.filterData.mainAccountId = account.id; 
+      this.filterData.mainAccount = account.name; // فقط للحساب الرئيسي
+      this.filterData.mainAccountId = account.id; // اختياري لو تريد تخزين الرقم
     }
     else if (this.currentFocus === 'subAccount') {
-      this.filterData.accountName = account.name; 
+      this.filterData.accountName = account.name; // فقط للحساب الفرعي
       this.filterData.accountNumber = account.id.toString();
-
-      // ✅ إضافة هذا السطر لحفظ id الحساب التحليلي
-      this.filterData.subAccountId = account.id;
-      this.selectedSubAccount = account; // لتطبيق الفلترة لاحقًا
     }
 
     this.selectedParentAccount = account;
-    this.displayAccountDialog = false; 
+
+    this.displayAccountDialog = false; // غلق الـ dialog بعد الاختيار
 }
 
 

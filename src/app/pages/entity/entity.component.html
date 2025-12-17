@@ -1,50 +1,90 @@
-<div class="card" style=" min-height: 77vh">
+<div class="card min-h-[77vh] p-4">
 
-       <p-toast position="top-center" class="custom-toast"></p-toast>
+  <p-toast position="top-center" class="custom-toast"></p-toast>
 
-  <div class="flex justify-between items-center mt-6">
-    <h2> Account maneger </h2>
-    <button pButton label="Add" icon="pi pi-plus" (click)="new()"outlined></button>
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mt-4">
+    <h2 class="text-xl font-semibold">Account Manager</h2>
+    <button pButton label="New Account" icon="pi pi-plus" (click)="new()" outlined></button>
   </div>
 
-  <p-table [value]="list" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]">
+  <!-- Table Wrapper (مهم للرسبونسف) -->
+<div class="mt-4 overflow-x-auto">
+  <p-table
+    [value]="list"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[10,20,50]"
+    responsiveLayout="scroll"
+    class="min-w-[1100px] table-fixed"
+  >
+
     <ng-template pTemplate="header">
       <tr>
-        <th>الاسم</th>
-        <th>الكود</th>
-        <th>النوع</th>
-        <th>الهاتف</th>
-        <th>الإيميل</th>
-        <th>العنوان</th>
-        <th>الرقم الضريبي</th>
-        <th>الحساب المرتبط</th>
-        <th>تحكم</th>
+        <th class="w-48">الاسم</th>
+        <th class="w-32">الكود</th>
+        <th class="w-32">النوع</th>
+        <th class="w-40">الهاتف</th>
+        <th class="w-56">الإيميل</th>
+        <th class="w-64">العنوان</th>
+        <th class="w-40">الرقم الضريبي</th>
+        <th class="w-64">الحساب المرتبط</th>
+        <th class="w-32">تحكم</th>
       </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-row>
       <tr>
-        <td>{{ row.name }}</td>
+        <td class="truncate-cell" title="{{ row.name }}">{{ row.name }}</td>
         <td>{{ row.code }}</td>
         <td>{{ row.entityType }}</td>
         <td>{{ row.phone }}</td>
-        <td>{{ row.email }}</td>
-        <td>{{ row.address }}</td>
+
+        <td class="truncate-cell" title="{{ row.email }}">
+          {{ row.email }}
+        </td>
+
+        <td class="truncate-cell" title="{{ row.address }}">
+          {{ row.address }}
+        </td>
+
         <td>{{ row.taxNumber }}</td>
-        <td>{{ row.accountCode }} - {{ row.accountName }}</td>
+
+        <td class="truncate-cell" title="{{ row.accountCode }} - {{ row.accountName }}">
+          {{ row.accountCode }} - {{ row.accountName }}
+        </td>
+
         <td class="flex gap-2">
-          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="edit(row)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-sm p-button-danger" (click)="remove(row.id)"></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" outlined (click)="edit(row)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" outlined (click)="remove(row.id)"></button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="9">
+          <div class="flex flex-col items-center justify-center py-10 text-gray-500">
+            <i class="pi pi-database text-3xl mb-2"></i>
+            لا توجد بيانات
+          </div>
         </td>
       </tr>
     </ng-template>
 
   </p-table>
+</div>
 
-  
-<p-dialog header="بيانات الحساب" [(visible)]="displayDialog" [modal]="true" [style]="{ width: '650px' }">
 
-  <div class="grid grid-cols-2 p-4 gap-4">
+  <p-dialog
+  header="بيانات الحساب"
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [breakpoints]="{ '960px': '90vw', '640px': '95vw' }"
+  [style]="{ width: '650px' }"
+>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
 
     <div>
       <label>الاسم</label>
@@ -55,33 +95,32 @@
       <label>الكود</label>
       <input pInputText class="w-full" [(ngModel)]="model.code" readonly>
     </div>
-<div>
-  <label>النوع</label>
- <!-- النوع -->
-<p-select
-  [options]="types"
-  [(ngModel)]="model.entityType"
-  optionLabel="label"
-  optionValue="value"
-  class="w-full"
-  placeholder="اختر النوع"
-  (onChange)="onTypeManualChange()">
-</p-select>
 
-</div>
+    <div>
+      <label>النوع</label>
+      <p-select
+        [options]="types"
+        [(ngModel)]="model.entityType"
+        optionLabel="label"
+        optionValue="value"
+        class="w-full"
+        placeholder="اختر النوع"
+        (onChange)="onTypeManualChange()">
+      </p-select>
+    </div>
 
-<div>
-  <label>الحساب المرتبط</label>
-  <p-select
-    [options]="filteredAccounts"
-    [(ngModel)]="model.accountId"
-    optionLabel="fullName"
-    optionValue="id"
-    class="w-full"
-    placeholder="اختر الحساب"
-    (onChange)="onAccountChange()">
-  </p-select>
-</div>
+    <div>
+      <label>الحساب المرتبط</label>
+      <p-select
+        [options]="filteredAccounts"
+        [(ngModel)]="model.accountId"
+        optionLabel="fullName"
+        optionValue="id"
+        class="w-full"
+        placeholder="اختر الحساب"
+        (onChange)="onAccountChange()">
+      </p-select>
+    </div>
 
     <div>
       <label>الهاتف</label>
@@ -106,10 +145,12 @@
   </div>
 
   <ng-template pTemplate="footer">
-    <button pButton label="حفظ" icon="pi pi-save" (click)="save()"></button>
+    <div class="flex justify-end gap-2 pt-3">
+      <button pButton label="حفظ" icon="pi pi-save" (click)="save()"outlined></button>
+    </div>
   </ng-template>
 
 </p-dialog>
 
-</div>
 
+</div>
