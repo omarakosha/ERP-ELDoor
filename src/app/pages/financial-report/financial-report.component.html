@@ -2,7 +2,7 @@
 
   <!-- ====== عنوان التقرير ====== -->
   <h2 class="text-center text-2xl font-bold mb-4 text-blue-700 pb-0">
-   التقارير المالية
+{{ 'finance_report' | translate }}
   </h2>
 
   <!-- ====== لوحة الملخص ====== -->
@@ -10,31 +10,31 @@
 
     <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm flex flex-col items-center">
       <i class="pi pi-arrow-down text-green-600 text-2xl"></i>
-      <span>إجمالي المدين</span>
+    <span>{{ 'TOTAL_DEBIT' | translate }}</span>
       <strong>{{ totalDebit | number:'1.2-2' }}</strong>
     </div>
 
     <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm flex flex-col items-center">
       <i class="pi pi-arrow-up text-red-600 text-2xl"></i>
-      <span>إجمالي الدائن</span>
+      <span>{{ 'TOTAL_CREDIT' | translate }}</span>
       <strong>{{ totalCredit | number:'1.2-2' }}</strong>
     </div>
 
     <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm flex flex-col items-center">
       <i class="pi pi-wallet text-blue-600 text-2xl"></i>
-      <span>الرصيد </span>
+       <th class="text-center">{{ 'BALANCE' | translate }}</th>
       <strong>{{ finalBalance | number:'1.2-2' }}</strong>
     </div>
 
     <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm flex flex-col items-center">
       <i class="pi pi-chart-line text-yellow-600 text-2xl"></i>
-      <span>متوسط الحركة</span>
+      <span> {{ 'TRANSACTION' | translate }}</span>
       <strong>{{ avgTransaction | number:'1.2-2' }}</strong>
     </div>
 
     <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm flex flex-col items-center">
       <i class="pi pi-list text-purple-600 text-2xl"></i>
-      <span>عدد الحركات</span>
+         <span> {{ 'TRANSACTION_COUNT' | translate }}</span>
       <strong>{{ filteredTransactions.length }}</strong>
     </div>
 
@@ -48,19 +48,19 @@
 
     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm flex flex-col gap-4">
       <div>
-        <label class="font-semibold mb-1 block">نوع الحركة</label>
+         <label class="font-semibold mb-1 block">{{ 'TRANSACTION_TYPE' | translate }}</label>
         <p-select [(ngModel)]="filterData.transactionType" [options]="transactionTypes" optionLabel="label"
-          optionValue="value" placeholder="اختر نوع الحركة" class="w-full"></p-select>
+          optionValue="value"[placeholder]="'TRANSACTION_TYPE' | translate" class="w-full"></p-select>
       </div>
       <div>
-        <label class="font-semibold mb-1 block">المشروع</label>
-        <input pInputText [(ngModel)]="filterData.project" placeholder="أدخل اسم المشروع" class="w-full" />
+        <label class="font-semibold mb-1 block"> {{ 'PROJECT' | translate }}</label>
+        <input pInputText [(ngModel)]="filterData.project"  [placeholder]="'PROJECT' | translate" class="w-full" />
       </div>
 
       <div>
-        <label class="font-semibold mb-1 block">العملة</label>
+        <label class="font-semibold mb-1 block">{{ 'CURRENCY' | translate }}</label>
         <p-select [(ngModel)]="filterData.currency" [options]="currencies" optionLabel="label" optionValue="value"
-          placeholder="اختر العملة" class="w-full"></p-select>
+        [placeholder]="'CURRENCY' | translate"  class="w-full"></p-select>
       </div>
     </div>
 
@@ -68,17 +68,17 @@
 
       <div class="flex gap-4">
         <div class="flex-1 flex flex-col">
-          <label class="font-semibold mb-1 block">من تاريخ</label>
+          <label class="font-semibold mb-1 block"> {{ 'FROM_DATE' | translate }}</label>
           <div class="w-full">
-            <p-datepicker [(ngModel)]="filterData.startDate" dateFormat="yy-mm-dd" placeholder="اختر تاريخ "
+            <p-datepicker [(ngModel)]="filterData.startDate" dateFormat="yy-mm-dd"  [placeholder]="'FROM_DATE' | translate"
               showIcon="true" [showButtonBar]="true" class="w-full" inputStyleClass="w-full"></p-datepicker>
           </div>
         </div>
 
         <div class="flex-1 flex flex-col">
-          <label class="font-semibold mb-1 block">إلى تاريخ</label>
+          <label class="font-semibold mb-1 block"> {{ 'TO_DATE' | translate }}</label>
           <div class="w-full">
-            <p-datepicker [(ngModel)]="filterData.endDate" dateFormat="yy-mm-dd" placeholder="اختر تاريخ "
+            <p-datepicker [(ngModel)]="filterData.endDate" dateFormat="yy-mm-dd"[placeholder]="'TO_DATE' | translate"
               showIcon="true" [showButtonBar]="true" class="w-full" inputStyleClass="w-full"></p-datepicker>
           </div>
         </div>
@@ -87,18 +87,18 @@
 
       <div class="flex gap-4">
         <div class="flex-1">
-          <label class="font-semibold mb-1 block"> حساب رئسى </label>
+          <label class="font-semibold mb-1 block">  {{ 'MAIN_ACCOUNT' | translate }} </label>
           <p-inputgroup class="w-full sm:w-auto flex-1">
-            <input #mainAccountInput  pInputText [(ngModel)]="filterData.mainAccount" placeholder="أدخل رقم الحساب" class="w-full"
+            <input #mainAccountInput  pInputText [(ngModel)]="filterData.mainAccount"   [placeholder]="'MAIN_ACCOUNT' | translate" class="w-full"
               (focus)="currentFocus='mainAccount'" />
             <button pButton icon="pi pi-user" class="p-button-secondary " (click)="focusAndOpen('mainAccount')"></button>
           </p-inputgroup>
 
         </div>
         <div class="flex-1">
-          <label class="font-semibold mb-1 block">حساب تحليلى </label>
+          <label class="font-semibold mb-1 block"> {{ 'SUB_ACCOUNT' | translate }} </label>
           <p-inputgroup class="w-full sm:w-auto flex-1">
-            <input #subAccountInput pInputText [(ngModel)]="filterData.accountName" placeholder="أدخل رقم الحساب" class="w-full"
+            <input #subAccountInput pInputText [(ngModel)]="filterData.accountName"  [placeholder]="'SUB_ACCOUNT' | translate" class="w-full"
               (focus)="currentFocus='subAccount'" />
             <button pButton icon="pi pi-users" class="p-button-secondary"  (click)="focusAndOpen('subAccount')"></button>
 
@@ -112,18 +112,18 @@
 
       <div class="flex gap-4">
         <div class="flex-1">
-          <label class="font-semibold mb-1 block">من مركز تكلفة</label>
+          <label class="font-semibold mb-1 block">  {{ 'COST_CENTER_FROM' | translate }}</label>
            <p-inputgroup class="w-full sm:w-auto flex-1">
-              <input #costFromInput pInputText [(ngModel)]="filterData.costCenterFrom" placeholder="اختر مركز التكلفة" class="w-full"
+              <input #costFromInput pInputText [(ngModel)]="filterData.costCenterFrom"  [placeholder]="'COST_CENTER_FROM' | translate"class="w-full"
             (focus)="currentFocus='costCenterFrom'" />
               <button pButton icon="pi pi-users" class="p-button-secondary"  (click)="focusAndOpen('costCenterFrom')"></button>
            </p-inputgroup>
         
         </div>
         <div class="flex-1">
-          <label class="font-semibold mb-1 block">الى مركز تكلفة</label>
+          <label class="font-semibold mb-1 block">{{ 'COST_CENTER_TO' | translate }}</label>
            <p-inputgroup class="w-full sm:w-auto flex-1">
-             <input #costToInput pInputText [(ngModel)]="filterData.costCenterTo" placeholder="اختر مركز التكلفة" class="w-full"
+             <input #costToInput pInputText [(ngModel)]="filterData.costCenterTo"     [placeholder]="'COST_CENTER_TO' | translate" class="w-full"
             (focus)="currentFocus='costCenterTo'" />
             <button pButton icon="pi pi-users" class="p-button-secondary"  (click)="focusAndOpen('costCenterTo')"></button>
            </p-inputgroup>
@@ -150,7 +150,7 @@
 
         <!-- حقل البحث مع زر مسح -->
         <p-inputgroup class="w-full sm:w-auto flex-1">
-          <input pInputText type="text" placeholder="بحث عام..." class="p-input-outlined h-12 sm:h-14"
+          <input pInputText type="text"[placeholder]="'SEARCH_ENTITY' | translate" class="p-input-outlined h-12 sm:h-14"
             (input)="onGlobalFilter($event)" />
           <button pButton icon="pi pi-times" class="p-button-outlined" (click)="clearFilters()"></button>
         </p-inputgroup>
@@ -163,12 +163,12 @@
     <!-- ===== رأس الجدول ===== -->
     <ng-template #header>
       <tr>
-        <th class="text-center">رقم القيد</th>
-        <th class="text-center">التاريخ</th>
-        <th class="text-center">البيان</th>
-        <th class="text-center">مدين</th>
-        <th class="text-center">دائن</th>
-        <th class="text-center">الرصيد</th>
+       <th class="text-center">{{ 'TRANSACTION_ID' | translate }}</th>
+        <th class="text-center">{{ 'DATE' | translate }}</th>
+        <th class="text-center">{{ 'DESCRIPTION' | translate }}</th>
+        <th class="text-center">{{ 'DEBIT' | translate }}</th>
+        <th class="text-center">{{ 'CREDIT' | translate }}</th>
+        <th class="text-center">{{ 'BALANCE' | translate }}</th>
       </tr>
     </ng-template>
 
@@ -193,7 +193,7 @@
     <!-- ===== رسالة لا توجد بيانات ===== -->
     <ng-template #emptymessage>
       <tr>
-        <td colspan="6" class="text-center py-4 font-medium">لا توجد بيانات</td>
+        <td colspan="6" class="text-center py-4 font-medium">{{ 'NO_DATA' | translate }}</td>
       </tr>
     </ng-template>
 
@@ -203,145 +203,140 @@
 
   <!-- ====== أزرار التصدير ====== -->
   <div class="flex flex-wrap justify-end gap-3 mt-4">
-    <button pButton label="PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportToPDF()"outlined></button>
-    <button pButton label="Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"outlined></button>
-    <button pButton label="CSV" icon="pi pi-file" class="p-button-warning" (click)="exportCSV()"outlined></button>
-    <button pButton label="view" icon="pi pi-list" class="p-button-secondary" (click)="applyAccountFilter()"outlined></button>
+    <button pButton [label]="'EXPORT_PDF' | translate"  icon="pi pi-file-pdf" class="p-button-danger" (click)="exportToPDF()"outlined></button>
+    <button pButton [label]="'EXPORT_EXCEL' | translate" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"outlined></button>
+    <button pButton [label]="'EXPORT_CSV' | translate"  icon="pi pi-file" class="p-button-warning" (click)="exportCSV()"outlined></button>
+    <button pButton [label]="'EXPORT_VIEW' | translate"  icon="pi pi-list" class="p-button-secondary" (click)="applyAccountFilter()"outlined></button>
 
   </div>
 
-  <!-- ====== Dialog لعرض تفاصيل الحركة ====== -->
-  <p-dialog header="تفاصيل الحركة" [(visible)]="displayDialog" [modal]="true" [closable]="true"
-    [style]="{width:'400px'}">
-    <div *ngIf="selectedTransaction">
-      <p><strong>رقم الحساب:</strong> {{selectedTransaction.accountNumber}}</p>
-      <p><strong>اسم الحساب:</strong> {{selectedTransaction.accountName}}</p>
-      <p><strong>التاريخ:</strong> {{selectedTransaction.date | date:'yyyy-MM-dd'}}</p>
-      <p><strong>نوع الحركة:</strong> {{selectedTransaction.type}}</p>
-      <p><strong>المبلغ:</strong> {{selectedTransaction.amount | number:'1.2-2'}}</p>
-      <p><strong>الرصيد التراكمي:</strong> {{selectedTransaction.balance | number:'1.2-2'}}</p>
-      <p><strong>مركز التكلفة:</strong> {{selectedTransaction.costCenter}}</p>
-      <p><strong>المشروع:</strong> {{selectedTransaction.project}}</p>
-      <p><strong>الوصف:</strong> {{selectedTransaction.description}}</p>
-      <p><strong>العملة:</strong> {{selectedTransaction.currency}}</p>
+ <p-dialog [header]="'TRANSACTION_DETAILS' | translate" [(visible)]="displayDialog" [modal]="true" [closable]="true"
+  [style]="{width:'400px'}">
+  <div *ngIf="selectedTransaction">
+    <p><strong>{{ 'ACCOUNT_NUMBER' | translate }}:</strong> {{selectedTransaction.accountNumber}}</p>
+    <p><strong>{{ 'ACCOUNT_NAME' | translate }}:</strong> {{selectedTransaction.accountName}}</p>
+    <p><strong>{{ 'DATE' | translate }}:</strong> {{selectedTransaction.date | date:'yyyy-MM-dd'}}</p>
+    <p><strong>{{ 'TRANSACTION_TYPE' | translate }}:</strong> {{selectedTransaction.type}}</p>
+    <p><strong>{{ 'AMOUNT' | translate }}:</strong> {{selectedTransaction.amount | number:'1.2-2'}}</p>
+    <p><strong>{{ 'BALANCE' | translate }}:</strong> {{selectedTransaction.balance | number:'1.2-2'}}</p>
+    <p><strong>{{ 'COST_CENTER' | translate }}:</strong> {{selectedTransaction.costCenter}}</p>
+    <p><strong>{{ 'PROJECT' | translate }}:</strong> {{selectedTransaction.project}}</p>
+    <p><strong>{{ 'DESCRIPTION' | translate }}:</strong> {{selectedTransaction.description}}</p>
+    <p><strong>{{ 'CURRENCY' | translate }}:</strong> {{selectedTransaction.currency}}</p>
+  </div>
+</p-dialog>
+
+<!-- ====== Dialog لاختيار الكيان عند F9 ====== -->
+<p-dialog [header]="'SELECT_ACCOUNT' | translate" [(visible)]="displayAccountDialog" [modal]="true"
+  [style]="{'width':'50vw','height':'450px'}" [resizable]="false" [breakpoints]="{'960px':'90vw'}">
+  <div class="flex flex-col h-full">
+
+    <!-- الهيدر ثابت مع البحث -->
+    <div class="flex gap-2 mb-2 flex-shrink-0">
+      <input type="text" pInputText [(ngModel)]="accountFilter" [placeholder]="'SEARCH_ENTITY' | translate" class="flex-1"
+        (input)="updateFilteredAccounts()">
     </div>
-  </p-dialog>
 
-  <!-- ====== Dialog لاختيار الكيان عند F9 ====== -->
-  <p-dialog header="اختر الحساب " [(visible)]="displayAccountDialog" [modal]="true"
-    [style]="{'width':'50vw','height':'450px'}" [resizable]="false" [breakpoints]="{'960px':'90vw'}">
+    <!-- الجدول scrollable -->
+    <div class="flex-1 overflow-auto min-h-[250px]">
+      <p-table [value]="filteredParentAccounts" [scrollable]="true" scrollHeight="100%">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>#</th>
+            <th>{{ 'ACCOUNT_ID' | translate }}</th>
+            <th>{{ 'ACCOUNT_NAME' | translate }}</th>
+          </tr>
+        </ng-template>
 
-    <div class="flex flex-col h-full">
+        <ng-template pTemplate="body" let-acc let-i="rowIndex">
+          <tr style="height:50px" (click)="selectParentAccount(acc)"
+            class="cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
+            [ngClass]="{'bg-blue-100 dark:bg-blue-700': selectedParentAccount?.id === acc.id}">
+            <td>{{i + 1}}</td>
+            <td>{{acc.code}}</td>
+            <td>{{acc.name}}</td>
+          </tr>
+        </ng-template>
 
-      <!-- الهيدر ثابت مع البحث -->
-      <div class="flex gap-2 mb-2 flex-shrink-0">
-        <input type="text" pInputText [(ngModel)]="accountFilter" placeholder="ابحث عن الكيان..." class="flex-1"
-          (input)="updateFilteredAccounts()">
-      </div>
-
-      <!-- الجدول scrollable -->
-      <div class="flex-1 overflow-auto min-h-[250px]">
-        <p-table [value]="filteredParentAccounts" [scrollable]="true" scrollHeight="100%">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>#</th>
-              <th>Account ID</th>
-              <th>Account Name</th>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="body" let-acc let-i="rowIndex">
-            <tr style="height:50px" (click)="selectParentAccount(acc)"
-              class="cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
-              [ngClass]="{'bg-blue-100 dark:bg-blue-700': selectedParentAccount?.id === acc.id}">
-              <td>{{i + 1}}</td>
-              <td>{{acc.code}}</td>
-              <td>{{acc.name}}</td>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="3">
-                <div class="flex flex-col items-center justify-center h-full py-10">
-                  <i class="pi pi-database text-2xl mb-2"></i>
-                  <span class="text-gray-500 text-lg">لا توجد بيانات</span>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-
-      <!-- الفوتر ثابت مع paginator -->
-      <div class="flex-shrink-0 mt-2 border-t pt-2 
-                bg-white border-gray-200 
-                dark:bg-[#18181b] dark:border-gray-700">
-        <p-paginator [rows]="5" [totalRecords]="filteredParentAccounts.length || 0"></p-paginator>
-      </div>
-
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3">
+              <div class="flex flex-col items-center justify-center h-full py-10">
+                <i class="pi pi-database text-2xl mb-2"></i>
+                <span class="text-gray-500 text-lg">{{ 'NO_DATA' | translate }}</span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
-  </p-dialog>
 
-
-
-
-  <!-- Dialog مراكز التكلفة -->
-
-  <p-dialog header="Select Cost Center" [(visible)]="costCenterDialog" [modal]="true"
-    [style]="{'width':'50vw','height':'450px'}" [resizable]="false" [breakpoints]="{'960px':'90vw'}">
-
-    <div class="flex flex-col h-full">
-
-      <!-- الهيدر ثابت -->
-      <div class="mb-2 flex-shrink-0">
-        <input type="text" pInputText [(ngModel)]="costCenterFilter" placeholder="Search cost center..." class="w-full"
-          (input)="filteredCostCenters()">
-      </div>
-
-      <!-- الجدول scrollable -->
-      <div class="flex-1 overflow-auto min-h-[250px]">
-        <p-table [value]="filteredCostCentersList" [scrollable]="true" scrollHeight="100%">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>#</th>
-              <th>Cost Center Name</th>
-              <th>Cost Center No</th>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="body" let-cc let-i="rowIndex">
-            <tr style="height:50px" (click)="selectCostCenter(cc)" class="cursor-pointer hover:bg-gray-200">
-              <td>{{i + 1}}</td>
-              <td>{{cc.name}}</td>
-              <td>{{cc.code}}</td>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="3">
-                <div class="flex flex-col items-center justify-center h-full py-10">
-                  <i class="pi pi-database" style="font-size: 2rem"></i>
-                  <span class="text-gray-500 text-lg">No Data Available</span>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-
-        </p-table>
-      </div>
-
-      <!-- الفوتر ثابت -->
-      <div class="flex-shrink-0 mt-2 border-t pt-2 
-            bg-white border-gray-200 
-            dark:bg-[#18181b] dark:border-gray-700">
-        <p-paginator [rows]="5" [totalRecords]="filteredCostCentersList.length || 0">
-        </p-paginator>
-      </div>
-
+    <!-- الفوتر ثابت مع paginator -->
+    <div class="flex-shrink-0 mt-2 border-t pt-2 
+          bg-white border-gray-200 
+          dark:bg-[#18181b] dark:border-gray-700">
+      <p-paginator [rows]="5" [totalRecords]="filteredParentAccounts.length || 0">
+      </p-paginator>
     </div>
-  </p-dialog>
+
+  </div>
+</p-dialog>
+
+ 
+
+<!-- ===== Dialog مراكز التكلفة ===== -->
+<p-dialog [header]="'SELECT_COST_CENTER' | translate" [(visible)]="costCenterDialog" [modal]="true"
+  [style]="{'width':'50vw','height':'450px'}" [resizable]="false" [breakpoints]="{'960px':'90vw'}">
+  <div class="flex flex-col h-full">
+
+    <!-- الهيدر ثابت -->
+    <div class="mb-2 flex-shrink-0">
+      <input type="text" pInputText [(ngModel)]="costCenterFilter" [placeholder]="'SEARCH_COST_CENTER' | translate" class="w-full"
+        (input)="filteredCostCenters()">
+    </div>
+
+    <!-- الجدول scrollable -->
+    <div class="flex-1 overflow-auto min-h-[250px]">
+      <p-table [value]="filteredCostCentersList" [scrollable]="true" scrollHeight="100%">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>#</th>
+            <th>{{ 'COST_CENTER_NAME' | translate }}</th>
+            <th>{{ 'COST_CENTER_NO' | translate }}</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-cc let-i="rowIndex">
+          <tr style="height:50px" (click)="selectCostCenter(cc)" class="cursor-pointer hover:bg-gray-200">
+            <td>{{i + 1}}</td>
+            <td>{{cc.name}}</td>
+            <td>{{cc.code}}</td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3">
+              <div class="flex flex-col items-center justify-center h-full py-10">
+                <i class="pi pi-database" style="font-size: 2rem"></i>
+                <span class="text-gray-500 text-lg">{{ 'NO_DATA' | translate }}</span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- الفوتر ثابت -->
+    <div class="flex-shrink-0 mt-2 border-t pt-2 
+          bg-white border-gray-200 
+          dark:bg-[#18181b] dark:border-gray-700">
+      <p-paginator [rows]="5" [totalRecords]="filteredCostCentersList.length || 0">
+      </p-paginator>
+    </div>
+
+  </div>
+</p-dialog>
 
 
 

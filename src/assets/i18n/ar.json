@@ -17,7 +17,6 @@
   "CANCEL": "إلغاء",
   "SUPPLIER_DETAILS": "إضافة / تعديل مورد",
   "INVALID_FIELD": "حقل غير صالح",
-  
   "SUPPLIER_UPLOAD_TITLE": "استيراد الموردين",
   "STEP_1": "حمل نموذج الاستيراد",
   "STEP_2": "قم بإدخال بيانات الموردين الخاصة بك",
@@ -30,7 +29,6 @@
   "MAX_ROWS": "أقصى عدد للموردين في الملف الواحد 1000",
   "IMPORT_SUPPLIERS": "استيراد الموردين",
   "CLOSE": "إغلاق",
-
   "EXCEL_POPUP_TITLE": "بيانات الموردين المرفوعة",
   "OPENING_BALANCE": "الرصيد الافتتاحي",
   "OPENING_VALUE": "قيمة الرصيد الافتتاحي",
@@ -46,7 +44,6 @@
   "BUILDING_NO": "رقم المبنى",
   "POSTAL_CODE": "الرمز البريدي",
   "ADDITIONAL_NO": "الرقم الإضافي",
-
   "SUPPLIER_PAYMENTS": "مدفوعات الموردين",
   "GENERAL_SEARCH": "بحث عام...",
   "INVOICE_NUMBER": "رقم الفاتورة",
@@ -54,8 +51,52 @@
   "SUPPLIER": "المورد",
   "PAYMENT_CATEGORY": "فئة طريقة الدفع",
   "PAYMENT_METHOD": "وسيلة الدفع",
-  "VIEW": "عرض",
   "PAYMENT_DETAILS": "تفاصيل الدفع",
   "TOTAL_PAID_AMOUNT": "إجمالي المبلغ المدفوع",
-  "NO_DATA": "لايوجد بيانات"
+ "finance_report": "التقرير المالي",
+  "TOTAL_DEBIT": "إجمالي المدين",
+  "TOTAL_CREDIT": "إجمالي الدائن",
+  "TRANSACTION": "متوسط الحركة",
+  "TRANSACTION_COUNT": "عدد الحركات",
+  "NO_DATA": "لا توجد بيانات",
+  "TRANSACTION_TYPE": "نوع الحركة",
+  "PROJECT": "المشروع",
+  "CURRENCY": "العملة",
+  "FROM_DATE": "من تاريخ",
+  "TO_DATE": "إلى تاريخ",
+  "MAIN_ACCOUNT": "الحساب الرئيسي",
+  "SUB_ACCOUNT": "حساب تحليلي",
+  "COST_CENTER_FROM": "من مركز تكلفة",
+  "COST_CENTER_TO": "إلى مركز تكلفة",
+
+
+       "TRANSACTION_ID": " #",
+
+
+  "EXPORT_PDF": "PDF",
+  "EXPORT_EXCEL": "Excel",
+  "EXPORT_CSV": "CSV",
+  "EXPORT_VIEW": "عرض",
+  
+  "TRANSACTION_DETAILS": "تفاصيل الحركة",
+  "ACCOUNT_NUMBER": "رقم الحساب",
+  "ACCOUNT_NAME": "اسم الحساب",
+  "DATE": "التاريخ",
+
+  "AMOUNT": "المبلغ",
+
+  "COST_CENTER": "مركز التكلفة",
+
+  "DESCRIPTION": "الوصف",
+
+  
+  "SELECT_ACCOUNT": "اختر الحساب",
+  "SEARCH_ENTITY": "ابحث عن الكيان...",
+  "ACCOUNT_ID": "رقم الحساب",
+
+  "SELECT_COST_CENTER": "اختر مركز التكلفة",
+  "SEARCH_COST_CENTER": "ابحث عن مركز التكلفة...",
+  "COST_CENTER_NAME": "اسم مركز التكلفة",
+  "COST_CENTER_NO": "رقم مركز التكلفة"
+  
 }

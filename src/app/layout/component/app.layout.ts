@@ -1,4 +1,4 @@
-import { Component, Renderer2, ViewChild } from '@angular/core';
+import { Component, Renderer2, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
@@ -8,6 +8,7 @@ import { AppFooter } from './app.footer';
 import { LayoutService } from '../service/layout.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+
 
 @Component({
     selector: 'app-layout',
@@ -46,7 +47,7 @@ import { MessageService } from 'primeng/api';
     
     `
 })
-export class AppLayout {
+export class AppLayout implements OnInit {
     overlayMenuOpenSubscription: Subscription;
 
     menuOutsideClickListener: any;
@@ -78,6 +79,20 @@ export class AppLayout {
             this.hideMenu();
         });
     }
+
+ngOnInit(): void {
+  this.setLanguage('ar'); // أو 'en'
+}
+
+setLanguage(lang: string) {
+  if(lang === 'ar') {
+    document.documentElement.classList.add('rtl');
+    document.documentElement.setAttribute('dir','rtl');
+  } else {
+    document.documentElement.classList.remove('rtl');
+    document.documentElement.setAttribute('dir','ltr');
+  }
+}
 
     isOutsideClicked(event: MouseEvent) {
         const sidebarEl = document.querySelector('.layout-sidebar');

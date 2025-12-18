@@ -22,3 +22,63 @@ a {
 .layout-wrapper {
     min-height: 100vh;
 }
+
+/* ========================= */
+/* ✅ دعم RTL عالمي لجميع العناصر */
+/* ========================= */
+html[dir="rtl"] {
+    body {
+        direction: rtl;
+        text-align: right;
+    }
+
+    /* النصوص داخل inputs, textarea, select */
+    input, textarea, select {
+        text-align: right;
+    }
+
+    /* الجداول */
+    table, th, td {
+        text-align: right;
+    }
+
+    /* Flexbox */
+    .flex {
+        flex-direction: row-reverse;
+    }
+
+    .justify-start {
+        justify-content: flex-end !important;
+    }
+
+    .ml-1 { margin-left: 0 !important; margin-right: 0.25rem !important; }
+    .mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+
+    /* PrimeNG pagination / dialogs */
+    .p-paginator, .p-dialog {
+        direction: rtl;
+        text-align: right;
+    }
+
+    /* أي نص داخل أزرار */
+    button {
+        text-align: center;
+    }
+}
+/* تعديل الكاردات وحقول الإدخال للـRTL */
+html[dir="rtl"] {
+  .card {
+    text-align: right;
+  }
+
+  button.p-button {
+    flex-direction: row-reverse; /* أيقونة على اليمين والنص على اليسار */
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .p-inputtext {
+    direction: rtl;
+    text-align: right;
+  }
+}

@@ -27,6 +27,7 @@ body, * {
 .custom-toast .p-toast-message {
   position: relative;
   overflow: hidden;
+    transform: translateY(6px); 
 }
 
 /* Success */

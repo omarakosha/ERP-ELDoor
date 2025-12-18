@@ -16,6 +16,7 @@ import { ChartModule } from 'primeng/chart';
 import { DialogModule } from 'primeng/dialog';
 import { AccordionModule } from 'primeng/accordion';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -65,7 +66,7 @@ interface Transaction {
   imports: [
     CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule,
     ToastModule, RippleModule, SelectModule, DatePickerModule, InputGroupModule,
-    TagModule, TooltipModule, ChartModule, AccordionModule, DialogModule
+    TagModule, TooltipModule, ChartModule, AccordionModule, DialogModule,TranslateModule ,
   ],
   templateUrl: './financial-report.component.html',
   providers: [MessageService]

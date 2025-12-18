@@ -4,14 +4,60 @@
     min-height: 100vh;
     justify-content: space-between;
     padding: 6rem 2rem 0 2rem;
-    transition: margin-left var(--layout-section-transition-duration);
+    transition: margin-left var(--layout-section-transition-duration),
+                margin-right var(--layout-section-transition-duration);
 }
 
 .layout-main {
     flex: 1 1 auto;
     padding-bottom: 2rem;
+    text-align: left; /* افتراضي */
 }
 
 img {
     max-width: none !important;
+}
+
+/* ========================= */
+/* ✅ RTL Adjustments */
+/* ========================= */
+html[dir="rtl"] {
+    .layout-main-container {
+        flex-direction: column;
+        padding: 6rem 2rem 0 2rem;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .layout-main {
+        text-align: right;
+    }
+
+    /* الكاردات داخل POS وغيرها */
+    .card {
+        text-align: right;
+    }
+
+    /* أزرار PrimeNG */
+    button.p-button {
+        flex-direction: row-reverse; /* أيقونة على اليمين */
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    /* حقول الإدخال */
+    .p-inputtext,
+    input,
+    textarea,
+    select {
+        direction: rtl;
+        text-align: right;
+    }
+
+    /* جداول PrimeNG */
+    .p-datatable,
+    table {
+        direction: rtl;
+        text-align: right;
+    }
 }

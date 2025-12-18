@@ -1208,3 +1208,155 @@ export class JournalEntriesComponent {
         الــدُّرّ
     </span>
   </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <!-- ====== Dialog لعرض تفاصيل الحركة ====== -->
+  <p-dialog header="تفاصيل الحركة" [(visible)]="displayDialog" [modal]="true" [closable]="true"
+    [style]="{width:'400px'}">
+    <div *ngIf="selectedTransaction">
+      <p><strong>رقم الحساب:</strong> {{selectedTransaction.accountNumber}}</p>
+      <p><strong>اسم الحساب:</strong> {{selectedTransaction.accountName}}</p>
+      <p><strong>التاريخ:</strong> {{selectedTransaction.date | date:'yyyy-MM-dd'}}</p>
+      <p><strong>نوع الحركة:</strong> {{selectedTransaction.type}}</p>
+      <p><strong>المبلغ:</strong> {{selectedTransaction.amount | number:'1.2-2'}}</p>
+      <p><strong>الرصيد التراكمي:</strong> {{selectedTransaction.balance | number:'1.2-2'}}</p>
+      <p><strong>مركز التكلفة:</strong> {{selectedTransaction.costCenter}}</p>
+      <p><strong>المشروع:</strong> {{selectedTransaction.project}}</p>
+      <p><strong>الوصف:</strong> {{selectedTransaction.description}}</p>
+      <p><strong>العملة:</strong> {{selectedTransaction.currency}}</p>
+    </div>
+  </p-dialog>
+
+  <!-- ====== Dialog لاختيار الكيان عند F9 ====== -->
+  <p-dialog header="اختر الحساب " [(visible)]="displayAccountDialog" [modal]="true"
+    [style]="{'width':'50vw','height':'450px'}" [resizable]="false" [breakpoints]="{'960px':'90vw'}">
+
+    <div class="flex flex-col h-full">
+
+      <!-- الهيدر ثابت مع البحث -->
+      <div class="flex gap-2 mb-2 flex-shrink-0">
+        <input type="text" pInputText [(ngModel)]="accountFilter" placeholder="ابحث عن الكيان..." class="flex-1"
+          (input)="updateFilteredAccounts()">
+      </div>
+
+      <!-- الجدول scrollable -->
+      <div class="flex-1 overflow-auto min-h-[250px]">
+        <p-table [value]="filteredParentAccounts" [scrollable]="true" scrollHeight="100%">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>#</th>
+              <th>Account ID</th>
+              <th>Account Name</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-acc let-i="rowIndex">
+            <tr style="height:50px" (click)="selectParentAccount(acc)"
+              class="cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
+              [ngClass]="{'bg-blue-100 dark:bg-blue-700': selectedParentAccount?.id === acc.id}">
+              <td>{{i + 1}}</td>
+              <td>{{acc.code}}</td>
+              <td>{{acc.name}}</td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="3">
+                <div class="flex flex-col items-center justify-center h-full py-10">
+                  <i class="pi pi-database text-2xl mb-2"></i>
+                  <span class="text-gray-500 text-lg">لا توجد بيانات</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <!-- الفوتر ثابت مع paginator -->
+      <div class="flex-shrink-0 mt-2 border-t pt-2 
+                bg-white border-gray-200 
+                dark:bg-[#18181b] dark:border-gray-700">
+        <p-paginator [rows]="5" [totalRecords]="filteredParentAccounts.length || 0"></p-paginator>
+      </div>
+
+    </div>
+  </p-dialog>
+
+
+
+
+  <!-- Dialog مراكز التكلفة -->
+
+  <p-dialog header="Select Cost Center" [(visible)]="costCenterDialog" [modal]="true"
+    [style]="{'width':'50vw','height':'450px'}" [resizable]="false" [breakpoints]="{'960px':'90vw'}">
+
+    <div class="flex flex-col h-full">
+
+      <!-- الهيدر ثابت -->
+      <div class="mb-2 flex-shrink-0">
+        <input type="text" pInputText [(ngModel)]="costCenterFilter" placeholder="Search cost center..." class="w-full"
+          (input)="filteredCostCenters()">
+      </div>
+
+      <!-- الجدول scrollable -->
+      <div class="flex-1 overflow-auto min-h-[250px]">
+        <p-table [value]="filteredCostCentersList" [scrollable]="true" scrollHeight="100%">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>#</th>
+              <th>Cost Center Name</th>
+              <th>Cost Center No</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-cc let-i="rowIndex">
+            <tr style="height:50px" (click)="selectCostCenter(cc)" class="cursor-pointer hover:bg-gray-200">
+              <td>{{i + 1}}</td>
+              <td>{{cc.name}}</td>
+              <td>{{cc.code}}</td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="3">
+                <div class="flex flex-col items-center justify-center h-full py-10">
+                  <i class="pi pi-database" style="font-size: 2rem"></i>
+                  <span class="text-gray-500 text-lg">No Data Available</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+      </div>
+
+      <!-- الفوتر ثابت -->
+      <div class="flex-shrink-0 mt-2 border-t pt-2 
+            bg-white border-gray-200 
+            dark:bg-[#18181b] dark:border-gray-700">
+        <p-paginator [rows]="5" [totalRecords]="filteredCostCentersList.length || 0">
+        </p-paginator>
+      </div>
+
+    </div>
+  </p-dialog>
+
+
+
+</div>

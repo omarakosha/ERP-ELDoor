@@ -1,21 +1,24 @@
-<div class="card" style=" min-height: 77vh">
+<div class="card rtl" style="min-height: 77vh">
   <p-toast position="top-center" class="custom-toast"></p-toast>
-  <!-- 🔍 Search bar & Add button -->
+
+  <!-- 🔍 شريط البحث و زر إضافة POS -->
   <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
     <div class="flex items-center w-full md:w-1/2 rounded-xl px-4 py-2 border border-gray-200">
-      <i class="pi pi-search text-gray-400 mr-2"></i>
-      <input type="text" pInputText placeholder="Search by POS name or location..." class="w-full outline-none border-0"
-        [(ngModel)]="searchQuery" (input)="filterPosList()" />
+      <i class="pi pi-search text-gray-400 ml-2"></i>
+      <input type="text" pInputText placeholder="ابحث باسم POS أو الموقع..." 
+             class="w-full outline-none border-0 text-right"
+             [(ngModel)]="searchQuery" (input)="filterPosList()" />
     </div>
 
-    <button pButton label="New POS" icon="pi pi-plus" class="p-button-success p-3 shadow-md" outlined
-      (click)="openAddDialog()"></button>
+    <button pButton label="POS جديد" icon="pi pi-plus" 
+            class="p-button-success p-3 shadow-md" outlined
+            (click)="openAddDialog()"></button>
   </div>
 
-  <!-- 🏪 POS List -->
+  <!-- 🏪 قائمة POS -->
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
     <div *ngFor="let pos of filteredPosList"
-      class="rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-200">
+         class="rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-200">
       <div class="p-5 flex flex-col h-full">
         <div class="flex justify-between items-center mb-3">
           <h3 class="text-lg font-bold text-gray-800">{{ pos.name }}</h3>
@@ -23,30 +26,31 @@
               'bg-green-100 text-green-600': pos.status === 'open',
               'bg-gray-200 text-gray-600': pos.status === 'closed'
             }">
-            {{ pos.status === 'open' ? 'Open' : 'Closed' }}
+            {{ pos.status === 'open' ? 'مفتوح' : 'مغلق' }}
           </span>
         </div>
 
-        <p class="text-sm text-gray-500 mb-1"><strong>Location:</strong> {{ pos.location }}</p>
-        <p class="text-sm text-gray-500 mb-1"><strong>Opened At:</strong> {{ pos.openedAt }}</p>
-        <p class="text-sm text-gray-500 mb-1"><strong>User:</strong> {{ pos.user }}</p>
-        <p class="text-sm text-gray-500 mb-3"><strong>Payment Methods:</strong> {{ pos.paymentMethods }}</p>
+        <p class="text-sm text-gray-500 mb-1"><strong>الموقع:</strong> {{ pos.location }}</p>
+        <p class="text-sm text-gray-500 mb-1"><strong>تاريخ الافتتاح:</strong> {{ pos.openedAt }}</p>
+        <p class="text-sm text-gray-500 mb-1"><strong>المستخدم:</strong> {{ pos.user }}</p>
+        <p class="text-sm text-gray-500 mb-3"><strong>طرق الدفع:</strong> {{ pos.paymentMethods }}</p>
 
-        <!-- Action buttons -->
+        <!-- أزرار الإجراءات -->
         <div class="flex flex-col mt-auto">
           <div class="flex justify-between">
-            <button pButton label="Continue Sale" icon="pi pi-shopping-cart"
-              class="p-button-primary "outlined  (click)="continueSale(pos)"></button>
+            <button pButton label="متابعة البيع" icon="pi pi-shopping-cart" 
+                    class="p-button-primary" outlined 
+                    (click)="continueSale(pos)"></button>
 
-            <button pButton label="Close POS" icon="pi pi-lock"
-             class="p-button-danger "outlined
-              (click)="attemptClosePos(pos)"></button>
+            <button pButton label="إغلاق POS" icon="pi pi-lock" 
+                    class="p-button-danger" outlined
+                    (click)="attemptClosePos(pos)"></button>
           </div>
 
-          <!-- Fixed container for warning message to control card height -->
+          <!-- مساحة لرسالة التحذير للتحكم في ارتفاع الكارد -->
           <div class="mt-2 min-h-[20px]">
             <p [class.invisible]="!pos.showCloseWarning" class="text-xs text-red-500 text-center w-full">
-              ⚠ Cannot close — POS is open on another device.
+              ⚠ لا يمكن الإغلاق — POS مفتوح على جهاز آخر.
             </p>
           </div>
         </div>
@@ -54,32 +58,32 @@
     </div>
   </div>
 
-  <!-- 🧾 Add New POS Dialog -->
-  <p-dialog header="Add New POS" [(visible)]="addDialogVisible" [modal]="true" [closable]="true" [draggable]="false"
-    [resizable]="false" [style]="{ width: '450px' }">
+  <!-- 🧾 نافذة إضافة POS جديد -->
+  <p-dialog header="إضافة POS جديد" [(visible)]="addDialogVisible" 
+            [modal]="true" [closable]="true" [draggable]="false" [resizable]="false"
+            [style]="{ width: '450px' }">
     <div class="p-fluid space-y-4">
       <div class="field">
-        <label class="font-semibold mb-2 block">POS Name</label>
-        <input type="text" pInputText placeholder="Enter POS name" [(ngModel)]="newPos.name" class="w-full" />
+        <label class="font-semibold mb-2 block">اسم POS</label>
+        <input type="text" pInputText placeholder="أدخل اسم POS" [(ngModel)]="newPos.name" class="w-full text-right" />
       </div>
 
       <div class="field">
-        <label class="font-semibold mb-2 block">Location</label>
-        <input type="text" pInputText placeholder="e.g., Riyadh Branch" [(ngModel)]="newPos.location" class="w-full" />
+        <label class="font-semibold mb-2 block">الموقع</label>
+        <input type="text" pInputText placeholder="مثال: فرع الرياض" [(ngModel)]="newPos.location" class="w-full text-right" />
       </div>
 
       <div class="field">
-        <label class="font-semibold mb-2 block">Payment Methods</label>
-        <input type="text" pInputText placeholder="e.g., Cash, Mada, Transfer" [(ngModel)]="newPos.paymentMethods"
-          class="w-full" />
+        <label class="font-semibold mb-2 block">طرق الدفع</label>
+        <input type="text" pInputText placeholder="مثال: نقد، مدى، تحويل" [(ngModel)]="newPos.paymentMethods" class="w-full text-right" />
       </div>
 
       <div class="flex justify-end gap-2 pt-4 border-t">
-        <button pButton label="Cancel" icon="pi pi-times-circle" class="p-button-danger"
-          (click)="addDialogVisible = false"outlined></button>
-        <button pButton label="Save" icon="pi pi-save" class="p-button-success" (click)="saveNewPos()"outlined></button>
+        <button pButton label="إلغاء" icon="pi pi-times-circle" class="p-button-danger" outlined 
+                (click)="addDialogVisible = false"></button>
+        <button pButton label="حفظ" icon="pi pi-save" class="p-button-success" outlined 
+                (click)="saveNewPos()"></button>
       </div>
     </div>
   </p-dialog>
-
 </div>
