@@ -119,31 +119,51 @@
     }
 }
 
+
 /* ========================= */
-/* ✅ RTL Adjustments */
+/* ✅ RTL Adjustments Fixed */
 /* ========================= */
 html[dir="rtl"] {
-    .layout-static .layout-main-container {
-        margin-left: 0;
-        margin-right: 22rem; // نفس عرض الـ sidebar
-    }
+  .layout-static .layout-main-container {
+    margin-left: 0;
+    margin-right: 22rem; // عرض المحتوى الرئسيى و السايد بار المسافه بينهما sidebar على Desktop
+  }
 
-    .layout-static-inactive .layout-main-container,
-    .layout-overlay .layout-main-container {
-        margin-left: 0;
-        margin-right: 0;
+  .layout-static-inactive .layout-main-container,
+  .layout-overlay .layout-main-container {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .layout-overlay .layout-sidebar,
+  .layout-static-inactive .layout-sidebar {
+    left: auto;
+    right: 0;
+    transform: translateX(100%); // مخفي افتراضياً في Mobile
+    transition: transform 0.3s ease;
+  }
+
+  .layout-overlay .layout-sidebar.active,
+  .layout-static-inactive .layout-sidebar.active {
+    transform: translateX(0); // يظهر عند التفعيل
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 991px) {
+    .layout-wrapper .layout-main-container {
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
 
     .layout-overlay .layout-sidebar,
     .layout-static-inactive .layout-sidebar {
-        left: auto;
-        right: 0;
+      width: 80%; // يمكن ضبط العرض على Mobile
+      top: 0;
+      height: 100%;
+      border-radius: 0; // لتملأ الشاشة
     }
-
-    @media (max-width: 991px) {
-        .layout-wrapper .layout-main-container {
-            padding-left: 2rem;
-            padding-right: 2rem;
-        }
-    }
+  }
 }
+

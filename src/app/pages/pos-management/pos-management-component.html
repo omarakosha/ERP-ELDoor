@@ -43,13 +43,32 @@
             {{ box.status }}
           </span>
         </td>
+       
         <td class="text-center">
-          <button pButton icon="pi pi-eye" class="p-button p-button-info p-button-sm mr-2" tooltip="View Details"
-            (click)="viewBox(box)" pTooltip=" Box Details"outlined></button>
+  <div class="inline-flex items-center gap-2">
+    <button
+      pButton
+      icon="pi pi-eye"
+      class="p-button-info p-button-sm"
+      pTooltip="Box Details"
+      tooltipPosition="top"
+      (click)="viewBox(box)"
+      outlined>
+    </button>
 
-          <button pButton icon="pi pi-times" class="p-button p-button-danger p-button-sm" tooltip="Close Register"
-            (click)="closeBox(box)" pTooltip="close Box" [disabled]="box.status !== 'Open'"outlined></button>
-        </td>
+    <button
+      pButton
+      icon="pi pi-times"
+      class="p-button-danger p-button-sm"
+      pTooltip="Close Box"
+      tooltipPosition="top"
+      (click)="closeBox(box)"
+      [disabled]="box.status !== 'Open'"
+      outlined>
+    </button>
+  </div>
+</td>
+
       </tr>
     </ng-template>
   </p-table>

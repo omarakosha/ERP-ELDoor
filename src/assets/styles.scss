@@ -5,84 +5,6 @@
 @use './demo/demo.scss';
 
 
-:root {
-  --p-font-family: 'Sukar', sans-serif;
-}
-
-body, * {
-  font-family: 'Sukar', sans-serif !important;
-}
-
-/* ====== استثناء الأيقونات من الخط ====== */
-.pi,
-[class^="pi-"],
-[class*=" pi-"] {
-  font-family: 'PrimeIcons' !important;
-}
-
-
-
-
-/* Common style */
-.custom-toast .p-toast-message {
-  position: relative;
-  overflow: hidden;
-    transform: translateY(6px); 
-}
-
-/* Success */
-.custom-toast .p-toast-message-success::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background-color: #22c55e; /* أخضر */
-  animation: toastProgress 3s linear forwards;
-}
-
-/* Warn */
-.custom-toast .p-toast-message-warn::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background-color: #facc15; /* أصفر */
-  animation: toastProgress 3s linear forwards;
-}
-
-/* Error */
-.custom-toast .p-toast-message-error::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background-color: #ef4444; /* أحمر */
-  animation: toastProgress 3s linear forwards;
-}
-
-/* Info */
-.custom-toast .p-toast-message-info::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background-color: #3b82f6; /* أزرق */
-  animation: toastProgress 3s linear forwards;
-}
-
-/* Animation */
-@keyframes toastProgress {
-  from { width: 100%; }
-  to { width: 0%; }
-}
 
 
 
@@ -90,44 +12,5 @@ body, * {
 
 
 
-.card-loader-wrapper {
-  position: absolute; /* بالنسبة للكارد */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.6); /* تعتيم داخل الكارد فقط */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10; /* فوق محتوى الكارد */
-}
 
-.card-loader-img {
-  width: 200px;
-  height: 120;
-  border-radius: 50%;
-  z-index: 2;
-  animation: pulse 1.5s infinite ease-in-out;
-}
 
-.card-loader-ring {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  border: 3px solid rgba(255, 255, 255, 0);
-  border-top: 8px solid #3c7688;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  z-index: 1;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.1); opacity: 1; }
-}

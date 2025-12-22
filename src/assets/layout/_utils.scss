@@ -23,3 +23,68 @@
         top: 100px;
     }
 }
+
+
+
+
+/* Common style */
+.custom-toast .p-toast-message {
+  position: relative;
+  overflow: hidden;
+    transform: translateY(6px); 
+}
+
+/* Success */
+.custom-toast .p-toast-message-success::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background-color: #22c55e; /* أخضر */
+  animation: toastProgress 3s linear forwards;
+}
+
+/* Warn */
+.custom-toast .p-toast-message-warn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background-color: #facc15; /* أصفر */
+  animation: toastProgress 3s linear forwards;
+}
+
+/* Error */
+.custom-toast .p-toast-message-error::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background-color: #ef4444; /* أحمر */
+  animation: toastProgress 3s linear forwards;
+}
+
+/* Info */
+.custom-toast .p-toast-message-info::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background-color: #3b82f6; /* أزرق */
+  animation: toastProgress 3s linear forwards;
+}
+
+
+  /* أيقونات PrimeNG */
+  .p-toast, .p-dialog, .p-paginator {
+    direction: rtl;
+    text-align: right;
+  }

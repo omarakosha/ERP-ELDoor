@@ -1,20 +1,36 @@
 @use 'mixins' as *;
 
 .layout-sidebar {
-    position: fixed;
-    width: 20rem;
-    height: calc(100vh - 8rem);
-    z-index: 999;
-    overflow-y: auto;
-    user-select: none;
-    top: 6rem;
-    left: 2rem;
-    transition:
-        transform var(--layout-section-transition-duration),
-        left var(--layout-section-transition-duration);
-    background-color: var(--surface-overlay);
-    border-radius: var(--content-border-radius);
-    padding: 0.5rem 1.5rem;
+  position: fixed;
+  width: 20rem;
+  height: calc(100vh - 8rem);
+  z-index: 999;
+  overflow-y: auto;
+  user-select: none;
+  top: 6rem;
+  background-color: var(--surface-overlay);
+  border-radius: var(--content-border-radius);
+  padding: 0.5rem 1.5rem;
+transform: translateX(-100%);
+transform: translateX(100%);
+transform: translateX(0);
+
+}
+
+/* ========================= */
+/* LTR Desktop */
+html[dir="ltr"] .layout-sidebar {
+ right: 0;
+right: 2rem;
+right: auto;
+}
+
+/* RTL Desktop */
+html[dir="rtl"] .layout-sidebar {
+  left: 0;
+  left: 2rem;
+  left: auto;
+
 }
 
 .layout-menu {
@@ -138,11 +154,11 @@
 /* ========================= */
 html[dir="rtl"] {
     .layout-sidebar {
-        right: 2rem;
-        left: auto;
-        transition:
-            transform var(--layout-section-transition-duration),
-            right var(--layout-section-transition-duration);
+       right: 2rem;
+       left: auto;
+       transition:
+        transform var(--layout-section-transition-duration),
+        right var(--layout-section-transition-duration);
     }
 
     .layout-menu {
@@ -159,13 +175,52 @@ html[dir="rtl"] {
             }
         }
 
-        ul {
-            li a { margin-right: 1rem; margin-left: 0; }
-            li li a { margin-right: 2rem; margin-left: 0; }
-            li li li a { margin-right: 2.5rem; margin-left: 0; }
-            li li li li a { margin-right: 3rem; margin-left: 0; }
-            li li li li li a { margin-right: 3.5rem; margin-left: 0; }
-            li li li li li li a { margin-right: 4rem; margin-left: 0; }
+          ul {
+            overflow: hidden;
+            border-radius: var(--content-border-radius);
+
+            li {
+                a { margin-right: 1rem; }
+
+                li { a { margin-right: 2rem; } }
+                li li { a { margin-right: 2.5rem; } }
+                li li li { a { margin-right: 3rem; } }
+                li li li li { a { margin-right: 3.5rem; } }
+                li li li li li { a { margin-right: 4rem; } }
+            }
         }
     }
 }
+
+
+/* ========================= */
+/* ✅ RTL Sidebar Mobile Fix */
+/* ========================= */
+@media (max-width: 1024px) {
+  html[dir="rtl"] {
+    .layout-sidebar {
+    right: 0;
+    left: auto;
+    transform: translateX(100%); /* مخفية افتراضياً من اليمين */
+    }
+
+    /* عندما تكون القائمة مفتوحة */
+    .layout-sidebar.active {
+      transform: translateX(0); /* تظهر */
+    }
+  }
+
+  html[dir="ltr"] {
+    .layout-sidebar {
+      left: 0;          /* ظهور من اليسار */
+      right: auto;
+      transform: translateX(-100%);/* مخفية افتراضياً من اليسار */
+    }
+
+    .layout-sidebar.active {
+      transform: translateX(0);
+    }
+  }
+}
+
+
