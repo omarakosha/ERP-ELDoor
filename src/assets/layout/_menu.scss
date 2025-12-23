@@ -11,27 +11,65 @@
   background-color: var(--surface-overlay);
   border-radius: var(--content-border-radius);
   padding: 0.5rem 1.5rem;
-transform: translateX(-100%);
-transform: translateX(100%);
-transform: translateX(0);
+ transition: transform 0.3s ease;
 
 }
+
 
 /* ========================= */
-/* LTR Desktop */
+/* ✅ LRT Sidebar Fix */
+/* ========================= */
 html[dir="ltr"] .layout-sidebar {
- right: 0;
-right: 2rem;
+
+left: 2rem;
 right: auto;
+
+    transition:
+        transform var(--layout-section-transition-duration),
+        left var(--layout-section-transition-duration);
 }
 
-/* RTL Desktop */
+
+/* ========================= */
+/* ✅ RTL Sidebar  */
+/* ========================= */
 html[dir="rtl"] .layout-sidebar {
-  left: 0;
-  left: 2rem;
-  left: auto;
+      right: 2rem;
+       left: auto;
+      
+       transition:
+       transform var(--layout-section-transition-duration),
+        right var(--layout-section-transition-duration);
+   .layout-menu {
+        a {
+            .layout-menuitem-icon {
+                margin-left: 0.5rem;
+                margin-right: 0;
+            }
+             .layout-submenu-toggler {
+                margin-right: auto;
+                margin-left: 0;
+              
+            }
+        }
+         ul {
+              overflow: hidden;
+              border-radius: var(--content-border-radius);
 
+              li {
+                a { margin-right: 1rem; }
+
+                li { a { margin-right: 2rem; } }
+                li li { a { margin-right: 2.5rem; } }
+                li li li { a { margin-right: 3rem; } }
+                li li li li { a { margin-right: 3.5rem; } }
+                li li li li li { a { margin-right: 4rem; } }
+              }
+
+            }
 }
+}
+   
 
 .layout-menu {
     margin: 0;
@@ -149,48 +187,6 @@ html[dir="rtl"] .layout-sidebar {
     transition: max-height 1s ease-in-out;
 }
 
-/* ========================= */
-/* ✅ RTL Sidebar Fix */
-/* ========================= */
-html[dir="rtl"] {
-    .layout-sidebar {
-       right: 2rem;
-       left: auto;
-       transition:
-        transform var(--layout-section-transition-duration),
-        right var(--layout-section-transition-duration);
-    }
-
-    .layout-menu {
-        a {
-            .layout-menuitem-icon {
-                margin-left: 0.5rem;
-                margin-right: 0;
-            }
-
-            .layout-submenu-toggler {
-                margin-right: auto;
-                margin-left: 0;
-                transform: rotate(180deg);
-            }
-        }
-
-          ul {
-            overflow: hidden;
-            border-radius: var(--content-border-radius);
-
-            li {
-                a { margin-right: 1rem; }
-
-                li { a { margin-right: 2rem; } }
-                li li { a { margin-right: 2.5rem; } }
-                li li li { a { margin-right: 3rem; } }
-                li li li li { a { margin-right: 3.5rem; } }
-                li li li li li { a { margin-right: 4rem; } }
-            }
-        }
-    }
-}
 
 
 /* ========================= */

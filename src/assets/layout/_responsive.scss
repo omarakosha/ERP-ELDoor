@@ -120,10 +120,11 @@
 }
 
 
-/* ========================= */
 /* ✅ RTL Adjustments Fixed */
 /* ========================= */
-html[dir="rtl"] {
+html[dir="rtl"] 
+{
+
   .layout-static .layout-main-container {
     margin-left: 0;
     margin-right: 22rem; // عرض المحتوى الرئسيى و السايد بار المسافه بينهما sidebar على Desktop
