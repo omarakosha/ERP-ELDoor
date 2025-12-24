@@ -124,9 +124,16 @@ export class AppTopbar {
   }
 
 
-  toggleLanguage() {
-    this.currentLang = this.currentLang === 'ar' ? 'en' : 'ar';
-    this.translate.use(this.currentLang);
-    document.documentElement.dir = this.currentLang === 'ar' ? 'rtl' : 'ltr';
-  }
+toggleLanguage() {
+  const newLang = this.currentLang === 'ar' ? 'en' : 'ar';
+  this.currentLang = newLang;
+
+  this.translate.use(newLang);
+
+  this.layoutService.layoutConfig.update(cfg => ({
+    ...cfg,
+    lang: newLang
+  }));
+}
+
 }

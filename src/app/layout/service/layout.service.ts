@@ -7,7 +7,9 @@ export interface layoutConfig {
     surface?: string | undefined | null;
     darkTheme?: boolean;
     menuMode?: string;
+    lang?: 'ar' | 'en';
 }
+
 
 interface LayoutState {
     staticMenuDesktopInactive?: boolean;
@@ -25,14 +27,19 @@ interface MenuChangeEvent {
 @Injectable({
     providedIn: 'root'
 })
+
 export class LayoutService {
-    private _config: layoutConfig = {
-        preset: 'Aura',
-        primary: 'emerald',
-        surface: null,
-        darkTheme: false,
-        menuMode: 'static'
-    };
+    private lastLang?: 'ar' | 'en';
+
+  private _config: layoutConfig = {
+    preset: 'Aura',
+    primary: 'emerald',
+    surface: null,
+    darkTheme: false,
+    menuMode: 'static',
+    lang: 'ar'
+};
+
 
     private _state: LayoutState = {
         staticMenuDesktopInactive: false,
@@ -151,10 +158,21 @@ export class LayoutService {
         return !this.isDesktop();
     }
 
-    onConfigUpdate() {
-        this._config = { ...this.layoutConfig() };
-        this.configUpdate.next(this.layoutConfig());
+ onConfigUpdate() {
+    this._config = { ...this.layoutConfig() };
+
+    const currentLang = this.layoutConfig().lang;
+    const isRtl = currentLang === 'ar';
+
+    if (this.lastLang !== currentLang) {
+        document.documentElement.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
+        document.documentElement.classList.toggle('rtl', isRtl);
+        this.lastLang = currentLang;
     }
+
+    this.configUpdate.next(this.layoutConfig());
+}
+
 
     onMenuStateChange(event: MenuChangeEvent) {
         this.menuSource.next(event);

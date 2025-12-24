@@ -1,83 +1,15 @@
 @use 'mixins' as *;
 
-.layout-sidebar {
-  position: fixed;
-  width: 20rem;
-  height: calc(100vh - 8rem);
-  z-index: 999;
-  overflow-y: auto;
-  user-select: none;
-  top: 6rem;
-  background-color: var(--surface-overlay);
-  border-radius: var(--content-border-radius);
-  padding: 0.5rem 1.5rem;
- transition: transform 0.3s ease;
-
-}
-
-
 /* ========================= */
-/* ✅ LRT Sidebar Fix */
+/* Sidebar Menu Base */
 /* ========================= */
-html[dir="ltr"] .layout-sidebar {
-
-left: 2rem;
-right: auto;
-
-    transition:
-        transform var(--layout-section-transition-duration),
-        left var(--layout-section-transition-duration);
-}
-
-
-/* ========================= */
-/* ✅ RTL Sidebar  */
-/* ========================= */
-html[dir="rtl"] .layout-sidebar {
-      right: 2rem;
-       left: auto;
-      
-       transition:
-       transform var(--layout-section-transition-duration),
-        right var(--layout-section-transition-duration);
-   .layout-menu {
-        a {
-            .layout-menuitem-icon {
-                margin-left: 0.5rem;
-                margin-right: 0;
-            }
-             .layout-submenu-toggler {
-                margin-right: auto;
-                margin-left: 0;
-              
-            }
-        }
-         ul {
-              overflow: hidden;
-              border-radius: var(--content-border-radius);
-
-              li {
-                a { margin-right: 1rem; }
-
-                li { a { margin-right: 2rem; } }
-                li li { a { margin-right: 2.5rem; } }
-                li li li { a { margin-right: 3rem; } }
-                li li li li { a { margin-right: 3.5rem; } }
-                li li li li li { a { margin-right: 4rem; } }
-              }
-
-            }
-}
-}
-   
-
 .layout-menu {
     margin: 0;
     padding: 0;
-    list-style-type: none;
+    list-style: none;
 
     .layout-root-menuitem {
-        > .layout-menuitem-root-text {
+        >.layout-menuitem-root-text {
             font-size: 0.857rem;
             text-transform: uppercase;
             font-weight: 700;
@@ -85,138 +17,200 @@ html[dir="rtl"] .layout-sidebar {
             margin: 0.75rem 0;
         }
 
-        > a {
+        >a {
             display: none;
         }
     }
 
     a {
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding: 0.75rem 1rem;
+        border-radius: var(--content-border-radius);
+        color: var(--text-color);
+        cursor: pointer;
         user-select: none;
+        transition: background-color var(--element-transition-duration), box-shadow var(--element-transition-duration);
 
-        &.active-menuitem {
-            > .layout-submenu-toggler {
-                transform: rotate(-180deg);
-            }
+        .layout-menuitem-icon {
+            margin-right: 0.5rem;
         }
-    }
 
-    li.active-menuitem {
-        > a {
-            .layout-submenu-toggler {
-                transform: rotate(-180deg);
-            }
-        }
-    }
+        .layout-submenu-toggler {
+            font-size: 75%;
+            transition: transform var(--element-transition-duration);
 
-    ul {
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
-
-        a {
-            display: flex;
-            align-items: center;
-            position: relative;
-            outline: 0 none;
-            color: var(--text-color);
-            cursor: pointer;
-            padding: 0.75rem 1rem;
-            border-radius: var(--content-border-radius);
-            transition:
-                background-color var(--element-transition-duration),
-                box-shadow var(--element-transition-duration);
-
-            .layout-menuitem-icon {
-                margin-right: 0.5rem;
-            }
-
-            .layout-submenu-toggler {
-                font-size: 75%;
+            /* LTR */
+            html[dir="ltr"] & {
                 margin-left: auto;
-                transition: transform var(--element-transition-duration);
+                margin-right: 0;
             }
 
-            &.active-route {
-                font-weight: 700;
-                color: var(--primary-color);
-            }
-
-            &:hover {
-                background-color: var(--surface-hover);
-            }
-
-            &:focus {
-                @include focused-inset();
+            /* RTL */
+            html[dir="rtl"] & {
+                margin-right: auto;
+                margin-left: 0;
             }
         }
 
-        ul {
-            overflow: hidden;
-            border-radius: var(--content-border-radius);
+        &:hover {
+            background-color: var(--surface-hover);
+        }
+
+        &:focus {
+            @include focused-inset();
+        }
+
+        &.active-route {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        &.active-menuitem>.layout-submenu-toggler {
+            transform: rotate(-180deg);
+        }
+    }
+
+    li ul {
+        overflow: hidden;
+        border-radius: var(--content-border-radius);
+
+        li {
+            a {
+
+                /* LTR */
+                html[dir="ltr"] & {
+                    margin-left: 1rem;
+                    margin-right: 0;
+                }
+
+                /* RTL */
+                html[dir="rtl"] & {
+                    margin-right: 1rem;
+                    margin-left: 0;
+                }
+            }
 
             li {
-                a { margin-left: 1rem; }
+                a {
+                    html[dir="ltr"] & {
+                        margin-left: 2rem;
+                        margin-right: 0;
+                    }
 
-                li { a { margin-left: 2rem; } }
-                li li { a { margin-left: 2.5rem; } }
-                li li li { a { margin-left: 3rem; } }
-                li li li li { a { margin-left: 3.5rem; } }
-                li li li li li { a { margin-left: 4rem; } }
+                    html[dir="rtl"] & {
+                        margin-right: 2rem;
+                        margin-left: 0;
+                    }
+                }
+            }
+
+            li li {
+                a {
+                    html[dir="ltr"] & {
+                        margin-left: 2.5rem;
+                        margin-right: 0;
+                    }
+
+                    html[dir="rtl"] & {
+                        margin-right: 2.5rem;
+                        margin-left: 0;
+                    }
+                }
+            }
+
+            li li li {
+                a {
+                    html[dir="ltr"] & {
+                        margin-left: 3rem;
+                        margin-right: 0;
+                    }
+
+                    html[dir="rtl"] & {
+                        margin-right: 3rem;
+                        margin-left: 0;
+                    }
+                }
+            }
+
+            li li li li {
+                a {
+                    html[dir="ltr"] & {
+                        margin-left: 3.5rem;
+                        margin-right: 0;
+                    }
+
+                    html[dir="rtl"] & {
+                        margin-right: 3.5rem;
+                        margin-left: 0;
+                    }
+                }
+            }
+
+            li li li li li {
+                a {
+                    html[dir="ltr"] & {
+                        margin-left: 4rem;
+                        margin-right: 0;
+                    }
+
+                    html[dir="rtl"] & {
+                        margin-right: 4rem;
+                        margin-left: 0;
+                    }
+                }
             }
         }
     }
+
 }
 
+/* ========================= */
+/* Submenu Animation */
 .layout-submenu-enter-from,
 .layout-submenu-leave-to {
     max-height: 0;
+    opacity: 0;
 }
 
 .layout-submenu-enter-to,
 .layout-submenu-leave-from {
     max-height: 1000px;
+    opacity: 1;
 }
 
 .layout-submenu-leave-active {
     overflow: hidden;
-    transition: max-height 0.45s cubic-bezier(0, 1, 0, 1);
+    transition: max-height 0.45s cubic-bezier(0, 1, 0, 1), opacity 0.3s ease;
 }
 
 .layout-submenu-enter-active {
     overflow: hidden;
-    transition: max-height 1s ease-in-out;
+    transition: max-height 0.5s ease-in-out, opacity 0.35s ease-in;
 }
 
-
-
 /* ========================= */
-/* ✅ RTL Sidebar Mobile Fix */
-/* ========================= */
-@media (max-width: 1024px) {
-  html[dir="rtl"] {
-    .layout-sidebar {
-    right: 0;
-    left: auto;
-    transform: translateX(100%); /* مخفية افتراضياً من اليمين */
+/* RTL Adjustments */
+html[dir="rtl"] {
+    .layout-menu a .layout-menuitem-icon {
+        margin-left: 0.5rem;
+        margin-right: 0;
     }
 
-    /* عندما تكون القائمة مفتوحة */
-    .layout-sidebar.active {
-      transform: translateX(0); /* تظهر */
+    .layout-menu li ul li a {
+        margin-right: 1rem;
     }
-  }
-
-  html[dir="ltr"] {
-    .layout-sidebar {
-      left: 0;          /* ظهور من اليسار */
-      right: auto;
-      transform: translateX(-100%);/* مخفية افتراضياً من اليسار */
-    }
-
-    .layout-sidebar.active {
-      transform: translateX(0);
-    }
-  }
 }
 
+/* Submenu toggler rotation */
+.layout-menu a.active-menuitem .layout-submenu-toggler,
+.layout-menu li.active-menuitem>a>.layout-submenu-toggler {
+    transform: rotate(-180deg);
+}
 
+/* إذا أردنا دعم RTL بنفس الطريقة */
+html[dir="rtl"] .layout-menu a.active-menuitem .layout-submenu-toggler,
+html[dir="rtl"] .layout-menu li.active-menuitem>a>.layout-submenu-toggler {
+    transform: rotate(-180deg);
+}
