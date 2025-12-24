@@ -73,53 +73,66 @@ html[dir="rtl"] .layout-static-inactive .layout-main-container {
 
 
 
-/* ========================= */
-/* Mobile Responsive Sidebar */
-/* ========================= */
+
+
 /* ========================= */
 /* Mobile Sidebar Logic */
 /* ========================= */
-@media (max-width: 1024px) {
+@media (max-width: 992px) {
+
+  /* Sidebar hidden by default */
+  .layout-wrapper.layout-static .layout-sidebar,
+  .layout-wrapper.layout-overlay .layout-sidebar {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: min(80%, 310px); 
+    border-radius: 0;
+    z-index: 1001; /* أعلى من mask */
+    transition: transform 0.3s ease;
+    background-color: var(--surface-overlay);
+  }
 
   /* LTR */
-  html[dir="ltr"] .layout-wrapper.layout-static .layout-sidebar {
+  html[dir="ltr"] .layout-wrapper.layout-static .layout-sidebar,
+  html[dir="ltr"] .layout-wrapper.layout-overlay .layout-sidebar {
     left: 0;
+    right: auto;
     transform: translateX(-100%);
   }
 
   /* RTL */
-  html[dir="rtl"] .layout-wrapper.layout-static .layout-sidebar {
+  html[dir="rtl"] .layout-wrapper.layout-static .layout-sidebar,
+  html[dir="rtl"] .layout-wrapper.layout-overlay .layout-sidebar {
+    left: auto;
     right: 0;
     transform: translateX(100%);
   }
 
-  /* ACTIVE (when staticMenuMobileActive = true) */
-  .layout-wrapper.layout-static.layout-mobile-active .layout-sidebar {
-    transform: translateX(0);
+  /* Sidebar active */
+  .layout-wrapper.layout-mobile-active .layout-sidebar {
+    transform: translateX(0) !important;
   }
 
-  .layout-sidebar {
-    width: 80%;
-    top: 0;
-    height: 100vh;
-    border-radius: 0;
-    z-index: 1000;
-  }
-}
-
-/* ========================= */
-/* Masks for Mobile Sidebar */
-
-@media (max-width: 1024px) {
-  .layout-mask {
+  /* Mask */
+  .layout-wrapper .layout-mask {
     display: none;
     position: fixed;
     inset: 0;
     background-color: var(--maskbg);
-    z-index: 998;
+    z-index: 1000; /* أقل من sidebar */
   }
 
   .layout-wrapper.layout-mobile-active .layout-mask {
     display: block;
+    pointer-events: auto; /* يلتقط النقرات خارج sidebar */
+  }
+
+  /* Main content adjustments */
+  .layout-wrapper .layout-main-container {
+    margin: 0 !important;
+    padding: 1rem;
   }
 }
+
+
