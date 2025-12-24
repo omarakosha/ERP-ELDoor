@@ -8,96 +8,116 @@ import { AppMenuitem } from './app.menuitem';
     selector: 'app-menu',
     standalone: true,
     imports: [CommonModule, AppMenuitem, RouterModule],
-    template: `<ul class="layout-menu">
+    template: `
+    <ul class="layout-menu">
         <ng-container *ngFor="let item of model; let i = index">
-            <li app-menuitem *ngIf="!item.separator" [item]="item" [index]="i" [root]="true"></li>
+            <li app-menuitem *ngIf="!item.separator"
+                [item]="item"
+                [index]="i"
+                [root]="true">
+            </li>
             <li *ngIf="item.separator" class="menu-separator"></li>
         </ng-container>
-    </ul> `
+    </ul>
+    `
 })
 export class AppMenu {
+
     model: MenuItem[] = [];
 
     ngOnInit() {
         this.model = [
+
+            // ================= Home =================
             {
-                label: 'Home',
+                label: 'MENU.HOME',
                 items: [
-                    { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/'] }
+                    {
+                        label: 'MENU.DASHBOARD',
+                        icon: 'pi pi-home',
+                        routerLink: ['/']
+                    }
                 ]
             },
 
+            // ================= Sales & Customers =================
             {
-                routerLink: ['/pages'],
                 items: [
                     {
-                        label: 'Sales & Customers',
+                        label: 'MENU.SALES_CUSTOMERS',
                         icon: 'pi pi-shopping-cart',
                         items: [
-                            { label: 'POS', icon: 'pi pi-desktop', routerLink: ['/pages/pos'] },
-                            { label: 'Cash Registers', icon: 'pi pi-briefcase', routerLink: ['/pages/pos-management'] },
-                            { label: 'Sales Invoices', icon: 'pi pi-file', routerLink: ['/pages/sales-invoices'] },
-                            { label: 'Store Orders', icon: 'pi pi-shopping-bag', routerLink: ['/pages/orders'] },
-                            { label: 'Customers', icon: 'pi pi-users', routerLink: ['/pages/CRM'] },
-                              { label: 'Customer Payments', icon: 'pi pi-users', routerLink: ['/pages/payments'] },
-                       
+                            { label: 'MENU.POS', icon: 'pi pi-desktop', routerLink: ['/pages/pos'] },
+                            { label: 'MENU.CASH_REGISTERS', icon: 'pi pi-briefcase', routerLink: ['/pages/pos-management'] },
+                            { label: 'MENU.SALES_INVOICES', icon: 'pi pi-file', routerLink: ['/pages/sales-invoices'] },
+                            { label: 'MENU.STORE_ORDERS', icon: 'pi pi-shopping-bag', routerLink: ['/pages/orders'] },
+                            { label: 'MENU.CUSTOMERS', icon: 'pi pi-users', routerLink: ['/pages/CRM'] },
+                            { label: 'MENU.CUSTOMER_PAYMENTS', icon: 'pi pi-wallet', routerLink: ['/pages/payments'] },
                         ]
                     }
                 ]
             },
 
+            // ================= Products & Inventory =================
             {
-                routerLink: ['/pages'],
                 items: [
                     {
-                        label: 'Products & Inventory',
+                        label: 'MENU.PRODUCTS_INVENTORY',
                         icon: 'pi pi-box',
                         items: [
-                            { label: 'Products', icon: 'pi pi-tags', routerLink: ['/pages/crud'] },
-                            { label: 'Inventory Stock', icon: 'pi pi-check-square', routerLink: ['/pages/inventory'] },
-                            { label: 'Stock Transfer', icon: 'pi pi-refresh', routerLink: ['/pages/stock-transfer'] },
+                            { label: 'MENU.PRODUCTS', icon: 'pi pi-tags', routerLink: ['/pages/crud'] },
+                            { label: 'MENU.INVENTORY_STOCK', icon: 'pi pi-check-square', routerLink: ['/pages/inventory'] },
+                            { label: 'MENU.STOCK_TRANSFER', icon: 'pi pi-refresh', routerLink: ['/pages/stock-transfer'] },
                         ]
                     }
                 ]
             },
 
+            // ================= Purchases & Suppliers =================
             {
-                routerLink: ['/pages'],
                 items: [
                     {
-                        label: 'Purchases & Suppliers',
+                        label: 'MENU.PURCHASES_SUPPLIERS',
                         icon: 'pi pi-truck',
                         items: [
-                            { label: 'Purchase Invoices', icon: 'pi pi-file-import', routerLink: ['/pages/purchase-invoices'] },
-                            { label: 'Purchase Returns', icon: 'pi pi-undo', routerLink: ['/pages/purchase-returns'] },
-                            { label: 'Suppliers', icon: 'pi pi-users', routerLink: ['/pages/suppliers'] },
-                            { label: 'Supplier Payments', icon: 'pi pi-wallet', routerLink: ['/pages/supplier-payments'] },
+                            { label: 'MENU.PURCHASE_INVOICES', icon: 'pi pi-file-import', routerLink: ['/pages/purchase-invoices'] },
+                            { label: 'MENU.PURCHASE_RETURNS', icon: 'pi pi-undo', routerLink: ['/pages/purchase-returns'] },
+                            { label: 'MENU.SUPPLIERS', icon: 'pi pi-users', routerLink: ['/pages/suppliers'] },
+                            { label: 'MENU.SUPPLIER_PAYMENTS', icon: 'pi pi-wallet', routerLink: ['/pages/supplier-payments'] },
                         ]
                     }
                 ]
             },
 
+            // ================= Accounting =================
             {
-                label: 'Accounting',
+                label: 'MENU.ACCOUNTING',
                 items: [
-                     { label: 'Tree Accounts', icon: 'pi pi-sitemap', routerLink: ['/pages/accounts-manager'] },
-                    { label: 'Journal Entries', icon: 'pi pi-list', routerLink: ['/pages/journal-entries'] },
-                    { label: 'Trial Balance', icon: 'pi pi-chart-bar', routerLink: ['/pages/trial-balance'] },
-                    { label: 'Profit & Loss', icon: 'pi pi-chart-line', routerLink: ['/pages/profit-loss'] },
-                    { label: 'Balance & Sheet', icon: 'pi pi-objects-column', routerLink: ['/pages/balancesheet'] },
-                    { label: 'Accounts manager', icon: 'pi pi-sitemap', routerLink: ['/pages/entity'] },
+                    { label: 'MENU.TREE_ACCOUNTS', icon: 'pi pi-sitemap', routerLink: ['/pages/accounts-manager'] },
+                    { label: 'MENU.JOURNAL_ENTRIES', icon: 'pi pi-list', routerLink: ['/pages/journal-entries'] },
+                    { label: 'MENU.TRIAL_BALANCE', icon: 'pi pi-chart-bar', routerLink: ['/pages/trial-balance'] },
+                    { label: 'MENU.PROFIT_LOSS', icon: 'pi pi-chart-line', routerLink: ['/pages/profit-loss'] },
+                    { label: 'MENU.BALANCE_SHEET', icon: 'pi pi-objects-column', routerLink: ['/pages/balancesheet'] },
+                    { label: 'MENU.ENTITY_MANAGER', icon: 'pi pi-sitemap', routerLink: ['/pages/entity'] },
                 ]
             },
 
+            // ================= Reports =================
             {
-                label: 'Reports',
+                label: 'MENU.REPORTS',
                 items: [
-                    { label: 'Reports', icon: 'pi pi-chart-pie', routerLink: ['/pages/reports'] },
-                    { label: 'Financial Reports', icon: 'pi pi-file', routerLink: ['/pages/financial-report'] },
+                    { label: 'MENU.ALL_REPORTS', icon: 'pi pi-chart-pie', routerLink: ['/pages/reports'] },
+                    { label: 'MENU.FINANCIAL_REPORTS', icon: 'pi pi-file', routerLink: ['/pages/financial-report'] },
                 ]
             },
 
-            {
+
+
+
+
+
+/*
+                        {
                 label: 'UI Components',
                 items: [
                     { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/formlayout'] },
@@ -182,7 +202,8 @@ export class AppMenu {
                     { label: 'Documentation', icon: 'pi pi-fw pi-pencil', routerLink: ['/documentation'] },
                     { label: 'View Source', icon: 'pi pi-fw pi-github', url: 'https://github.com/primefaces/sakai-ng', target: '_blank' }
                 ]
-            }
+            }*/
+
         ];
     }
 }

@@ -21,7 +21,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   template: `
   <div class="layout-topbar">
     <div class="layout-topbar-logo-container">
-      <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
+       <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
         <i class="pi pi-bars"></i>
       </button>
 
@@ -36,10 +36,23 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
           الــدُّرّ
         </span>
       </a>
+
+     
+
+      
     </div>
 
     <div class="layout-topbar-actions">
       <div class="layout-config-menu">
+
+         <!-- Language Toggle -->
+          <button type="button" class="layout-topbar-action" (click)="toggleLanguage()" >
+            <i class="pi pi-language"></i>
+            
+            <span>{{ currentLang === 'ar' ? 'العربية' : 'English' }}</span>
+          </button>
+
+
         <!-- Dark Mode Toggle -->
         <button type="button" class="layout-topbar-action" (click)="toggleDarkMode()">
           <i [ngClass]="{'pi': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme()}"></i>
@@ -59,6 +72,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         </div>
       </div>
 
+      
+      
+
       <button class="layout-topbar-menu-button layout-topbar-action"
               pStyleClass="@next"
               enterFromClass="hidden"
@@ -69,11 +85,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         <i class="pi pi-ellipsis-v"></i>
       </button>
 
-         <!-- Language Toggle -->
-          <button type="button" class="layout-topbar-action" (click)="toggleLanguage()">
-            <i class="pi pi-globe"></i>
-            <span>{{ currentLang === 'ar' ? 'العربية' : 'English' }}</span>
-          </button>
 
       <!-- Topbar Menu -->
       <div class="layout-topbar-menu hidden lg:block">

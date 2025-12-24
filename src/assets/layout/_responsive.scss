@@ -18,9 +18,33 @@
     will-change: transform;
 }
 
+
 /* ========================= */
 /* LTR/RTL Initial Positions */
+/* ========================= *//* Desktop - overlay LTR */
+
+html[dir="ltr"] .layout-overlay .layout-sidebar {
+  left: 2rem;
+  transform: translateX(-110%); /* مخفي افتراضيًا */
+}
+
+html[dir="ltr"] .layout-wrapper.layout-overlay.layout-mobile-active .layout-sidebar {
+  transform: translateX(0); /* يظهر عند فتح القائمة */
+}
+
+/* Overlay - RTL */
+html[dir="rtl"] .layout-overlay .layout-sidebar {
+  right: 2rem;
+  transform: translateX(110%); /* مخفي افتراضيًا */
+}
+
+html[dir="rtl"] .layout-wrapper.layout-overlay.layout-mobile-active .layout-sidebar {
+  transform: translateX(0); /* يظهر عند فتح القائمة */
+}
+
 /* ========================= */
+/* LTR/RTL Initial Positions */
+/* ========================= *//*static - overlay LTR */
 html[dir="ltr"] .layout-sidebar {
     left: 2rem;
     right: auto;
@@ -134,5 +158,25 @@ html[dir="rtl"] .layout-static-inactive .layout-main-container {
     padding: 1rem;
   }
 }
+
+/* ========================= */
+/* Hover Overlay Sidebar - Desktop Only */
+/* ========================= */
+@media (min-width: 993px) {
+  html[dir="ltr"] .layout-overlay .layout-sidebar {
+    transform: translateX(-110%);
+    transition: transform 0.3s ease;
+  }
+  html[dir="rtl"] .layout-overlay .layout-sidebar {
+    transform: translateX(110%);
+    transition: transform 0.3s ease;
+  }
+
+  /* Hover فقط على زر القائمة */
+  .layout-overlay .layout-menu-button:hover + .layout-sidebar {
+    transform: translateX(0) !important;
+  }
+}
+
 
 

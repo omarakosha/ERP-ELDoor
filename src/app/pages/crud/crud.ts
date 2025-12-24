@@ -57,12 +57,27 @@ interface ExportColumn {
     template: `
         <p-toolbar styleClass="mb-6">
         <p-toast position="top-center" class="custom-toast" [baseZIndex]="10000"></p-toast>
-            <ng-template #start>
-                <p-button label="New" icon="pi pi-plus" severity="success" class="mr-2" (onClick)="openNew()" outlined/>
-                
-                <p-button label="Delete" icon="pi pi-trash" severity="danger" outlined [style]="{ width: 'auto' }" (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
-              
-            </ng-template>
+          <ng-template #start>
+  <div class="toolbar-buttons">
+    <p-button
+      label="New"
+      icon="pi pi-plus"
+      severity="success"
+      outlined
+      (onClick)="openNew()">
+    </p-button>
+
+    <p-button
+      label="Delete"
+      icon="pi pi-trash"
+      severity="danger"
+      outlined
+      (onClick)="deleteSelectedProducts()"
+      [disabled]="!selectedProducts || !selectedProducts.length">
+    </p-button>
+  </div>
+</ng-template>
+
 
             <ng-template #end>
                 <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />

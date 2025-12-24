@@ -15,11 +15,11 @@
 
   /* شعار Topbar */
   .layout-topbar-logo-container {
-    width: 20rem;
+    
     display: flex;
     align-items: center;
     justify-content: flex-start; // LTR افتراضي
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   html[dir="rtl"] & .layout-topbar-logo-container {
@@ -172,6 +172,7 @@
         justify-content: flex-start;
         border-radius: var(--content-border-radius);
         padding: 0.5rem 1rem;
+        
 
         i {
           font-size: 1rem;
@@ -191,3 +192,34 @@
     }
   }
 }
+
+.layout-topbar-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem; /* المسافة بين الأيقونة والنص */
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  background-color: var(--surface-card);
+  color: var(--text-color);
+
+  &:hover {
+    background-color: var(--surface-hover);
+  }
+
+  i {
+    font-size: 1.25rem;
+  }
+
+  .language-label {
+    display: inline-block;
+    font-size: 0.9rem;
+  }
+}
+
+/* دعم RTL */
+html[dir="rtl"] .layout-topbar-action {
+  flex-direction: row-reverse;
+}
+

@@ -95,6 +95,43 @@
  "COST_CENTER_NO": "Cost Center No",
   "SELECT_COST_CENTER": "Select Cost Center",
   "SEARCH_COST_CENTER": "Search cost center...",
-  "COST_CENTER_NAME": "Cost Center Name"
+  "COST_CENTER_NAME": "Cost Center Name",
 
+
+  "MENU": {
+    "HOME": "Home",
+    "DASHBOARD": "Dashboard",
+
+    "SALES_CUSTOMERS": "Sales & Customers",
+    "POS": "POS",
+    "CASH_REGISTERS": "Cash Registers",
+    "SALES_INVOICES": "Sales Invoices",
+    "STORE_ORDERS": "Store Orders",
+    "CUSTOMERS": "Customers",
+    "CUSTOMER_PAYMENTS": "Customer Payments",
+
+    "PRODUCTS_INVENTORY": "Products & Inventory",
+    "PRODUCTS": "Products",
+    "INVENTORY_STOCK": "Inventory Stock",
+    "STOCK_TRANSFER": "Stock Transfer",
+
+    "PURCHASES_SUPPLIERS": "Purchases & Suppliers",
+    "PURCHASE_INVOICES": "Purchase Invoices",
+    "PURCHASE_RETURNS": "Purchase Returns",
+    "SUPPLIERS": "Suppliers",
+    "SUPPLIER_PAYMENTS": "Supplier Payments",
+
+    "ACCOUNTING": "Accounting",
+    "TREE_ACCOUNTS": "Chart of Accounts",
+    "JOURNAL_ENTRIES": "Journal Entries",
+    "TRIAL_BALANCE": "Trial Balance",
+    "PROFIT_LOSS": "Profit & Loss",
+    "BALANCE_SHEET": "Balance Sheet",
+    "ENTITY_MANAGER": "Accounts Manager",
+
+    "REPORTS": "Reports",
+    "ALL_REPORTS": "Reports",
+    "FINANCIAL_REPORTS": "Financial Reports"
+  }
 }
+

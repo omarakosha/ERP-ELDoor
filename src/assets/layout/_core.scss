@@ -131,14 +131,29 @@ html[dir="rtl"] .pos-card-header { flex-direction: row-reverse; }
 /* زر أيقونة فقط */
 .p-button.p-button-icon-only {
     padding: 0.5rem;
-    width: 3.0rem;
+    width: 2.80rem;
     height: 2.5rem;
-    justify-content: center !important;
+    justify-content: center ;
+}
+/* الأيقونة في الوسط */
+.p-button.p-button-icon-only .p-button-icon {
+  font-size: 1.25rem;
+  display: flex;               /* flex للأيقونة أيضًا */
+  align-items: center;
+  justify-content: center;
 }
 
 html[dir="rtl"] .p-button { direction: rtl; }
 html[dir="rtl"] .p-button .p-button-icon { margin: 0 !important; }
 html[dir="ltr"] .p-button .p-button-icon { margin: 0 !important; }
+
+
+.toolbar-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* المسافة بين الأزرار */
+}
+
 
 /* =========================================================
    📌 Status Badges
@@ -211,6 +226,8 @@ img { max-width: 100%; height: auto; }
   z-index: 1;
 }
 
+
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -226,3 +243,4 @@ img { max-width: 100%; height: auto; }
   from { width: 100%; }
   to { width: 0%; }
 }
+

@@ -7,61 +7,77 @@ import { CommonModule } from '@angular/common';
 import { RippleModule } from 'primeng/ripple';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from '../service/layout.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
     selector: '[app-menuitem]',
     standalone: true,
-    imports: [CommonModule, RouterModule, RippleModule],
+    imports: [CommonModule, RouterModule, RippleModule,TranslateModule],
     template: `
-        <ng-container>
-            <div *ngIf="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div>
+       <ng-container>
+    <!-- Root title -->
+    <div *ngIf="root && item.visible !== false"
+         class="layout-menuitem-root-text">
+        {{ item.label | translate }}
+    </div>
 
-            <a *ngIf="(!item.routerLink || item.items) && item.visible !== false"
-                [attr.href]="item.url"
-                (click)="itemClick($event)"
-                [ngClass]="item.styleClass"
-                [attr.target]="item.target"
-                tabindex="0"
-                pRipple>
-                <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
-                <span class="layout-menuitem-text">{{ item.label }}</span>
-                <i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
-            </a>
+    <!-- Parent / expandable item -->
+    <a *ngIf="(!item.routerLink || item.items) && item.visible !== false"
+       [attr.href]="item.url"
+       (click)="itemClick($event)"
+       [ngClass]="item.styleClass"
+       [attr.target]="item.target"
+       tabindex="0"
+       pRipple>
 
-            <a *ngIf="item.routerLink && !item.items && item.visible !== false"
-                (click)="itemClick($event)"
-                [ngClass]="item.styleClass"
-                [routerLink]="item.routerLink"
-                routerLinkActive="active-route"
-                [routerLinkActiveOptions]="item.routerLinkActiveOptions || { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }"
-                [fragment]="item.fragment"
-                [queryParamsHandling]="item.queryParamsHandling"
-                [preserveFragment]="item.preserveFragment"
-                [skipLocationChange]="item.skipLocationChange"
-                [replaceUrl]="item.replaceUrl"
-                [state]="item.state"
-                [queryParams]="item.queryParams"
-                [attr.target]="item.target"
-                tabindex="0"
-                pRipple>
-                <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
-                <span class="layout-menuitem-text">{{ item.label }}</span>
-                <i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
-            </a>
+        <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
+        <span class="layout-menuitem-text">
+            {{ item.label | translate }}
+        </span>
+        <i class="pi pi-fw pi-angle-down layout-submenu-toggler"
+           *ngIf="item.items"></i>
+    </a>
 
-            <ul *ngIf="item.items && item.visible !== false" [@children]="submenuAnimation">
-                <ng-template ngFor let-child let-i="index" [ngForOf]="item.items">
-                    <li app-menuitem
-                        [item]="child"
-                        [index]="i"
-                        [parentKey]="key"
-                        [active]="active"
-                        [class]="child['badgeClass']">
-                    </li>
-                </ng-template>
-            </ul>
-        </ng-container>
+    <!-- Router link item -->
+    <a *ngIf="item.routerLink && !item.items && item.visible !== false"
+       (click)="itemClick($event)"
+       [ngClass]="item.styleClass"
+       [routerLink]="item.routerLink"
+       routerLinkActive="active-route"
+       [routerLinkActiveOptions]="item.routerLinkActiveOptions || { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }"
+       [fragment]="item.fragment"
+       [queryParamsHandling]="item.queryParamsHandling"
+       [preserveFragment]="item.preserveFragment"
+       [skipLocationChange]="item.skipLocationChange"
+       [replaceUrl]="item.replaceUrl"
+       [state]="item.state"
+       [queryParams]="item.queryParams"
+       [attr.target]="item.target"
+       tabindex="0"
+       pRipple>
+
+        <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
+        <span class="layout-menuitem-text">
+            {{ item.label | translate }}
+        </span>
+    </a>
+
+    <!-- Children -->
+    <ul *ngIf="item.items && item.visible !== false"
+        [@children]="submenuAnimation">
+        <ng-template ngFor let-child let-i="index" [ngForOf]="item.items">
+            <li app-menuitem
+                [item]="child"
+                [index]="i"
+                [parentKey]="key"
+                [active]="active"
+                [class]="child['badgeClass']">
+            </li>
+        </ng-template>
+    </ul>
+</ng-container>
+
     `,
     animations: [
         trigger('children', [
