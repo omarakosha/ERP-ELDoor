@@ -29,6 +29,7 @@ interface MenuChangeEvent {
 })
 
 export class LayoutService {
+    
     private lastLang?: 'ar' | 'en';
 
   private _config: layoutConfig = {
