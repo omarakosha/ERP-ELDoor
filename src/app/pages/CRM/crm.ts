@@ -118,8 +118,8 @@ interface Customer {
           </span>
         </td>
         <td class="flex gap-2 justify-center">
-          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editCustomer(c)"outlined></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteCustomer(c)"outlined></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info " (click)="editCustomer(c)"outlined></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger " (click)="deleteCustomer(c)"outlined></button>
         </td>
       </tr>
     </ng-template>

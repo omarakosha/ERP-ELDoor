@@ -91,9 +91,9 @@ interface Sale {
         <td>{{sale.paid | currency:'SAR':'symbol':'1.2-2'}}</td>
         <td>{{sale.createdAt}}</td>
         <td class="flex gap-2 justify-center">
-          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm"outlined (click)="editSale(sale)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" outlined (click)="confirmDelete(sale)"></button>
-          <button pButton icon="pi pi-print" class="p-button-warning p-button-sm" outlined (click)="printSale(sale)"></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info "outlined (click)="editSale(sale)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger " outlined (click)="confirmDelete(sale)"></button>
+          <button pButton icon="pi pi-print" class="p-button-warning " outlined (click)="printSale(sale)"></button>
         </td>
       </tr>
     </ng-template>

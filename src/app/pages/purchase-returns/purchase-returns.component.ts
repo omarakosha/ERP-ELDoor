@@ -85,8 +85,8 @@ interface PurchaseReturn {
           <td><p-tag [value]="r.status" [severity]="getSeverity(r.status)"></p-tag></td>
           <td><p-tag [value]="r.paymentStatus" [severity]="getPaymentSeverity(r.paymentStatus)"></p-tag></td>
           <td class="flex gap-2 justify-center">
-            <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editReturn(r)"outlined></button>
-            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteReturn(r)"outlined></button>
+            <button pButton icon="pi pi-pencil" class="p-button-info " (click)="editReturn(r)"outlined></button>
+            <button pButton icon="pi pi-trash" class="p-button-danger " (click)="deleteReturn(r)"outlined></button>
           </td>
         </tr>
       </ng-template>
@@ -170,7 +170,7 @@ interface PurchaseReturn {
               <td class="p-2 text-right">{{p.availableQuantity}}</td>
               <td class="p-2 text-right font-semibold">{{(p.quantity || 0) * (p.newPrice || 0)}}</td>
               <td class="p-2 text-center">
-                <button pButton icon="pi pi-times" class="p-button-danger p-button-rounded p-button-sm" (click)="removeProduct(p)"></button>
+                <button pButton icon="pi pi-times" class="p-button-danger p-button-rounded " (click)="removeProduct(p)"></button>
               </td>
             </tr>
           </tbody>

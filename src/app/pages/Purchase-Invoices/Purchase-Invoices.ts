@@ -33,7 +33,8 @@ interface PurchaseOrder {
   ],
   providers: [ConfirmationService, MessageService],
   template: `
-<div class="card p-6 bg-white shadow-md rounded-lg">
+ <div class="card p-4 shadow-md rounded-xl bg-white">
+ 
  <p-toast position="top-center" class="custom-toast"></p-toast>
 
       <h2 class="text-xl font-semibold text-gray-700">Purchase Orders</h2>
@@ -75,9 +76,9 @@ interface PurchaseOrder {
         <td>{{po.total | currency:'SAR'}}</td>
         <td><span [ngClass]="statusClass(po.status)">{{po.status}}</span></td>
         <td class="flex gap-2 justify-center">
-          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editPO(po)"outlined></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="confirmDelete(po)"outlined></button>
-          <button pButton icon="pi pi-print" class="p-button-warning p-button-sm" (click)="printPO(po)"outlined></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info " (click)="editPO(po)"outlined></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger" (click)="confirmDelete(po)"outlined></button>
+          <button pButton icon="pi pi-print" class="p-button-warning " (click)="printPO(po)"outlined></button>
         </td>
       </tr>
     </ng-template>

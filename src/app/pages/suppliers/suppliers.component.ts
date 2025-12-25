@@ -96,8 +96,8 @@ interface Supplier {
         <td>{{s.balance}}</td>
         <td><p-tag [value]="s.status" [severity]="getSeverity(s.status)"></p-tag></td>
         <td class="flex gap-2 justify-center">
-          <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editSupplier(s)"outlined></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteSupplier(s)"outlined></button>
+          <button pButton icon="pi pi-pencil" class="p-button-info" (click)="editSupplier(s)"outlined></button>
+          <button pButton icon="pi pi-trash" class="p-button-danger " (click)="deleteSupplier(s)"outlined></button>
         </td>
       </tr>
     </ng-template>
@@ -153,7 +153,7 @@ interface Supplier {
           pButton 
           label="Supplier Import Template" 
           icon="pi pi-download" 
-          class="p-button-sm p-button-success"
+          class=" p-button-success"
           (click)="downloadTemplate()">
         </button>
       </div>
@@ -277,7 +277,7 @@ interface Supplier {
           <td class="p-1 text-right"><input pInputText [(ngModel)]="s.postalCode" class="w-full"></td>
           <td class="p-1 text-right"><input pInputText [(ngModel)]="s.additionalNo" class="w-full"></td>
           <td class="p-1 text-center">
-            <button pButton icon="pi pi-times" class="p-button-danger p-button-rounded p-button-sm" (click)="removeExcelSupplier(s)"></button>
+            <button pButton icon="pi pi-times" class="p-button-danger p-button-rounded " (click)="removeExcelSupplier(s)"></button>
           </td>
         </tr>
       </tbody>

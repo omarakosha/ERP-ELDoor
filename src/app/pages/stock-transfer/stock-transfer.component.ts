@@ -87,8 +87,8 @@ interface Product {
           <td>{{t.updatedAt}}</td>
           <td><p-tag [value]="t.status" [severity]="getSeverity(t.status)"></p-tag></td>
           <td class="flex gap-2 justify-center">
-            <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editTransfer(t)"outlined></button>
-            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteTransfer(t)"outlined></button>
+            <button pButton icon="pi pi-pencil" class="p-button-info " (click)="editTransfer(t)"outlined></button>
+            <button pButton icon="pi pi-trash" class="p-button-danger " (click)="deleteTransfer(t)"outlined></button>
           </td>
         </tr>
       </ng-template>

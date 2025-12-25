@@ -106,8 +106,8 @@ interface Inventory {
           <td>{{item.totalCost | currency:'SAR':'symbol':'1.2-2'}}</td>
           <td><p-tag [value]="item.status" [severity]="getSeverity(item.status)"></p-tag></td>
           <td class="flex gap-2 justify-center">
-            <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" (click)="editInventory(item)"outlined></button>
-            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteInventory(item)"outlined></button>
+            <button pButton icon="pi pi-pencil" class="p-button-info " (click)="editInventory(item)"outlined></button>
+            <button pButton icon="pi pi-trash" class="p-button-danger" (click)="deleteInventory(item)"outlined></button>
           </td>
         </tr>
       </ng-template>
