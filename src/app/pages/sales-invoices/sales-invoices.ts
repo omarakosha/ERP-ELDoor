@@ -7,10 +7,12 @@ import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
+
 import { ConfirmationService, MessageService } from 'primeng/api';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { LayoutService } from '@/layout/service/layout.service';
 
 interface Customer { id:number; name:string; }
 interface Product { id:number; name:string; }
@@ -39,7 +41,8 @@ interface Sale {
     DialogModule,
     InputTextModule,
     ToastModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    
   ],
   providers: [ConfirmationService, MessageService],
   template: `
@@ -62,8 +65,14 @@ interface Sale {
       <button pButton label="Clear Filters" icon="pi pi-filter-slash" class="p-button-outlined" (click)="dt.clear()"></button>
     </div>
   </div>
-
-  <p-table #dt [value]="filteredSales" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'" [rowsPerPageOptions]="[10,20,50]" class="overflow-auto rounded-lg shadow-sm">
+<div class="overflow-x-auto rounded-lg shadow-sm">
+  <p-table #dt 
+           [value]="filteredSales" 
+           [paginator]="true" 
+           [rows]="10" 
+           [rowsPerPageOptions]="[10,20,50]" 
+           [responsiveLayout]="'scroll'" 
+           class="min-w-full">
 
     <!-- Table Header -->
     <ng-template pTemplate="header">
@@ -79,34 +88,57 @@ interface Sale {
     </ng-template>
 
     <!-- Table Body -->
-    <ng-template pTemplate="body" let-sale>
-      <tr class="hover:bg-gray-50">
-        <td>{{sale.invoiceNo}}</td>
-        <td>{{sale.location}}</td>
-        <td>{{sale.paymentMethod}}</td>
-        <td>{{sale.customer?.name}}</td>
-        <td>{{sale.salesChannel}}</td>
-        <td>{{sale.saleType}}</td>
-        <td>{{sale.total | currency:'SAR':'symbol':'1.2-2'}}</td>
-        <td>{{sale.paid | currency:'SAR':'symbol':'1.2-2'}}</td>
-        <td>{{sale.createdAt}}</td>
-        <td class="flex gap-2 justify-center">
-          <button pButton icon="pi pi-pencil" class="p-button-info "outlined (click)="editSale(sale)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger " outlined (click)="confirmDelete(sale)"></button>
-          <button pButton icon="pi pi-print" class="p-button-warning " outlined (click)="printSale(sale)"></button>
-        </td>
-      </tr>
-    </ng-template>
+   <ng-template pTemplate="body" let-sale>
+  <tr class="hover:bg-gray-50">
+    <td class="truncate">{{sale.invoiceNo}}</td>
+    <td class="truncate">{{sale.location}}</td>
+    <td class="truncate">{{sale.paymentMethod}}</td>
+    <td class="truncate">{{sale.customer?.name}}</td>
+    <td class="truncate">{{sale.salesChannel}}</td>
+    <td class="truncate">{{sale.saleType}}</td>
+
+    <!-- Total -->
+    <td>
+      <div class="amount-cell">
+        <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي"/>
+        <span class="amount-value">{{sale.total | number:'1.2-2'}}</span>
+      </div>
+    </td>
+
+    <!-- Paid -->
+    <td>
+      <div class="amount-cell">
+        <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي"/>
+        <span class="amount-value">{{sale.paid | number:'1.2-2'}}</span>
+      </div>
+    </td>
+
+    <td class="truncate">{{sale.createdAt}}</td>
+
+    <!-- Actions -->
+    <td>
+      <div class="flex gap-1 justify-center flex-wrap">
+        <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm" outlined (click)="editSale(sale)"></button>
+        <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" outlined (click)="confirmDelete(sale)"></button>
+        <button pButton icon="pi pi-print" class="p-button-warning p-button-sm" outlined (click)="printSale(sale)"></button>
+      </div>
+    </td>
+  </tr>
+</ng-template>
+
 
     <!-- Empty Message -->
     <ng-template pTemplate="emptymessage">
       <tr>
         <td colspan="10" class="text-center py-4 text-gray-500">
-          No results found. Please adjust your search or filters to find what you are looking for.
+          No results found. Adjust filters to see data.
         </td>
       </tr>
     </ng-template>
+
   </p-table>
+</div>
+
 
   <!-- Sale Dialog -->
   <p-dialog header="{{isEdit ? 'Edit' : 'New'}} Sale" [(visible)]="displayDialog" [modal]="true" [style]="{width:'90vw', maxWidth:'700px'}" [closable]="false">
@@ -175,7 +207,10 @@ export class SalesInvoicesComponent {
   products: Product[] = [];
   newSale: Sale = { invoiceNo:'', location:'', paymentMethod:'', customer:null, salesChannel:'POS', saleType:'بيع', total:0, paid:0, createdAt:'', items:[] };
   displayDialog = false;
-  isEdit = false;
+  isDarkMode = false; // true عند الدارك مود
+useSecondDarkIcon = false; // لتحديد أي نسخة من الداكن تريد
+
+  isEdit= false;
   filterInvoice = '';
   filterCustomer = '';
   filterDate = '';
@@ -192,7 +227,7 @@ export class SalesInvoicesComponent {
     { header:'Created At', field:'createdAt', filterType:'date', filterPlaceholder:'بحث بالتاريخ', minWidth:'120px' },
   ];
 
-  constructor(private confirmationService: ConfirmationService, private messageService: MessageService) {
+  constructor(private confirmationService: ConfirmationService, private messageService: MessageService, private layoutService: LayoutService) {
     this.customers = [
       { id:1, name:'ليلى بنت عبد العالى بن عامر'},
       { id:2, name:'أحمد محمد'},
@@ -229,6 +264,12 @@ export class SalesInvoicesComponent {
       accept: () => this.deleteSale(sale)
     });
   }
+
+getRiyalIcon() {
+  return this.layoutService.isDarkTheme()
+    ? 'assets/icons/riyalsymbol-dark.png'  // أيقونة الداكن
+    : 'assets/icons/riyalsymbol.png'; // أيقونة الفاتح
+}
 
   deleteSale(sale: Sale) {
     this.sales = this.sales.filter(s => s.invoiceNo !== sale.invoiceNo);

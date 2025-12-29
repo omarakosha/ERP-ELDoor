@@ -15,6 +15,7 @@ import { Select } from 'primeng/select';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { InvoiceService } from '../service/invoice.service';
+import { LayoutService } from '@/layout/service/layout.service';
 
 interface Product {
   name: string;
@@ -51,6 +52,8 @@ interface Customer {
 export class CasherposComponent implements OnInit, OnDestroy {
 
   clientName = 'Walk-in Client';
+   isDarkMode = false; // true عند الدارك مود
+useSecondDarkIcon = false; // لتحديد أي نسخة من الداكن تريد
   currentDateTime = '';
   products: Product[] = [];
 
@@ -78,7 +81,8 @@ export class CasherposComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private confirmationService: ConfirmationService,
     private invoiceService: InvoiceService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private layoutService: LayoutService
   ) {}
 
   ngOnInit() {
@@ -200,6 +204,11 @@ export class CasherposComponent implements OnInit, OnDestroy {
       }
     });
   }
+  getRiyalIcon() {
+  return this.layoutService.isDarkTheme()
+    ? 'assets/icons/riyalsymbol-dark.png'  // أيقونة الداكن
+    : 'assets/icons/riyalsymbol.png'; // أيقونة الفاتح
+}
 
   printInvoice(invoiceData: any, invoiceNumber: string) {
     const doc = new jsPDF();

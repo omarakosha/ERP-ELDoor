@@ -49,9 +49,13 @@
                 <input type="number" [(ngModel)]="prod.price" (ngModelChange)="calculateTotals()" min="0"
                   class="p-inputtext w-20 text-center border-gray-300 dark:border-gray-600 rounded-md focus:ring-[#2CA3A3]" />
               </td>
-              <td class="text-right font-semibold text-gray-800 dark:text-gray-200">
-                {{ prod.qty * prod.price | number:'1.2-2' }} SAR
-              </td>
+              
+                 <td>
+      <div class="amount-cell">
+        <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي"/>
+        <span class="amount-value">{{ prod.qty * prod.price | number:'1.2-2' }}</span>
+      </div>
+    </td>
               <td class="text-center">
                 <button pButton icon="pi pi-times" class="p-button p-button-danger p-button-sm"
                   (click)="removeProduct(i)">
@@ -104,11 +108,18 @@
         class="bg-gray-50 dark:bg-gray-700 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-sm space-y-3 mt-auto p-6">
         <div class="flex justify-between text-gray-600 dark:text-gray-300">
           <span>Total:</span>
-          <span>{{ total | number:'1.2-2' }} SAR</span>
+           <div class="amount-cell">
+        <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي"/>
+        <span>{{ total | number:'1.2-2' }}</span>
+      </div>
+           
         </div>
         <div class="flex justify-between text-gray-600 dark:text-gray-300">
           <span>VAT ({{ vatRate }}%):</span>
-          <span>{{ vatAmount | number:'1.2-2' }} SAR</span>
+          <div class="amount-cell">
+        <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي"/>
+         <span>{{ vatAmount | number:'1.2-2' }}</span>
+      </div>
         </div>
         <div class="flex justify-between items-center text-gray-600 dark:text-gray-300">
           <label>Discount (%):</label>
@@ -118,16 +129,33 @@
         <hr class="border-gray-200 dark:border-gray-600">
         <div class="flex justify-between font-bold text-green-700 dark:text-green-500 text-lg">
           <span>Grand Total:</span>
-          <span>{{ grandTotal | number:'1.2-2' }} SAR</span>
+         <div class="amount-cell">
+        <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي"/>
+         <span>{{ grandTotal | number:'1.2-2' }}</span>
+      </div>
         </div>
       </div>
 
       <!-- Pay Button -->
       <div class="mt-6 flex flex-col gap-3">
-        <button pButton pRipple label="💰 Pay {{ grandTotal | number:'1.2-2' }} SAR" severity="success" outlined
-          class="text-lg font-bold py-3 shadow-md hover:shadow-lg transition-all w-full rounded-lg"
-          (click)="payInvoice()">
-        </button>
+       <button
+  pButton
+  pRipple
+  severity="success"
+  outlined
+  class="text-lg font-bold py-3 shadow-md hover:shadow-lg transition-all w-full rounded-lg flex items-center justify-center gap-2"
+  (click)="payInvoice()"
+>
+  <span>Pay</span>
+
+  <span class="amount-cell">
+    <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي" />
+    <span class="amount-value">
+      {{ grandTotal | number:'1.2-2' }}
+    </span>
+  </span>
+</button>
+
       </div>
 
     </div>

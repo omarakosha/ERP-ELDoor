@@ -227,6 +227,64 @@ img { max-width: 100%; height: auto; }
 }
 
 
+/* =========================================================
+   🖼 Riyal Symbol Styling (Correct Alignment)
+========================================================= */
+
+/* حاوية المبلغ مع أيقونة الريال */
+.amount-cell {
+  display: flex;            /* استخدام flex لمحاذاة الرقم والأيقونة */
+  align-items: center;      /* محاذاة عمودية وسطية */
+  justify-content: flex-end; /* الرقم يمين الخلية */
+  gap: 4px;                 /* المسافة بين الأيقونة والرقم */
+  white-space: nowrap;      /* منع التفاف الرقم */
+  direction: ltr;           /* الرقم مع أيقونة الريال من اليسار لليمين */
+  padding: 0.25rem 0.5rem;
+}
+
+/* أيقونة الريال */
+.riyal-icon {
+  width: 12px;
+  height: 12px;
+  position: relative;
+     top: -2px;
+  flex-shrink: 0;           /* منع تصغير الأيقونة */
+}
+
+/* الرقم */
+.amount-value {
+  font-variant-numeric: tabular-nums; /* أرقام ثابتة العرض */
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: inherit;
+}
+
+/* تحسين محاذاة باقي الأعمدة */
+.p-table th, .p-table td {
+  padding: 0.5rem 0.75rem;
+  vertical-align: middle;
+  text-align: left;
+}
+
+html[dir="rtl"] .p-table th, html[dir="rtl"] .p-table td {
+  text-align: right;
+}
+
+/* لجعل جدول responsive عند الشاشات الصغيرة */
+@media (max-width: 640px) {
+  .p-table th, .p-table td {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.4rem;
+  }
+  .amount-cell {
+    min-width: 70px;
+    font-size: 0.8rem;
+  }
+}
+
+
+
+
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
