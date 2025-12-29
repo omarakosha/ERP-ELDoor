@@ -179,7 +179,13 @@ interface Sale {
             </td>
             <td><input type="number" min="1" [(ngModel)]="item.quantity" (ngModelChange)="calculateTotal()" class="p-inputtext w-full border rounded p-1"></td>
             <td><input type="number" min="0" [(ngModel)]="item.price" (ngModelChange)="calculateTotal()" class="p-inputtext w-full border rounded p-1"></td>
-            <td>{{item.quantity * item.price | currency:'SAR':'symbol':'1.2-2'}}</td>
+            
+             <td>
+      <div class="amount-cell">
+        <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي"/>
+        <span class="amount-value">{{item.quantity * item.price | number:'1.2-2'}}</span>
+      </div>
+    </td>
             <td>
               <button pButton icon="pi pi-times" class="p-button-rounded p-button-danger p-button-sm" (click)="removeItem(i)"></button>
             </td>
@@ -187,8 +193,17 @@ interface Sale {
         </ng-template>
       </p-table>
     </div>
+<div class="text-right font-bold text-lg mb-2 flex justify-end items-center gap-1">
+  <span>Total:</span>
 
-    <div class="text-right font-bold text-lg mb-2">Total: {{newSale.total | currency:'SAR':'symbol':'1.2-2'}}</div>
+  <span class="amount-cell">
+    <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي" />
+    <span class="amount-value">
+      {{ newSale.total | number:'1.2-2' }}
+    </span>
+  </span>
+</div>
+
 
     <ng-template pTemplate="footer">
       <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
