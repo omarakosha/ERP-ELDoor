@@ -11,6 +11,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { DatePickerModule } from 'primeng/datepicker';
 
 interface Payment {
   receiptNo: string;
@@ -32,6 +33,7 @@ interface Payment {
     ButtonModule,
     InputTextModule,
     DialogModule,
+     DatePickerModule,
     ToastModule
   ],
   template: `
@@ -121,7 +123,17 @@ interface Payment {
          </div>
          <div>
              <label>Date</label>
-             <input pInputText type="date" [(ngModel)]="newPayment.date" class="w-full">
+            
+             <p-datepicker
+  [(ngModel)]="newPayment.date"
+  [showIcon]="true"
+  [showButtonBar]="true"
+  styleClass="w-full"
+  [inputStyle]="{ height: '40px', width: '100%' }"
+  placeholder="End Date">
+</p-datepicker>
+
+
          </div>
          <div>
              <label>Customer Name</label>

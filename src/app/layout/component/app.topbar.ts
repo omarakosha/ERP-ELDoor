@@ -47,7 +47,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
          <!-- Language Toggle -->
           <button type="button" class="layout-topbar-action" (click)="toggleLanguage()" >
-            <i class="pi pi-language"></i>
+            <i class="pi pi-globe"></i>
             
             <span>{{ currentLang === 'ar' ? 'العربية' : 'English' }}</span>
           </button>

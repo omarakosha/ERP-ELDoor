@@ -13,15 +13,16 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { LayoutService } from '@/layout/service/layout.service';
+import { DatePickerModule } from 'primeng/datepicker';
 
-interface Customer { id:number; name:string; }
-interface Product { id:number; name:string; }
-interface SaleItem { product: Product|null; quantity:number; price:number; }
+interface Customer { id: number; name: string; }
+interface Product { id: number; name: string; }
+interface SaleItem { product: Product | null; quantity: number; price: number; }
 interface Sale {
   invoiceNo: string;
   location: string;
   paymentMethod: string;
-  customer: Customer|null;
+  customer: Customer | null;
   salesChannel: string;
   saleType: string;
   total: number;
@@ -41,8 +42,9 @@ interface Sale {
     DialogModule,
     InputTextModule,
     ToastModule,
+    DatePickerModule,
     ConfirmDialogModule,
-    
+
   ],
   providers: [ConfirmationService, MessageService],
   template: `
@@ -58,12 +60,39 @@ interface Sale {
       <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-info" (click)="exportExcel()"outlined></button>
       <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"outlined></button>
     </div>
-    <div class="flex gap-2 flex-wrap items-center">
-      <input pInputText type="text" placeholder="Search Invoice #" [(ngModel)]="filterInvoice" class="p-inputtext border rounded p-2 w-36 md:w-48">
-      <input pInputText type="text" placeholder="Search Customer" [(ngModel)]="filterCustomer" class="p-inputtext border rounded p-2 w-36 md:w-48">
-      <input pInputText type="date" [(ngModel)]="filterDate" class="p-inputtext border rounded p-2 w-32 md:w-40">
-      <button pButton label="Clear Filters" icon="pi pi-filter-slash" class="p-button-outlined" (click)="dt.clear()"></button>
-    </div>
+ <div class="flex gap-2 flex-wrap items-center">
+
+  <p-datepicker
+      [(ngModel)]="filterDate"
+      [showIcon]="true"
+      [showButtonBar]="true"
+      placeholder="End Date"
+      styleClass="filter-control"
+       [inputStyle]="{  width: '100%' }" 
+      >
+  </p-datepicker>
+
+  <input pInputText type="text"
+         placeholder="Search Invoice #"
+         [(ngModel)]="filterInvoice"
+         class="filter-control w-36 md:w-48">
+
+  <input pInputText type="text"
+         placeholder="Search Customer"
+         [(ngModel)]="filterCustomer"
+         class="filter-control w-36 md:w-48">
+
+ 
+
+  <button pButton
+          label="Clear Filters"
+          icon="pi pi-filter-slash"
+          class="filter-control p-button-outlined"
+          (click)="dt.clear()">
+  </button>
+
+</div>
+
   </div>
 <div class="overflow-x-auto rounded-lg shadow-sm">
   <p-table #dt 
@@ -141,7 +170,7 @@ interface Sale {
 
 
   <!-- Sale Dialog -->
-  <p-dialog header="{{isEdit ? 'Edit' : 'New'}} Sale" [(visible)]="displayDialog" [modal]="true" [style]="{width:'90vw', maxWidth:'700px'}" [closable]="false">
+  <p-dialog header="{{isEdit ? 'Edit' : 'New'}} Sale" [(visible)]="displayDialog" [modal]="true" [style]="{height:'90vw',width:'100vw', maxWidth:'700px'}" [closable]="false">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
       <div>
         <label class="font-semibold block mb-1">Customer</label>
@@ -152,7 +181,14 @@ interface Sale {
       </div>
       <div>
         <label class="font-semibold block mb-1">Date</label>
-        <input type="date" [(ngModel)]="newSale.createdAt" class="p-inputtext w-full border rounded p-2"/>
+      
+          <p-datepicker
+      [(ngModel)]="newSale.createdAt"
+      [showIcon]="true"
+      [showButtonBar]="true"
+      placeholder="End Date"
+      class="filter-control">
+  </p-datepicker>
       </div>
     </div>
 
@@ -187,7 +223,7 @@ interface Sale {
       </div>
     </td>
             <td>
-              <button pButton icon="pi pi-times" class="p-button-rounded p-button-danger p-button-sm" (click)="removeItem(i)"></button>
+              <button pButton icon="pi pi-times" class="p-button p-button-danger " (click)="removeItem(i)" outlined></button>
             </td>
           </tr>
         </ng-template>
@@ -220,52 +256,52 @@ export class SalesInvoicesComponent {
   sales: Sale[] = [];
   customers: Customer[] = [];
   products: Product[] = [];
-  newSale: Sale = { invoiceNo:'', location:'', paymentMethod:'', customer:null, salesChannel:'POS', saleType:'بيع', total:0, paid:0, createdAt:'', items:[] };
+  newSale: Sale = { invoiceNo: '', location: '', paymentMethod: '', customer: null, salesChannel: 'POS', saleType: 'بيع', total: 0, paid: 0, createdAt: '', items: [] };
   displayDialog = false;
   isDarkMode = false; // true عند الدارك مود
-useSecondDarkIcon = false; // لتحديد أي نسخة من الداكن تريد
+  useSecondDarkIcon = false; // لتحديد أي نسخة من الداكن تريد
 
-  isEdit= false;
+  isEdit = false;
   filterInvoice = '';
   filterCustomer = '';
   filterDate = '';
 
   tableColumns = [
-    { header:'Invoice #', field:'invoiceNo', filterType:'text', filterPlaceholder:'بحث برقم الفاتورة', minWidth:'120px' },
-    { header:'Location', field:'location', filterType:'text', filterPlaceholder:'بحث بالموقع', minWidth:'100px' },
-    { header:'Payment Method', field:'paymentMethod', filterType:'text', filterPlaceholder:'بحث بطريقة الدفع', minWidth:'140px' },
-    { header:'Customer', field:'customer.name', filterType:'text', filterPlaceholder:'بحث باسم العميل', minWidth:'160px' },
-    { header:'Sales Channel', field:'salesChannel', filterType:'text', filterPlaceholder:'بحث بقناة البيع', minWidth:'120px' },
-    { header:'Sale Type', field:'saleType', filterType:'text', filterPlaceholder:'بحث بنوع البيع', minWidth:'100px' },
-    { header:'Total', field:'total', filterType:'numeric', filterPlaceholder:'بحث بالمجموع', minWidth:'100px' },
-    { header:'Paid', field:'paid', filterType:'numeric', filterPlaceholder:'بحث بالمدفوع', minWidth:'100px' },
-    { header:'Created At', field:'createdAt', filterType:'date', filterPlaceholder:'بحث بالتاريخ', minWidth:'120px' },
+    { header: 'Invoice #', field: 'invoiceNo', filterType: 'text', filterPlaceholder: 'بحث برقم الفاتورة', minWidth: '120px' },
+    { header: 'Location', field: 'location', filterType: 'text', filterPlaceholder: 'بحث بالموقع', minWidth: '100px' },
+    { header: 'Payment Method', field: 'paymentMethod', filterType: 'text', filterPlaceholder: 'بحث بطريقة الدفع', minWidth: '140px' },
+    { header: 'Customer', field: 'customer.name', filterType: 'text', filterPlaceholder: 'بحث باسم العميل', minWidth: '160px' },
+    { header: 'Sales Channel', field: 'salesChannel', filterType: 'text', filterPlaceholder: 'بحث بقناة البيع', minWidth: '120px' },
+    { header: 'Sale Type', field: 'saleType', filterType: 'text', filterPlaceholder: 'بحث بنوع البيع', minWidth: '100px' },
+    { header: 'Total', field: 'total', filterType: 'numeric', filterPlaceholder: 'بحث بالمجموع', minWidth: '100px' },
+    { header: 'Paid', field: 'paid', filterType: 'numeric', filterPlaceholder: 'بحث بالمدفوع', minWidth: '100px' },
+    { header: 'Created At', field: 'createdAt', filterType: 'date', filterPlaceholder: 'بحث بالتاريخ', minWidth: '120px' },
   ];
 
   constructor(private confirmationService: ConfirmationService, private messageService: MessageService, private layoutService: LayoutService) {
     this.customers = [
-      { id:1, name:'ليلى بنت عبد العالى بن عامر'},
-      { id:2, name:'أحمد محمد'},
-      { id:3, name:'سارة علي'}
+      { id: 1, name: 'ليلى بنت عبد العالى بن عامر' },
+      { id: 2, name: 'أحمد محمد' },
+      { id: 3, name: 'سارة علي' }
     ];
     this.products = [
-      { id:1, name:'منتج 1'},
-      { id:2, name:'منتج 2'},
-      { id:3, name:'منتج 3'}
+      { id: 1, name: 'منتج 1' },
+      { id: 2, name: 'منتج 2' },
+      { id: 3, name: 'منتج 3' }
     ];
     this.sales = [
-      { invoiceNo:'S20250814-1', location:'default', paymentMethod:'شيك', customer:this.customers[0], salesChannel:'POS', saleType:'بيع', total:17500, paid:17500, createdAt:'2025-08-14', items:[] }
+      { invoiceNo: 'S20250814-1', location: 'default', paymentMethod: 'شيك', customer: this.customers[0], salesChannel: 'POS', saleType: 'بيع', total: 17500, paid: 17500, createdAt: '2025-08-14', items: [] }
     ];
   }
 
   openNewSale() {
-    this.newSale = { invoiceNo:'', location:'default', paymentMethod:'', customer:null, salesChannel:'POS', saleType:'بيع', total:0, paid:0, createdAt: new Date().toISOString().substring(0,10), items:[] };
+    this.newSale = { invoiceNo: '', location: 'default', paymentMethod: '', customer: null, salesChannel: 'POS', saleType: 'بيع', total: 0, paid: 0, createdAt: new Date().toISOString().substring(0, 10), items: [] };
     this.isEdit = false;
     this.displayDialog = true;
   }
 
   editSale(sale: Sale) {
-    this.newSale = { ...sale, items: sale.items.map(i=>({...i})) };
+    this.newSale = { ...sale, items: sale.items.map(i => ({ ...i })) };
     this.isEdit = true;
     this.displayDialog = true;
     this.calculateTotal();
@@ -280,63 +316,63 @@ useSecondDarkIcon = false; // لتحديد أي نسخة من الداكن تر�
     });
   }
 
-getRiyalIcon() {
-  return this.layoutService.isDarkTheme()
-    ? 'assets/icons/riyalsymbol-dark.png'  // أيقونة الداكن
-    : 'assets/icons/riyalsymbol.png'; // أيقونة الفاتح
-}
+  getRiyalIcon() {
+    return this.layoutService.isDarkTheme()
+      ? 'assets/icons/riyalsymbol-dark.png'  // أيقونة الداكن
+      : 'assets/icons/riyalsymbol.png'; // أيقونة الفاتح
+  }
 
   deleteSale(sale: Sale) {
     this.sales = this.sales.filter(s => s.invoiceNo !== sale.invoiceNo);
-      this.messageService.clear();
-    this.messageService.add({severity:'success', summary:'Deleted', detail:`Invoice #${sale.invoiceNo} deleted.`});
+    this.messageService.clear();
+    this.messageService.add({ severity: 'success', summary: 'Deleted', detail: `Invoice #${sale.invoiceNo} deleted.` });
   }
 
   addItem() {
-    this.newSale.items.push({ product:this.products[0], quantity:1, price:0 });
+    this.newSale.items.push({ product: this.products[0], quantity: 1, price: 0 });
     this.calculateTotal();
   }
 
-  removeItem(index:number) {
-    this.newSale.items.splice(index,1);
+  removeItem(index: number) {
+    this.newSale.items.splice(index, 1);
     this.calculateTotal();
   }
 
   calculateTotal() {
-    this.newSale.total = this.newSale.items.reduce((sum,item) => sum + (item.quantity*item.price),0);
+    this.newSale.total = this.newSale.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
   }
 
   saveSale() {
-    if(!this.newSale.customer){
-        this.messageService.clear();
-      this.messageService.add({severity:'warn', summary:'Validation', detail:'Please select a customer!'});
+    if (!this.newSale.customer) {
+      this.messageService.clear();
+      this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please select a customer!' });
       return;
     }
     this.calculateTotal();
-    if(!this.isEdit){
+    if (!this.isEdit) {
       this.newSale.invoiceNo = 'S' + (20250000 + this.sales.length + 1);
-      this.sales.push({...this.newSale});
-        this.messageService.clear();
-      this.messageService.add({severity:'success', summary:'Saved', detail:`Invoice #${this.newSale.invoiceNo} added.`});
+      this.sales.push({ ...this.newSale });
+      this.messageService.clear();
+      this.messageService.add({ severity: 'success', summary: 'Saved', detail: `Invoice #${this.newSale.invoiceNo} added.` });
     } else {
-      const idx = this.sales.findIndex(s=>s.invoiceNo===this.newSale.invoiceNo);
-      if(idx!==-1) this.sales[idx] = {...this.newSale};
-        this.messageService.clear();
-      this.messageService.add({severity:'success', summary:'Updated', detail:`Invoice #${this.newSale.invoiceNo} updated.`});
+      const idx = this.sales.findIndex(s => s.invoiceNo === this.newSale.invoiceNo);
+      if (idx !== -1) this.sales[idx] = { ...this.newSale };
+      this.messageService.clear();
+      this.messageService.add({ severity: 'success', summary: 'Updated', detail: `Invoice #${this.newSale.invoiceNo} updated.` });
     }
-    this.displayDialog=false;
+    this.displayDialog = false;
   }
 
   get filteredSales() {
-    return this.sales.filter(s=>{
-      const invoiceMatch = this.filterInvoice? s.invoiceNo.toLowerCase().includes(this.filterInvoice.toLowerCase()):true;
-      const customerMatch = this.filterCustomer? s.customer?.name.toLowerCase().includes(this.filterCustomer.toLowerCase()):true;
-      const dateMatch = this.filterDate? s.createdAt===this.filterDate:true;
+    return this.sales.filter(s => {
+      const invoiceMatch = this.filterInvoice ? s.invoiceNo.toLowerCase().includes(this.filterInvoice.toLowerCase()) : true;
+      const customerMatch = this.filterCustomer ? s.customer?.name.toLowerCase().includes(this.filterCustomer.toLowerCase()) : true;
+      const dateMatch = this.filterDate ? s.createdAt === this.filterDate : true;
       return invoiceMatch && customerMatch && dateMatch;
     });
   }
 
-   printSale(sale: Sale) {
+  printSale(sale: Sale) {
     const content = `
       <div style="font-family:Arial,sans-serif;padding:20px;">
         <h2 style="text-align:center;">Invoice #${sale.invoiceNo}</h2>
@@ -344,8 +380,8 @@ getRiyalIcon() {
         <p><strong>Date:</strong> ${sale.createdAt}</p>
         <table border="1" cellspacing="0" cellpadding="5" width="100%">
           <thead><tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
-          <tbody>${sale.items.map(i=>`
-              <tr><td>${i.product?.name}</td><td>${i.quantity}</td><td>${i.price}</td><td>${i.quantity*i.price}</td></tr>
+          <tbody>${sale.items.map(i => `
+              <tr><td>${i.product?.name}</td><td>${i.quantity}</td><td>${i.price}</td><td>${i.quantity * i.price}</td></tr>
           `).join('')}</tbody>
         </table>
         <h3 style="text-align:right;">Total: ${sale.total}</h3>
@@ -377,18 +413,18 @@ getRiyalIcon() {
     const doc = new jsPDF();
     doc.text('Sales Invoices', 14, 10);
     autoTable(doc, {
-      head: [['Invoice #','Location','Payment','Customer','Channel','Type','Total','Paid','Created At']],
+      head: [['Invoice #', 'Location', 'Payment', 'Customer', 'Channel', 'Type', 'Total', 'Paid', 'Created At']],
       body: this.sales.map(s => [
-  s.invoiceNo || '',
-  s.location || '',
-  s.paymentMethod || '',
-  s.customer?.name || '',
-  s.salesChannel || '',
-  s.saleType || '',
-  s.total ?? 0,
-  s.paid ?? 0,
-  s.createdAt || ''
-])
+        s.invoiceNo || '',
+        s.location || '',
+        s.paymentMethod || '',
+        s.customer?.name || '',
+        s.salesChannel || '',
+        s.saleType || '',
+        s.total ?? 0,
+        s.paid ?? 0,
+        s.createdAt || ''
+      ])
 
     });
     doc.save('SalesInvoices.pdf');
