@@ -13,6 +13,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, fromEvent } from 'rxjs';
 
 interface Customer {
@@ -38,7 +39,8 @@ interface Customer {
     DialogModule,
     ToastModule,
     TagModule,
-    ProgressBarModule
+    ProgressBarModule,
+    TranslateModule ,
   ],
   providers: [ConfirmationService, MessageService],
   template: `
@@ -47,7 +49,7 @@ interface Customer {
   <p-toast position="top-center" class="custom-toast"></p-toast>
 
   <div class="flex flex-wrap justify-between items-center mb-5 gap-3">
-    <h2 class="text-xl font-semibold text-gray-800">Customer Management</h2>
+    <h2 class="text-xl font-semibold text-gray-800"> {{ 'Customer_Management' | translate }}</h2>
 
     <div class="flex flex-wrap gap-2">
       <button pButton label="Clear Filters" icon="pi pi-filter-slash" class="p-button-outlined" (click)="clear(dt)"outlined></button>
@@ -135,11 +137,12 @@ interface Customer {
 
   <!-- Add / Edit Dialog -->
   <p-dialog
-    header="{{ isEdit ? 'Edit Customer' : 'Add New Customer' }}"
+    [header]="isEdit ? ('CUSTOMER.EDIT' | translate) : ('CUSTOMER.ADD' | translate)"
     [(visible)]="displayDialog"
     [modal]="true"
     [closable]="true"
     [style]="{ width: '95vw', maxWidth: '450px' }"
+    
   >
     <div class="p-fluid space-y-4">
       <div class="field">

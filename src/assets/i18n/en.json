@@ -96,6 +96,8 @@
   "SELECT_COST_CENTER": "Select Cost Center",
   "SEARCH_COST_CENTER": "Search cost center...",
   "COST_CENTER_NAME": "Cost Center Name",
+  "Customer_Management":" Customer Management",
+
 
 
   "MENU": {
@@ -132,6 +134,13 @@
     "REPORTS": "Reports",
     "ALL_REPORTS": "Reports",
     "FINANCIAL_REPORTS": "Financial Reports"
+  },
+  
+  "CUSTOMER": {
+    "ADD": "Add New Customer",
+    "EDIT": "Edit Customer"
   }
+
+
 }
 

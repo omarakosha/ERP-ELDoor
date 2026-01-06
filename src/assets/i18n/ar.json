@@ -97,6 +97,7 @@
   "SEARCH_COST_CENTER": "بحث عن مركز تكلفة...",
   "COST_CENTER_NAME": "اسم مركز التكلفة",
   "COST_CENTER_NO": "رقم مركز التكلفة",
+  "Customer_Management":"ادارة العملاء",
 
   "MENU": {
     "HOME": "الرئيسية",
@@ -132,5 +133,12 @@
     "REPORTS": "التقارير",
     "ALL_REPORTS": "التقارير",
     "FINANCIAL_REPORTS": "التقارير المالية"
+  },
+  
+  "CUSTOMER": {
+    "ADD": "إضافة عميل جديد",
+    "EDIT": "تعديل بيانات العميل"
   }
+
+
 }

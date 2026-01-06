@@ -282,6 +282,26 @@ html[dir="rtl"] .p-table th, html[dir="rtl"] .p-table td {
   text-align: right;
 }
 
+/* Labels تلتقط الاتجاه تلقائيًا */
+label {
+  direction: inherit;
+  text-align: start;
+}
+
+/* Inputs تتبع الاتجاه */
+h2, input, textarea, .p-inputtext {
+  direction: inherit;
+  text-align: start;
+}
+
+/* Dialogs */
+.p-dialog {
+  direction: inherit;
+}
+
+/* أي عنصر تحتاجه يمكن إضافته */
+
+
 /* لجعل جدول responsive عند الشاشات الصغيرة */
 @media (max-width: 640px) {
   .p-table th, .p-table td {
