@@ -68,12 +68,52 @@ html[dir="rtl"] {
     transition: all 0.2s ease;
 }
 
+/* ================================
+   Global Inputs (PrimeNG)
+   ================================ */
+
 /* أي input يستخدم pInputText */
 .p-inputtext {
-  height: 40px;          /* الارتفاع اللي تريده */
-  padding: 0.75rem 0.75rem;
+  height: 40px;
+  padding: 0.5rem 0.75rem; /* توازن عمودي طبيعي */
   font-size: 0.95rem;
+  line-height: 1.25;      /* طبيعي للنص */
+  box-sizing: border-box;
 }
+
+
+/* ================================
+   PrimeNG Select (p-select)
+   ================================ */
+
+.p-select {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* النص الداخلي (placeholder والقيمة المختارة) */
+.p-select .p-select-label {
+  flex: 1;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 0.75rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+}
+
+/* أيقونة السهم */
+.p-select .p-select-dropdown {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
 
 
 .card:hover {
@@ -144,7 +184,7 @@ html[dir="rtl"] .pos-card-header { flex-direction: row-reverse; }
 .p-button.p-button-icon-only {
     padding: 0.5rem;
     width: 2.80rem;
-    height: 2.5rem;
+    height: 2.90rem;
     justify-content: center ;
 }
 /* الأيقونة في الوسط */
@@ -281,6 +321,10 @@ img { max-width: 100%; height: auto; }
 html[dir="rtl"] .p-table th, html[dir="rtl"] .p-table td {
   text-align: right;
 }
+
+
+
+
 
 /* Labels تلتقط الاتجاه تلقائيًا */
 label {
