@@ -43,6 +43,7 @@ html[dir="rtl"] {
         flex-direction: row-reverse; /* أيقونة على اليمين */
         justify-content: center;
         gap: 0.5rem;
+        
     }
 
     /* حقول الإدخال */
@@ -52,6 +53,7 @@ html[dir="rtl"] {
     select {
         direction: rtl;
         text-align: right;
+
     }
 
     /* جداول PrimeNG */

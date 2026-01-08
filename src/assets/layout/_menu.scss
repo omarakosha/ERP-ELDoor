@@ -10,7 +10,7 @@
 
     .layout-root-menuitem {
         >.layout-menuitem-root-text {
-            font-size: 0.857rem;
+            font-size: 1.150rem;
             text-transform: uppercase;
             font-weight: 700;
             color: var(--text-color);
@@ -81,14 +81,19 @@
 
                 /* LTR */
                 html[dir="ltr"] & {
-                    margin-left: 1rem;
+                    margin-left: 1.100rem;
                     margin-right: 0;
+                    font-size: 0.950rem;
+                   
+                    
                 }
 
                 /* RTL */
                 html[dir="rtl"] & {
-                    margin-right: 1rem;
+                    margin-right: 1.100rem;
                     margin-left: 0;
+                    font-size:  0.950rem;
+                   
                 }
             }
 
