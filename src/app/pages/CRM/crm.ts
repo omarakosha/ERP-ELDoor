@@ -14,6 +14,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { TranslateModule } from '@ngx-translate/core';
+import { LayoutService } from '@/layout/service/layout.service';
 import { debounceTime, fromEvent } from 'rxjs';
 
 interface Customer {
@@ -40,7 +41,7 @@ interface Customer {
     ToastModule,
     TagModule,
     ProgressBarModule,
-    TranslateModule ,
+    TranslateModule,
   ],
   providers: [ConfirmationService, MessageService],
   template: `
@@ -57,7 +58,7 @@ interface Customer {
       <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success" (click)="exportExcel()"outlined></button>
       <button pButton label="Export PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportPDF()"outlined></button>
       <span class="relative">
-        <i class="pi pi-search absolute top-2.5 right-3 text-gray-400"></i>
+       
         <input
           #filterInput
           pInputText
@@ -105,20 +106,25 @@ interface Customer {
         <td class="truncate max-w-[220px]" [title]="c.name">{{ c.name }}</td>
         <td class="truncate max-w-[180px]" [title]="c.email">{{ c.email }}</td>
         <td>{{ c.phone }}</td>
-        <td>{{ c.paid | currency: 'SAR':'symbol':'1.2-2' }}</td>
-        <td>{{ c.balance | currency: 'SAR':'symbol':'1.2-2' }}</td>
-        <td>
-          <span
-            class="px-2 py-1 text-xs rounded-full font-medium"
-            [ngClass]="{
-              'bg-green-100 text-green-600': c.status === 'Active',
-              'bg-yellow-100 text-yellow-700': c.status === 'New',
-              'bg-red-100 text-red-600': c.status === 'Inactive'
-            }"
-          >
-            {{ c.status }}
-          </span>
-        </td>
+       
+          <td>
+      <div class="amount-cell">
+        <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي"/>
+        <span class="amount-value">{{c.paid | number:'1.2-2'}}</span>
+      </div>
+    </td>
+
+      <td>
+      <div class="amount-cell">
+        <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي"/>
+        <span class="amount-value">{{c.balance | number:'1.2-2'}}</span>
+      </div>
+    </td>
+
+     <td><p-tag [value]="c.status" [severity]="getSeverity(c.status)"></p-tag></td>
+
+
+        
         <td class="flex gap-2 justify-center">
           <button pButton icon="pi pi-pencil" class="p-button-info " (click)="editCustomer(c)"outlined></button>
           <button pButton icon="pi pi-trash" class="p-button-danger " (click)="deleteCustomer(c)"outlined></button>
@@ -188,8 +194,8 @@ interface Customer {
 })
 export class CRMComponent implements OnInit {
 
-@ViewChild('filterInput') filterInput!: ElementRef;
-@ViewChild('dt') dt!: Table; // أضف هذا فوق المتغيرات
+  @ViewChild('filterInput') filterInput!: ElementRef;
+  @ViewChild('dt') dt!: Table; // أضف هذا فوق المتغيرات
 
   customers: Customer[] = [];
   displayDialog = false;
@@ -209,8 +215,9 @@ export class CRMComponent implements OnInit {
 
   constructor(
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
-  ) {}
+    private confirmationService: ConfirmationService,
+    private layoutService: LayoutService
+  ) { }
 
   ngOnInit() {
     this.customers = [
@@ -219,7 +226,23 @@ export class CRMComponent implements OnInit {
     this.loading = false;
   }
 
+  getRiyalIcon() {
+    return this.layoutService.isDarkTheme()
+      ? 'assets/icons/riyalsymbol-dark.png'  // أيقونة الداكن
+      : 'assets/icons/riyalsymbol.png'; // أيقونة الفاتح
+  }
+
   
+  getSeverity(status: string) {
+    switch (status.toLowerCase()) {
+      case 'نشط': return 'success';
+      case ' النقل': return 'warn';
+      case 'غير نشط': return 'danger';
+      default: return 'info';
+    }
+  }
+
+
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }

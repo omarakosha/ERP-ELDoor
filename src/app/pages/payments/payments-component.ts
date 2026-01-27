@@ -12,6 +12,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DatePickerModule } from 'primeng/datepicker';
+import { LayoutService } from '@/layout/service/layout.service';
 
 interface Payment {
   receiptNo: string;
@@ -33,7 +34,7 @@ interface Payment {
     ButtonModule,
     InputTextModule,
     DialogModule,
-     DatePickerModule,
+    DatePickerModule,
     ToastModule
   ],
   template: `
@@ -98,7 +99,15 @@ interface Payment {
              <td>{{p.receiptNo}}</td>
              <td>{{p.date | date:'MM/dd/yyyy'}}</td>
              <td>{{p.customer}}</td>
-             <td>{{p.amount | currency:'USD'}}</td>
+
+             <td>
+      <div class="amount-cell">
+        <img [src]="getRiyalIcon()" class="riyal-icon" alt="ريال سعودي"/>
+        <span class="amount-value">{{p.amount | number:'1.2-2'}}</span>
+      </div>
+    </td>
+
+        
              <td>{{p.paymentMethod}}</td>
              <td>{{p.cashBox}}</td>
              <td>
@@ -163,23 +172,30 @@ interface Payment {
 export class PaymentsComponent implements OnInit {
   constructor(
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
-  ) {}
+    private confirmationService: ConfirmationService,
+    private layoutService: LayoutService
+  ) { }
 
   @ViewChild('filterInput') filterInput!: ElementRef;
 
   payments: Payment[] = [];
   displayDialog = false;
   isEdit = false;
-  newPayment: Payment = {receiptNo:'', date:new Date(), customer:'', amount:0, paymentMethod:'', cashBox:''};
+  newPayment: Payment = { receiptNo: '', date: new Date(), customer: '', amount: 0, paymentMethod: '', cashBox: '' };
   loading = true;
 
   ngOnInit() {
     this.payments = [
-      {receiptNo:'RCPT-1001', date:new Date(), customer:'أحمد علي', amount:5000, paymentMethod:'نقدي', cashBox:'صندوق رئيسي'}
+      { receiptNo: 'RCPT-1001', date: new Date(), customer: 'أحمد علي', amount: 5000, paymentMethod: 'نقدي', cashBox: 'صندوق رئيسي' }
     ];
     this.loading = false;
   }
+  getRiyalIcon() {
+    return this.layoutService.isDarkTheme()
+      ? 'assets/icons/riyalsymbol-dark.png'  // أيقونة الداكن
+      : 'assets/icons/riyalsymbol.png'; // أيقونة الفاتح
+  }
+
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
@@ -191,36 +207,36 @@ export class PaymentsComponent implements OnInit {
   }
 
   openNew() {
-    this.newPayment = {receiptNo:'', date:new Date(), customer:'', amount:0, paymentMethod:'', cashBox:''};
+    this.newPayment = { receiptNo: '', date: new Date(), customer: '', amount: 0, paymentMethod: '', cashBox: '' };
     this.isEdit = false;
     this.displayDialog = true;
   }
 
   editPayment(payment: Payment) {
-    this.newPayment = {...payment};
+    this.newPayment = { ...payment };
     this.isEdit = true;
     this.displayDialog = true;
   }
 
   savePayment() {
     // Validation
-    if(!this.newPayment.receiptNo || !this.newPayment.customer || !this.newPayment.amount){
-      this.showMessage('warn','Validation','Please fill all required fields.');
+    if (!this.newPayment.receiptNo || !this.newPayment.customer || !this.newPayment.amount) {
+      this.showMessage('warn', 'Validation', 'Please fill all required fields.');
       return;
     }
 
     if (!this.isEdit) {
       // إضافة دفعة جديدة
       this.payments.push({ ...this.newPayment });
-      this.showMessage('success','Added',`Payment for customer "${this.newPayment.customer}" added successfully.`);
+      this.showMessage('success', 'Added', `Payment for customer "${this.newPayment.customer}" added successfully.`);
     } else {
       // تعديل دفعة موجودة
       const idx = this.payments.findIndex(p => p.receiptNo === this.newPayment.receiptNo);
       if (idx !== -1) {
         this.payments[idx] = { ...this.newPayment };
-        this.showMessage('success','Updated',`Payment for customer "${this.newPayment.customer}" updated successfully.`);
+        this.showMessage('success', 'Updated', `Payment for customer "${this.newPayment.customer}" updated successfully.`);
       } else {
-        this.showMessage('error','Not Found',`Payment with receipt #${this.newPayment.receiptNo} not found.`);
+        this.showMessage('error', 'Not Found', `Payment with receipt #${this.newPayment.receiptNo} not found.`);
       }
     }
 
@@ -229,7 +245,7 @@ export class PaymentsComponent implements OnInit {
 
   showMessage(severity: string, summary: string, detail: string) {
     this.messageService.clear();
-    this.messageService.add({severity, summary, detail, life:3000});
+    this.messageService.add({ severity, summary, detail, life: 3000 });
   }
 
   exportExcel() {
@@ -247,10 +263,10 @@ export class PaymentsComponent implements OnInit {
   }
 
   exportPDF() {
-    const doc = new jsPDF({orientation: 'landscape'});
+    const doc = new jsPDF({ orientation: 'landscape' });
     doc.text('مدفوعات العملاء', 14, 10);
     autoTable(doc, {
-      head:[['رقم سند القبض','تاريخ الاستلام','اسم العميل','المبلغ','طريقة الدفع','اسم الصندوق']],
+      head: [['رقم سند القبض', 'تاريخ الاستلام', 'اسم العميل', 'المبلغ', 'طريقة الدفع', 'اسم الصندوق']],
       body: this.payments.map(p => [
         p.receiptNo,
         p.date instanceof Date ? p.date.toLocaleDateString() : p.date,

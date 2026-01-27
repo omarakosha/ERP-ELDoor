@@ -92,6 +92,12 @@ import { MenuModule } from 'primeng/menu';
     </div>
 
 
+    
+
+    <!-- ======= Topbar Menu ======= -->
+    <div class="layout-topbar-menu hidden lg:flex gap-2">
+
+
     <!-- ======= Dark Mode Toggle ======= -->
     <button
       type="button"
@@ -102,22 +108,33 @@ import { MenuModule } from 'primeng/menu';
       <i [ngClass]="{'pi': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme()}"></i>
     </button>
 
-    <!-- ======= Topbar Menu ======= -->
-    <div class="layout-topbar-menu hidden lg:flex gap-2">
+
       <button type="button" class="layout-topbar-action">
         <i class="pi pi-calendar"></i>
         <span>{{ 'topbar.calendar' | translate }}</span>
       </button>
 
-      <button type="button" class="layout-topbar-action">
-        <i class="pi pi-inbox"></i>
-        <span>{{ 'topbar.messages' | translate }}</span>
-      </button>
+      <p-menu #messageMenu [popup]="true" [model]="messageItems"></p-menu>
 
-      <button type="button" class="layout-topbar-action">
-        <i class="pi pi-user"></i>
-        <span>{{ 'topbar.profile' | translate }}</span>
-      </button>
+<button
+  type="button"
+  class="layout-topbar-action"
+  (click)="messageMenu.toggle($event)">
+  <i class="pi pi-inbox"></i>
+  <span>{{ 'topbar.messages' | translate }}</span>
+</button>
+
+<p-menu #profileMenu [popup]="true" [model]="profileItems"></p-menu>
+
+<button
+  type="button"
+  class="layout-topbar-action"
+  (click)="profileMenu.toggle($event)">
+  <i class="pi pi-user"></i>
+  <span>{{ 'topbar.profile' | translate }}</span>
+</button>
+
+
     </div>
 
     <!-- ======= Mobile Menu Button ======= -->
@@ -142,22 +159,54 @@ import { MenuModule } from 'primeng/menu';
 })
 export class AppTopbar {
   items!: MenuItem[];
+  showCalendar: boolean = false;   // للتحكم في ظهور Dialog
+filterDate: Date | null = null;  // لتخزين التاريخ المحدد
+
+   profileItems:MenuItem[]= [
+                {
+                    label: 'Settings',
+                    icon: 'pi pi-fw pi-cog'
+                },
+                {
+                    label: 'Billing',
+                    icon: 'pi pi-fw pi-file'
+                }
+            ];
+  messageItems: MenuItem[] = [
+  { label: 'لا توجد رسائل جديدة', disabled: true }
+];
+
   currentLang: string;
 
   constructor(
-    public layoutService: LayoutService,
-    private translate: TranslateService
-  ) {
-    // تعيين اللغة الحالية / fallback
-    this.currentLang = 'ar';
-    this.translate.setDefaultLang('ar');
-    this.translate.use(this.currentLang);
-    document.documentElement.dir = 'rtl';
-  }
+  public layoutService: LayoutService,
+  private translate: TranslateService
+) {
+  const deviceLang = this.getDeviceLanguage();
+
+  this.currentLang = deviceLang;
+
+  this.translate.setDefaultLang(deviceLang);
+  this.translate.use(deviceLang);
+
+  document.documentElement.dir = deviceLang === 'ar' ? 'rtl' : 'ltr';
+
+  this.layoutService.layoutConfig.update(cfg => ({
+    ...cfg,
+    lang: deviceLang
+  }));
+}
+
 
   toggleDarkMode() {
     this.layoutService.layoutConfig.update(state => ({ ...state, darkTheme: !state.darkTheme }));
   }
+
+  getDeviceLanguage(): 'ar' | 'en' {
+  const lang = navigator.language || navigator.languages[0];
+  return lang.startsWith('ar') ? 'ar' : 'en';
+}
+
 
   toggleLanguage() {
     const newLang = this.currentLang === 'ar' ? 'en' : 'ar';
