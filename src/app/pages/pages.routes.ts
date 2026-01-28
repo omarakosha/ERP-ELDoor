@@ -22,29 +22,39 @@ import { SuppliersComponent } from './suppliers/suppliers.component';
 import { SupplierPaymentsComponent } from './supplier-payments/supplier-payments.component';
 import { BalanceSheetComponent } from './balancesheet/balancesheet';
 import { EntityComponent } from './entity/entity.component';
+
 export default [
-  { path: 'documentation', component: Documentation },
-  { path: 'crud', component: Crud },
-  { path: 'orders', component: Orders },
-  { path: 'CRM', component: CRMComponent },
-  { path: 'inventory', component: InventoryComponent },
-  { path: 'sales-invoices', component: SalesInvoicesComponent },
-  { path: 'purchase-invoices', component: PurchaseOrdersComponent },
-  { path: 'journal-entries', component: JournalEntriesComponent },
-  { path: 'trial-balance', component: TrialBalanceComponent },
-  { path: 'balancesheet', component: BalanceSheetComponent },
-  { path: 'profit-loss', component: ProfitLossComponent },
-  { path: 'accounts-manager', component: AccountsManager },
-  { path: 'entity', component: EntityComponent },
-  { path: 'financial-report', component: FinancialReportComponent },
-  { path: 'pos', component: PosComponent },
-  { path: 'pos-management', component: PosManagementComponent },
-  { path: 'payments', component: PaymentsComponent },
-  { path: 'stock-transfer', component: StockTransferComponent },
-  { path: 'purchase-returns', component: PurchaseReturnsComponent },
-  { path: 'suppliers', component: SuppliersComponent },
-  { path: 'supplier-payments', component: SupplierPaymentsComponent },
-  { path: 'empty', component: Empty },
-  { path: 'reports', component: ReportsComponent },
+  { path: 'documentation', component: Documentation, data: { breadcrumb: 'MENU.DOCUMENTATION' } },
+  { path: 'crud', component: Crud, data: { breadcrumb: 'MENU.PRODUCTS' } },
+  { path: 'orders', component: Orders, data: { breadcrumb: 'MENU.ORDERS' } },
+  { path: 'CRM', component: CRMComponent, data: { breadcrumb: 'MENU.CUSTOMERS' } },
+  { path: 'inventory', component: InventoryComponent, data: { breadcrumb: 'MENU.INVENTORY' } },
+
+  { path: 'sales-invoices', component: SalesInvoicesComponent, data: { breadcrumb: 'MENU.SALES_INVOICES' } },
+  { path: 'purchase-invoices', component: PurchaseOrdersComponent, data: { breadcrumb: 'MENU.PURCHASE_INVOICES' } },
+
+  { path: 'journal-entries', component: JournalEntriesComponent, data: { breadcrumb: 'MENU.JOURNAL_ENTRIES' } },
+  { path: 'trial-balance', component: TrialBalanceComponent, data: { breadcrumb: 'MENU.TRIAL_BALANCE' } },
+  { path: 'balancesheet', component: BalanceSheetComponent, data: { breadcrumb: 'MENU.BALANCE_SHEET' } },
+  { path: 'profit-loss', component: ProfitLossComponent, data: { breadcrumb: 'MENU.PROFIT_LOSS' } },
+
+  { path: 'accounts-manager', component: AccountsManager, data: { breadcrumb: 'MENU.TREE_ACCOUNTS' } },
+  { path: 'entity', component: EntityComponent, data: { breadcrumb: 'MENU.ENTITY_MANAGER' } },
+
+  { path: 'financial-report', component: FinancialReportComponent, data: { breadcrumb: 'MENU.FINANCIAL_REPORTS' } },
+  { path: 'reports', component: ReportsComponent, data: { breadcrumb: 'MENU.REPORTS' } },
+
+  { path: 'pos', component: PosComponent, data: { breadcrumb: 'MENU.POS' } },
+  { path: 'pos-management', component: PosManagementComponent, data: { breadcrumb: 'MENU.CASH_REGISTERS' } },
+
+  { path: 'payments', component: PaymentsComponent, data: { breadcrumb: 'MENU.PAYMENTS' } },
+  { path: 'stock-transfer', component: StockTransferComponent, data: { breadcrumb: 'MENU.STOCK_TRANSFER' } },
+  { path: 'purchase-returns', component: PurchaseReturnsComponent, data: { breadcrumb: 'MENU.PURCHASE_RETURNS' } },
+
+  { path: 'suppliers', component: SuppliersComponent, data: { breadcrumb: 'MENU.SUPPLIERS' } },
+  { path: 'supplier-payments', component: SupplierPaymentsComponent, data: { breadcrumb: 'MENU.SUPPLIER_PAYMENTS' } },
+
+  { path: 'empty', component: Empty, data: { breadcrumb: 'MENU.EMPTY' } },
+
   { path: '**', redirectTo: '/notfound' }
 ] as Routes;
