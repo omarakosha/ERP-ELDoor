@@ -55,18 +55,16 @@ interface Supplier {
 <div class="card p-4 shadow-md rounded-xl bg-white">
 
   <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
-    <h2 class="text-xl font-semibold text-gray-700">Suppliers</h2>
+  <input pInputText #filterInput placeholder="Search suppliers..." 
+           (input)="onGlobalFilter(dt, $event)" class="w-full md:w-1/3">
+           
     <div class="flex gap-2">
       <button pButton label="Upload Suppliers" icon="pi pi-upload" class="p-button-sucsses" (click)="openSupplierUpload()"outlined></button>
       <button pButton label="New Supplier" icon="pi pi-plus" class="p-button-success" (click)="openNewSupplier()"outlined></button>
     </div>
   </div>
 
-  <!-- Search -->
-  <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
-    <input pInputText #filterInput placeholder="Search suppliers..." 
-           (input)="onGlobalFilter(dt, $event)" class="w-full md:w-1/3">
-  </div>
+ 
 
   <!-- Suppliers Table -->
   <p-table #dt [value]="suppliers" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]"

@@ -1,49 +1,46 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { MenuItem } from 'primeng/api';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject, combineLatest } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-breadcrumb',
   standalone: true,
   imports: [CommonModule, BreadcrumbModule],
   template: `
-  <div class="breadcrumb-container">
-    <p-breadcrumb
-      [model]="items"
-      [home]="home">
-    </p-breadcrumb>
-  </div>
+    <div class="breadcrumb-container"
+>
+      <p-breadcrumb
+        [model]="items"
+        [home]="home">
+      </p-breadcrumb>
+    </div>
   `,
-styles: [`
-  .breadcrumb-container {
-    padding: 0.75rem 1rem;
-    background: var(--surface-card);
-    border-bottom: 1px solid var(--surface-border);
-
-    /* الحواف المدورة */
-    border-radius: 8px; /* يمكنك تغيير القيمة حسب الرغبة */
-
-    /* مسافة من الأعلى */
-    margin-top: 0rem;
-
-    /* مسافة من الأسفل */
-    margin-bottom: 1rem;
-  }
-`]
-
+  styles: [`
+    .breadcrumb-container {
+      padding: 0.75rem 1rem;
+      background: var(--surface-card);
+      border-bottom: 1px solid var(--surface-border);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+    }
+  `]
 })
-export class AppBreadcrumbComponent implements OnInit {
+export class AppBreadcrumbComponent implements OnInit, OnDestroy {
 
   items: MenuItem[] = [];
+  isRtl = false;
 
   home: MenuItem = {
     icon: 'pi pi-home',
     routerLink: '/'
   };
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
@@ -52,37 +49,67 @@ export class AppBreadcrumbComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.items = [];
-        this.buildBreadcrumb(this.route.root, '');
-      });
+    combineLatest([
+      this.router.events.pipe(filter(e => e instanceof NavigationEnd)),
+      this.translate.onLangChange
+    ])
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(() => {
+      this.rebuildBreadcrumb();
+    });
+
+    this.rebuildBreadcrumb();
   }
 
-  private buildBreadcrumb(route: ActivatedRoute, url: string) {
-    const children = route.children;
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-    for (const child of children) {
+  private rebuildBreadcrumb(): void {
+    this.isRtl = this.translate.currentLang === 'ar';
+
+    const tempItems: MenuItem[] = [];
+    this.buildBreadcrumb(this.route.root, '', tempItems);
+
+    this.items = this.isRtl
+      ? tempItems.reverse()
+      : tempItems;
+  }
+
+  private buildBreadcrumb(
+    route: ActivatedRoute,
+    url: string,
+    result: MenuItem[]
+  ): void {
+    for (const child of route.children) {
       const routeConfig = child.snapshot.routeConfig;
 
-      if (!routeConfig) continue; // تخطي المسارات الغير معرفة
-
-      const path = routeConfig.path;
-      if (path) {
-        url += `/${path}`;
+      if (!routeConfig || routeConfig.path === '') {
+        this.buildBreadcrumb(child, url, result);
+        continue;
       }
+
+      const nextUrl = `${url}/${routeConfig.path}`;
 
       const labelKey = child.snapshot.data['breadcrumb'];
-      if (labelKey) {
-        this.items.push({
-          label: this.translate.instant(labelKey), // لدعم الترجمة
-          routerLink: url
-        });
-      }
+if (labelKey) {
+  this.translate.get(labelKey)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(label => {
+      result.push({
+        label,
+        routerLink: nextUrl
+      });
 
-      // استدعاء بشكل recursive للأطفال
-      this.buildBreadcrumb(child, url);
+      // تحديث القائمة بعد وصول الترجمة
+      this.items = this.isRtl
+        ? [...result].reverse()
+        : [...result];
+    });
+}
+
+      this.buildBreadcrumb(child, nextUrl, result);
     }
   }
 }

@@ -50,7 +50,6 @@ interface Customer {
   <p-toast position="top-center" class="custom-toast"></p-toast>
 
   <div class="flex flex-wrap justify-between items-center mb-5 gap-3">
-    <h2 class="text-xl font-semibold text-gray-800"> {{ 'Customer_Management' | translate }}</h2>
 
     <div class="flex flex-wrap gap-2">
       <button pButton label="Clear Filters" icon="pi pi-filter-slash" class="p-button-outlined" (click)="clear(dt)"outlined></button>

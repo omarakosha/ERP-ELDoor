@@ -26,13 +26,6 @@ import { LoaderService } from '@/apiservice/loading.service';
 
 <!-- Header Row -->
 <div class="flex items-center justify-between mt-6 flex-wrap gap-3">
-
-  <!-- Title -->
-  <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100">
-    Balance Sheet
-  </h2>
-  
-
   <!-- Buttons -->
   <div>
     <button

@@ -3,13 +3,15 @@
   <p-confirmDialog header="تأكيد الإغلاق" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
   <div class="flex justify-between items-center mb-4">
-    <h2 class="text-xl font-semibold text-gray-700">Cash Register Management</h2>
 
     <div class="flex gap-2">
+      
+       <button pButton label=" New Register" icon="pi pi-plus" class="p-button-success"
+        (click)="openAddDialog()"outlined></button>
+
       <input type="text" pInputText placeholder="Search by box name or location" [(ngModel)]="searchTerm"
         (input)="filterBoxes()" class="w-64" />
-      <button pButton label=" New Register" icon="pi pi-plus" class="p-button-success"
-        (click)="openAddDialog()"outlined></button>
+     
     </div>
   </div>
 

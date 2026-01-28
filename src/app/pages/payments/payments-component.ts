@@ -40,7 +40,6 @@ interface Payment {
   template: `
 <div class="card">
  <p-toast position="top-center" class="custom-toast" [baseZIndex]="10000"></p-toast>
- <div class="font-semibold text-xl mb-4">Customer Payments</div>
 
  <!-- Toolbar -->
  <div class="flex flex-wrap gap-2 mb-3">

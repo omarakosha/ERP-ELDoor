@@ -46,7 +46,7 @@ interface PurchaseReturn {
   template: `
  <div class="card p-4 shadow-md rounded-xl bg-white">
     <div class="flex flex-wrap justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold text-gray-700">Purchase Returns</h2>
+
       <button pButton icon="pi pi-plus" label=" New Return" class="p-button-success" (click)="openNewReturn()"outlined></button>
     </div>
 

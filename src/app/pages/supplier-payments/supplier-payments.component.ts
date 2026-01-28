@@ -32,8 +32,6 @@ interface SupplierPayment {
   template: `
 <div class="card p-4">
 
-  <h2 class="text-xl font-semibold mb-4">Supplier Payments</h2>
-
   <!-- Global Search -->
   <div class="mb-4">
     <input pInputText placeholder="Global Search..." [(ngModel)]="globalFilter" 

@@ -37,7 +37,7 @@ interface PurchaseOrder {
  
  <p-toast position="top-center" class="custom-toast"></p-toast>
 
-      <h2 class="text-xl font-semibold text-gray-700">Purchase Orders</h2>
+
 
 
   <!-- Toolbar Filters -->

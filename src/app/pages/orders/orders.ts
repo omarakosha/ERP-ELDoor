@@ -51,7 +51,6 @@ interface expandedRows {
     template: `
     <div class="card">
      <p-toast position="top-center" class="custom-toast"></p-toast>
-        <div class="font-semibold text-xl mb-4">Orders</div>
         
         <p-table 
             [value]="products" 

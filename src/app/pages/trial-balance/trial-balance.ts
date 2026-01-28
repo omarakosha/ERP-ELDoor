@@ -29,9 +29,9 @@ import { LoaderService } from '@/apiservice/loading.service';
   ],
   providers: [MessageService, ConfirmationService],
   template: `
-<div class="card" style=" min-height: 77vh">
+<div class="card" style=" min-height 77vh">
       <p-toast position="top-center" class="custom-toast"></p-toast>
-  <h2 class="text-3xl font-bold mb-6">Trial Balance </h2>
+
 
  <div class="flex flex-wrap gap-4 mb-4 items-center">
 
@@ -69,7 +69,7 @@ import { LoaderService } from '@/apiservice/loading.service';
          [paginator]="true"
          [rows]="10"
          [scrollable]="true"
-         [scrollHeight]="'300px'"
+         [scrollHeight]="'400px'"
          [responsiveLayout]="'scroll'">
 
     <ng-template pTemplate="header">

@@ -43,7 +43,7 @@ interface Product {
   template: `
 <div class="card p-4 shadow-md rounded-xl bg-white">
     <div class="flex flex-wrap justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold text-gray-700">Stock Transfer</h2>
+
 
       <div class="flex gap-2">
         <button pButton icon="pi pi-plus" label="New Transfer" class="p-button-success" (click)="openNewTransfer()"outlined></button>

@@ -35,7 +35,7 @@ interface MultiSelectOption {
   template: `
 <div class="card" style=" min-height: 77vh">
      <p-toast position="top-center" class="custom-toast"></p-toast>
-  <h2 class="text-3xl font-bold mb-6">Profit & Loss Statement</h2>
+
 
   <div class="flex gap-4 mb-4 flex-wrap">
     <p-datepicker

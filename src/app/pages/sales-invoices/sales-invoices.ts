@@ -50,9 +50,7 @@ interface Sale {
   template: `
 <div class="card p-6 bg-white shadow-md rounded-lg">
    <p-toast position="top-center" class="custom-toast"></p-toast>
-       <h2 class="text-xl font-semibold text-gray-700">Sales </h2>
-
-
+   
   <!-- Toolbar Filters -->
   <div class="flex flex-wrap gap-2 justify-between p-2 rounded-t-lg mb-2">
     <div class="flex gap-2 flex-wrap">
