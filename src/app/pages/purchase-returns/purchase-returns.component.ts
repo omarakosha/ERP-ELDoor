@@ -6,6 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { TagModule } from 'primeng/tag';
+import { DatePickerModule } from 'primeng/datepicker';
 
 interface Product {
   name: string;
@@ -41,21 +42,45 @@ interface PurchaseReturn {
     InputTextModule,
     DialogModule,
     TagModule,
+    DatePickerModule
   
   ],
   template: `
- <div class="card p-4 shadow-md rounded-xl bg-white">
-    <div class="flex flex-wrap justify-between items-center mb-4">
+<div class="card" style=" min-height: 77vh">
+   <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+  <!-- Left: Search Input -->
+  <div class="flex-1 ">
+    <input
+      pInputText
+      #filterInput
+      placeholder="Search returns..."
+      (input)="onGlobalFilter(dt, $event)"
+     
+    />
+  </div>
 
-      <button pButton icon="pi pi-plus" label=" New Return" class="p-button-success" (click)="openNewReturn()"outlined></button>
-    </div>
+  <!-- Right: Datepicker + Button -->
+  <div class="flex gap-2 flex-wrap">
+    <p-datepicker
+      [(ngModel)]="filterDate"
+      [showIcon]="true"
+      [showButtonBar]="true"
+      placeholder="Returns Date"
+      styleClass="filter-control"
+      [inputStyle]="{ width: '180px' }"
+    ></p-datepicker>
 
-    <!-- Search -->
-    <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
-      <input pInputText #filterInput placeholder="Search returns..." 
-             (input)="onGlobalFilter(dt, $event)" class="w-full md:w-1/3">
-      <input type="date" [(ngModel)]="filterDate" placeholder="Creation Date" class="border rounded p-2 w-48">
-    </div>
+    <button
+      pButton
+      icon="pi pi-plus"
+      label="New Return"
+      class="p-button-success"
+      (click)="openNewReturn()"
+      outlined
+    ></button>
+  </div>
+</div>
+
 
     <!-- Table -->
     <p-table #dt [value]="returns" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]"

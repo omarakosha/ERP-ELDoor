@@ -30,79 +30,94 @@ interface SupplierPayment {
     TagModule
   ],
   template: `
-<div class="card p-4">
+<div class="card flex flex-col min-h-[77vh]">
 
   <!-- Global Search -->
-  <div class="mb-4">
-    <input pInputText placeholder="Global Search..." [(ngModel)]="globalFilter" 
-           (input)="dt.filterGlobal(globalFilter, 'contains')" class="w-full md:w-1/3">
+  <div class="mb-3 flex flex-wrap items-center justify-between gap-2 px-4 pt-4">
+    <input pInputText 
+           placeholder="Global Search..." 
+           [(ngModel)]="globalFilter" 
+           (input)="dt.filterGlobal(globalFilter, 'contains')" 
+           class="w-full md:w-1/3 p-2 border rounded"/>
   </div>
 
   <!-- Payments Table -->
-  <p-table #dt [value]="payments" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]"
-           [showGridlines]="true" responsiveLayout="scroll"
-           [globalFilterFields]="['invoiceNumber','creationDate','supplier','paymentCategory','status','paymentMethod']">
+  <div class="flex-1 overflow-auto px-4 pb-4">
+    <p-table #dt
+             [value]="payments"
+             [paginator]="true"
+             [rows]="10"
+             [rowsPerPageOptions]="[10,20,50]"
+             [showGridlines]="true"
+             responsiveLayout="scroll"
+             scrollable="true"
+             scrollHeight="100%"
+             [globalFilterFields]="['invoiceNumber','creationDate','supplier','paymentCategory','status','paymentMethod']">
 
-    <ng-template pTemplate="header">
-      <tr>
-        <th>
-          <span>Invoice Number</span>
-          <p-columnFilter type="text" field="invoiceNumber" display="menu" placeholder="Search"></p-columnFilter>
-        </th>
-        <th>
-          <span>Creation Date</span>
-          <p-columnFilter type="date" field="creationDate" display="menu"></p-columnFilter>
-        </th>
-        <th>
-          <span>Supplier</span>
-          <p-columnFilter type="text" field="supplier" display="menu" placeholder="Search"></p-columnFilter>
-        </th>
-        <th>
-          <span>Payment Category</span>
-          <p-columnFilter type="text" field="paymentCategory" display="menu" placeholder="Search"></p-columnFilter>
-        </th>
-        <th>
-          <span>Status</span>
-          <p-columnFilter type="text" field="status" display="menu" placeholder="Search"></p-columnFilter>
-        </th>
-        <th>
-          <span>Payment Method</span>
-          <p-columnFilter type="text" field="paymentMethod" display="menu" placeholder="Search"></p-columnFilter>
-        </th>
-        <th>Total Paid</th>
-        <th>Actions</th>
-      </tr>
-    </ng-template>
+      <!-- Table Header -->
+      <ng-template pTemplate="header">
+        <tr class="bg-gray-100 text-gray-700 text-sm">
+          <th>
+            Invoice Number
+            <p-columnFilter type="text" field="invoiceNumber" display="menu" placeholder="Search"></p-columnFilter>
+          </th>
+          <th>
+            Creation Date
+            <p-columnFilter type="date" field="creationDate" display="menu"></p-columnFilter>
+          </th>
+          <th>
+            Supplier
+            <p-columnFilter type="text" field="supplier" display="menu" placeholder="Search"></p-columnFilter>
+          </th>
+          <th>
+            Payment Category
+            <p-columnFilter type="text" field="paymentCategory" display="menu" placeholder="Search"></p-columnFilter>
+          </th>
+          <th>
+            Status
+            <p-columnFilter type="text" field="status" display="menu" placeholder="Search"></p-columnFilter>
+          </th>
+          <th>
+            Payment Method
+            <p-columnFilter type="text" field="paymentMethod" display="menu" placeholder="Search"></p-columnFilter>
+          </th>
+          <th>Total Paid</th>
+          <th style="width: 120px;">Actions</th>
+        </tr>
+      </ng-template>
 
-    <ng-template pTemplate="body" let-p>
-      <tr>
-        <td>{{p.invoiceNumber}}</td>
-        <td>{{p.creationDate}}</td>
-        <td>{{p.supplier}}</td>
-        <td>{{p.paymentCategory}}</td>
-        <td>{{p.status}}</td>
-        <td>{{p.paymentMethod}}</td>
-        <td>{{p.totalPaid | number:'1.2-2'}}</td>
-        <td class="flex gap-2">
-          <button pButton icon="pi pi-eye" class=" p-button-info" (click)="viewPayment(p)"outlined></button>
-          <button pButton icon="pi pi-trash" class=" p-button-danger" (click)="deletePayment(p)"outlined></button>
-        </td>
-      </tr>
-    </ng-template>
+      <!-- Table Body -->
+      <ng-template pTemplate="body" let-p>
+        <tr class="hover:bg-gray-50">
+          <td>{{p.invoiceNumber}}</td>
+          <td>{{p.creationDate}}</td>
+          <td>{{p.supplier}}</td>
+          <td>{{p.paymentCategory}}</td>
+          <td>{{p.status}}</td>
+          <td>{{p.paymentMethod}}</td>
+          <td>{{p.totalPaid | number:'1.2-2'}}</td>
+          <td class="flex gap-2 justify-center">
+            <button pButton icon="pi pi-eye" class="p-button-info p-button-sm" (click)="viewPayment(p)" outlined></button>
+            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deletePayment(p)" outlined></button>
+          </td>
+        </tr>
+      </ng-template>
 
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="8" class="text-center text-gray-500 p-4">
-          No data available
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+      <!-- Empty Message -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center text-gray-500 p-4">
+            No data available
+          </td>
+        </tr>
+      </ng-template>
 
-</div>
-
-<p-dialog header="Payment Details" [(visible)]="displayDialog" [modal]="true" [style]="{width:'400px'}">
-  <div *ngIf="selectedPayment">
+    </p-table>
+  </div>
+  
+<!-- Payment Details Dialog -->
+<p-dialog header="Payment Details" [(visible)]="displayDialog" [modal]="true" [style]="{width:'450px'}" [closable]="false">
+  <div *ngIf="selectedPayment" class="space-y-2 p-4">
     <p><strong>Invoice Number:</strong> {{selectedPayment.invoiceNumber}}</p>
     <p><strong>Creation Date:</strong> {{selectedPayment.creationDate}}</p>
     <p><strong>Supplier:</strong> {{selectedPayment.supplier}}</p>
@@ -112,9 +127,12 @@ interface SupplierPayment {
     <p><strong>Total Paid:</strong> {{selectedPayment.totalPaid | number:'1.2-2'}}</p>
   </div>
   <ng-template pTemplate="footer">
-    <button pButton label="Close" (click)="displayDialog=false"outlined></button>
+    <button pButton label="Close" (click)="displayDialog=false" outlined></button>
   </ng-template>
 </p-dialog>
+
+</div>
+
 
   `
 })

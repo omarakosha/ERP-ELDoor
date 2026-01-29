@@ -12,23 +12,14 @@ import { filter, takeUntil } from 'rxjs/operators';
   standalone: true,
   imports: [CommonModule, BreadcrumbModule],
   template: `
-    <div class="breadcrumb-container"
->
+        <div class="breadcrumb-container">
       <p-breadcrumb
         [model]="items"
         [home]="home">
       </p-breadcrumb>
     </div>
   `,
-  styles: [`
-    .breadcrumb-container {
-      padding: 0.75rem 1rem;
-      background: var(--surface-card);
-      border-bottom: 1px solid var(--surface-border);
-      border-radius: 8px;
-      margin-bottom: 0.75rem;
-    }
-  `]
+
 })
 export class AppBreadcrumbComponent implements OnInit, OnDestroy {
 
@@ -93,21 +84,21 @@ export class AppBreadcrumbComponent implements OnInit, OnDestroy {
       const nextUrl = `${url}/${routeConfig.path}`;
 
       const labelKey = child.snapshot.data['breadcrumb'];
-if (labelKey) {
-  this.translate.get(labelKey)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(label => {
-      result.push({
-        label,
-        routerLink: nextUrl
-      });
+      if (labelKey) {
+        this.translate.get(labelKey)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(label => {
+            result.push({
+              label,
+              routerLink: nextUrl
+            });
 
-      // تحديث القائمة بعد وصول الترجمة
-      this.items = this.isRtl
-        ? [...result].reverse()
-        : [...result];
-    });
-}
+            // تحديث القائمة بعد وصول الترجمة
+            this.items = this.isRtl
+              ? [...result].reverse()
+              : [...result];
+          });
+      }
 
       this.buildBreadcrumb(child, nextUrl, result);
     }

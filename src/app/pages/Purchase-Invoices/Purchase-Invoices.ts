@@ -11,6 +11,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { DatePickerModule } from 'primeng/datepicker';
 
 interface Supplier { id: number; name: string; }
 interface Product { id: number; name: string; }
@@ -29,11 +30,11 @@ interface PurchaseOrder {
   standalone: true,
   imports: [
     CommonModule, FormsModule, ButtonModule, TableModule, DialogModule,
-    ConfirmDialogModule, InputTextModule, ToastModule
+    ConfirmDialogModule, InputTextModule, ToastModule,DatePickerModule
   ],
   providers: [ConfirmationService, MessageService],
   template: `
- <div class="card p-4 shadow-md rounded-xl bg-white">
+<div class="card" style=" min-height: 77vh">
  
  <p-toast position="top-center" class="custom-toast"></p-toast>
 
@@ -50,8 +51,9 @@ interface PurchaseOrder {
     <div class="flex gap-2 flex-wrap items-center">
       <input pInputText type="text" placeholder="Search PO #" [(ngModel)]="filterPO" class="p-inputtext border rounded p-2 w-36 md:w-48">
       <input pInputText type="text" placeholder="Search Supplier" [(ngModel)]="filterSupplier" class="p-inputtext border rounded p-2 w-36 md:w-48">
-      <input pInputText type="date" [(ngModel)]="filterDate" class="p-inputtext border rounded p-2 w-32 md:w-40">
       <input pInputText type="text" placeholder="Search Status" [(ngModel)]="filterStatus" class="p-inputtext border rounded p-2 w-32 md:w-40">
+       <p-datepicker [(ngModel)]="filterDate" [showIcon]="true" [showButtonBar]="true" placeholder="Invoice Date"styleClass="filter-control" [inputStyle]="{ width: '180px' }" > </p-datepicker>
+
     </div>
   </div>
 
@@ -105,7 +107,7 @@ interface PurchaseOrder {
       </div>
       <div>
         <label class="font-semibold block mb-1">Date</label>
-        <input type="date" [(ngModel)]="newPO.date" class="p-inputtext w-full border rounded p-2"/>
+          <p-datepicker [(ngModel)]="filterDate" [showIcon]="true" [showButtonBar]="true" placeholder="Invoice Date"styleClass="filter-control" [inputStyle]="{  width: '100%' }" >  </p-datepicker>
       </div>
       <div>
         <label class="font-semibold block mb-1">Status</label>

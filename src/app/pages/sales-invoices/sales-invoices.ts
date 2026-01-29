@@ -66,7 +66,7 @@ interface Sale {
       [showButtonBar]="true"
       placeholder="End Date"
       styleClass="filter-control"
-       [inputStyle]="{  width: '100%' }" 
+      [inputStyle]="{ width: '180px' }"
       >
   </p-datepicker>
 

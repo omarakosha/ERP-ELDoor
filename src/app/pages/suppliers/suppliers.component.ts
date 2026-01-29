@@ -52,7 +52,7 @@ interface Supplier {
     TagModule
   ],
   template: `
-<div class="card p-4 shadow-md rounded-xl bg-white">
+<div class="card" style=" min-height: 77vh">
 
   <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
   <input pInputText #filterInput placeholder="Search suppliers..." 
@@ -65,41 +65,62 @@ interface Supplier {
   </div>
 
  
+<!-- Suppliers Table with Filters and Actions -->
+<p-table #dt [value]="suppliers" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]"
+         [showGridlines]="true" responsiveLayout="scroll"
+         [globalFilterFields]="['code','name','status']">
 
-  <!-- Suppliers Table -->
-  <p-table #dt [value]="suppliers" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]"
-           [showGridlines]="true" responsiveLayout="scroll"
-           [globalFilterFields]="['code','name','status']">
+  <!-- Table Header -->
+  <ng-template pTemplate="header">
+    <tr class="bg-gray-100 text-gray-700 text-sm">
+      <th>
+        Supplier Code
+        <p-columnFilter type="text" field="code" display="menu" placeholder="Search"></p-columnFilter>
+      </th>
+      <th>
+        Supplier Name
+        <p-columnFilter type="text" field="name" display="menu" placeholder="Search"></p-columnFilter>
+      </th>
+      <th>Total Paid</th>
+      <th>Debit</th>
+      <th>Credit</th>
+      <th>Balance</th>
+      <th>
+        Status
+        <p-columnFilter type="text" field="status" display="menu" placeholder="Search"></p-columnFilter>
+      </th>
+      <th style="width: 100px;">Actions</th>
+    </tr>
+  </ng-template>
 
-    <ng-template pTemplate="header">
-      <tr class="bg-gray-100 text-gray-700 text-sm">
-        <th>Supplier Code</th>
-        <th>Supplier Name</th>
-        <th>Total Paid</th>
-        <th>Debit</th>
-        <th>Credit</th>
-        <th>Balance</th>
-        <th>Status</th>
-        <th style="width: 120px;">Actions</th>
-      </tr>
-    </ng-template>
+  <!-- Table Body -->
+  <ng-template pTemplate="body" let-s>
+    <tr class="hover:bg-gray-50">
+      <td>{{s.code}}</td>
+      <td>{{s.name}}</td>
+      <td>{{s.totalPaid | number:'1.2-2'}}</td>
+      <td>{{s.debit | number:'1.2-2'}}</td>
+      <td>{{s.credit | number:'1.2-2'}}</td>
+      <td>{{s.balance | number:'1.2-2'}}</td>
+      <td>
+        <p-tag [value]="s.status" [severity]="getSeverity(s.status)"></p-tag>
+      </td>
+      <td class="flex gap-2 justify-center">
+        <button pButton icon="pi pi-pencil" class="p-button-info" (click)="editSupplier(s)" outlined></button>
+        <button pButton icon="pi pi-trash" class="p-button-danger" (click)="deleteSupplier(s)" outlined></button>
+      </td>
+    </tr>
+  </ng-template>
 
-    <ng-template pTemplate="body" let-s>
-      <tr class="hover:bg-gray-50">
-        <td>{{s.code}}</td>
-        <td>{{s.name}}</td>
-        <td>{{s.totalPaid}}</td>
-        <td>{{s.debit}}</td>
-        <td>{{s.credit}}</td>
-        <td>{{s.balance}}</td>
-        <td><p-tag [value]="s.status" [severity]="getSeverity(s.status)"></p-tag></td>
-        <td class="flex gap-2 justify-center">
-          <button pButton icon="pi pi-pencil" class="p-button-info" (click)="editSupplier(s)"outlined></button>
-          <button pButton icon="pi pi-trash" class="p-button-danger " (click)="deleteSupplier(s)"outlined></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+  <!-- Empty Message -->
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="8" class="text-center text-gray-500 p-4">
+        No data available
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
 
   <!-- Add/Edit Supplier -->
   <p-dialog header="Add / Edit Supplier" [(visible)]="displayDialog" [modal]="true" [style]="{width:'500px'}" [closable]="false">
