@@ -25,66 +25,129 @@
 }
 
 
-
-
-/* Common style */
+/* ===============================
+   Toast Message (Base)
+================================ */
 .custom-toast .p-toast-message {
   position: relative;
+  background: #ffffff;
+  color: #374151;
+  border-radius: 10px;
+
+  /* Logical spacing (RTL / LTR) */
+  padding-block: 14px;
+  padding-inline: 20px 16px;
+
+  margin-block-end: 12px;
+  border: none;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-    transform: translateY(6px); 
+  align-items: center;
+  gap: 12px;
 }
 
-/* Success */
-.custom-toast .p-toast-message-success::after {
+/* ===============================
+   Sidebar Indicator (Auto RTL/LTR)
+================================ */
+.custom-toast .p-toast-message::before {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background-color: #22c55e; /* أخضر */
+  inset-block-end: 0;
+  inset-inline-start: 0; /* RTL = right | LTR = left */
+  width: 8px;
+  height: 100%;
+  background-color: var(--toast-color, #6b7280);
+  border-radius: 0 10px 10px 0;
+}
+
+/* ===============================
+   Progress Bar (Timeout)
+================================ */
+.custom-toast .p-toast-message::after {
+  content: '';
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 8px;
+  height: 3px;
+  width: calc(100% - 6px);
+  background: rgba(0, 0, 0, 0.15);
   animation: toastProgress 3s linear forwards;
 }
 
-/* Warn */
-.custom-toast .p-toast-message-warn::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background-color: #facc15; /* أصفر */
-  animation: toastProgress 3s linear forwards;
-}
-
-/* Error */
-.custom-toast .p-toast-message-error::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background-color: #ef4444; /* أحمر */
-  animation: toastProgress 3s linear forwards;
-}
-
-/* Info */
-.custom-toast .p-toast-message-info::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background-color: #3b82f6; /* أزرق */
-  animation: toastProgress 3s linear forwards;
-}
-
-
-  /* أيقونات PrimeNG */
-  .p-toast, .p-dialog, .p-paginator {
-    direction: rtl;
-    text-align: right;
+@keyframes toastProgress {
+  from {
+    width: calc(100% - 6px);
   }
+  to {
+    width: 0;
+  }
+}
+
+/* ===============================
+   Toast Types (Dynamic Colors)
+================================ */
+.custom-toast .p-toast-message-success {
+  --toast-color: #22c55e;
+}
+
+.custom-toast .p-toast-message-error {
+  --toast-color: #ef4444;
+}
+
+.custom-toast .p-toast-message-info {
+  --toast-color: #3b82f6;
+}
+
+.custom-toast .p-toast-message-warn {
+  --toast-color: #f59e0b;
+}
+
+/* ===============================
+   Title & Message
+================================ */
+.custom-toast .p-toast-summary {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.custom-toast .p-toast-detail {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* ===============================
+   Icon
+================================ */
+.custom-toast .p-toast-message-icon {
+  font-size: 18px;
+  margin-inline-start: 6px;
+  color: var(--toast-color);
+}
+
+/* ===============================
+   Close Button (Auto RTL/LTR)
+================================ */
+.custom-toast .p-toast-icon-close {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-start: 8px; /* RTL = left | LTR = right */
+  width: 24px;
+  height: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 6px;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.custom-toast .p-toast-icon-close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
