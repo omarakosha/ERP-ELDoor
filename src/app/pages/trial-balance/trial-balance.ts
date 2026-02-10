@@ -29,7 +29,7 @@ import { LoaderService } from '@/apiservice/loading.service';
   ],
   providers: [MessageService, ConfirmationService],
   template: `
-<div class="card" style=" min-height 77vh">
+<div class="card" style=" min-height: 70vh">
       <p-toast position="top-center" class="custom-toast"></p-toast>
 
 

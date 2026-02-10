@@ -52,7 +52,7 @@ interface Supplier {
     TagModule
   ],
   template: `
-<div class="card" style=" min-height: 77vh">
+<div class="card" style=" min-height: 70vh">
 
   <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
   <input pInputText #filterInput placeholder="Search suppliers..." 

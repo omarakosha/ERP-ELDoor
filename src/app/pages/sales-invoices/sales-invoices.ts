@@ -48,7 +48,7 @@ interface Sale {
   ],
   providers: [ConfirmationService, MessageService],
   template: `
-<div class="card p-6 bg-white shadow-md rounded-lg">
+<div class="card" style=" min-height: 70vh">
    <p-toast position="top-center" class="custom-toast"></p-toast>
    
   <!-- Toolbar Filters -->

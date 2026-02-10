@@ -38,7 +38,7 @@ interface Payment {
     ToastModule
   ],
   template: `
-<div class="card">
+<div class="card rtl" style="min-height: 70vh">
  <p-toast position="top-center" class="custom-toast" [baseZIndex]="10000"></p-toast>
 
  <!-- Toolbar -->

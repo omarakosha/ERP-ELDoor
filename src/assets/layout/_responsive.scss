@@ -46,7 +46,7 @@ html[dir="rtl"] .layout-wrapper.layout-overlay.layout-mobile-active .layout-side
 /* LTR/RTL Initial Positions */
 /* ========================= *//*static - overlay LTR */
 html[dir="ltr"] .layout-sidebar {
-    left: 2rem;
+    left: rem;
     right: auto;
     transform: translateX(0);
 }

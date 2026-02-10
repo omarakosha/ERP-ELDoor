@@ -34,7 +34,7 @@ interface Inventory {
     TagModule
   ],
   template: `
- <div class="card p-4 shadow-md rounded-xl bg-white">
+<div class="card" style=" min-height: 70vh">
     <div class="flex flex-wrap justify-between items-center mb-4">
 
       <div class="flex gap-2">

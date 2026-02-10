@@ -34,7 +34,7 @@ interface PurchaseOrder {
   ],
   providers: [ConfirmationService, MessageService],
   template: `
-<div class="card" style=" min-height: 77vh">
+<div class="card" style=" min-height: 70vh">
  
  <p-toast position="top-center" class="custom-toast"></p-toast>
 

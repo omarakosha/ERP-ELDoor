@@ -30,7 +30,7 @@ interface SupplierPayment {
     TagModule
   ],
   template: `
-<div class="card flex flex-col min-h-[77vh]">
+<div class="card flex flex-col min-h-[70vh]">
 
   <!-- Global Search -->
   <div class="mb-3 flex flex-wrap items-center justify-between gap-2 px-4 pt-4">
