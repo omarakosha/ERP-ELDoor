@@ -263,26 +263,30 @@ img { max-width: 100%; height: auto; }
 
 .card-loader-img {
   width: 200px;
-  height: 120;
+  height: 200px; /* يفضل أن يكون الطول مساوي للعرض بما أن الحواف دائرية 50% */
   border-radius: 50%;
   z-index: 2;
-  animation: pulse 1.5s infinite ease-in-out;
+  object-fit: cover;
+  
+  /* الأنيميشن الجديد */
+  animation: professional-pulse 2s infinite ease-in-out;
+  box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); /* لون ذهبي خفيف ليناسب شعارك */
 }
 
-.card-loader-ring {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  border: 3px solid rgba(255, 255, 255, 0);
-  border-top: 8px solid #3c7688;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  z-index: 1;
+@keyframes professional-pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 15px rgba(212, 175, 55, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+  }
 }
-
-/* =========================================================
-   🖼 breadcrumb Styling (Correct Alignment)
-========================================================= */
 /* =========================================================
    🖼 Breadcrumb Styling (Fixed Height Always)
 ========================================================= */
