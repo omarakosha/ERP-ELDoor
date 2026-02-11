@@ -151,6 +151,10 @@
     "INFO_DETAIL": "Please check your input",
     "WARN_SUMMARY": "Warning",
     "WARN_DETAIL": "Be careful with this action"
+  },
+  "footer": {
+    "rights": "All rights reserved to Al-Dar © 1447AH - 2026.",
+    "poweredBy": "Powered by Rqm"
   }
 
 
