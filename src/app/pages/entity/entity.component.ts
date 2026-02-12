@@ -13,6 +13,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { LoaderService } from '@/apiservice/loading.service';
 import { TranslateService } from '@ngx-translate/core';
+import { finalize, Observable } from 'rxjs';
 
 
 @Component({
@@ -34,6 +35,14 @@ import { TranslateService } from '@ngx-translate/core';
 export class EntityComponent implements OnInit {
 
   list: EntityRecord[] = [];
+   loading: boolean = false;
+
+    invalidFields = {
+  name: false,
+  entityType: false,
+  accountId: false
+};
+submitted = false;
 
 
   displayDialog = false;
@@ -158,30 +167,47 @@ compareAccount(a1: number, a2: number) {
     this.service.delete(id).subscribe(() => this.loadEntities());
   }
 
-  save() {
-    if (this.model.id === 0) {
-      this.service.add(this.model).subscribe(() => {
-        this.displayDialog = false;
-        this.loadEntities();
-         this.messageService.add({
-          severity: 'success',
-          summary:  'success' ,
-          detail: 'Account created successfully'
-        });
+save() {
+  this.submitted = true;
 
+  // ✅ التحقق من الحقول المطلوبة
+  this.invalidFields.name = !this.model.name?.trim();
+  this.invalidFields.entityType = !this.model.entityType;
+  this.invalidFields.accountId = !this.model.accountId;
+
+  // إذا هناك حقل غير صالح، أوقف الحفظ
+  if (this.invalidFields.name || this.invalidFields.entityType || this.invalidFields.accountId) {
+    return;
+  }
+
+  this.loading = true;
+
+  let request: Observable<any> = this.model.id === 0
+    ? this.service.add(this.model)
+    : this.service.update(this.model);
+
+  request.pipe(
+    finalize(() => this.loading = false)
+  ).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: this.model.id === 0 ? 'Account created successfully' : 'Account updated successfully'
       });
-    } else {
-      this.service.update(this.model).subscribe(() => {
-             this.messageService.add({
-          severity: 'success',
-          summary:  'success' ,
-          detail: 'Account update successfully'
-        });
-        this.displayDialog = false;
-        this.loadEntities();
+      this.displayDialog = false;
+      this.loadEntities();
+      this.submitted = false; // إعادة التعيين بعد الحفظ
+    },
+    error: () => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Operation failed'
       });
     }
-  }
+  });
+}
 
 
 onTypeManualChange() {
@@ -189,6 +215,11 @@ onTypeManualChange() {
   this.onTypeChange();
 }
 
+
+cancelDialog() {
+    this.displayDialog = false;
+  
+}
 
 onTypeChange() {
   const type = this.model.entityType;

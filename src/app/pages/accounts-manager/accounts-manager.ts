@@ -313,6 +313,7 @@ saveAccount() {
       this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Please enter name and code' });
       return;
     }
+  this.loading = true; // 🟢 تشغيل لودينق الزر
 
     const accountToSave: Account = {
       id: this.isEdit && this.currentNode?.key ? +this.currentNode.key : 0,
@@ -385,10 +386,12 @@ saveAccount() {
           this.filteredTree = [...this.accountsTree];
           this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Account added' });
           this.cancelDialog();
+            this.loading = false; // 🔴 إيقاف اللودينق
         },
         error: (err) => {
           console.error('Create error:', err);
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create account' });
+            this.loading = false; // 🔴 إيقاف اللودينق
         }
       });
     }
