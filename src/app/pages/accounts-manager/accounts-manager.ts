@@ -15,6 +15,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { Select } from "primeng/select";
 import { LoaderService } from '@/apiservice/loading.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface MyTreeNode extends TreeNode {
   key: string;
@@ -89,11 +90,13 @@ entityTypes = [
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private accountsService: AccountsService,
+      private translate: TranslateService,
      public loaderService: LoaderService
   ) { }
 
   ngOnInit() {
     this.loadAccounts();
+
   }
 
 loadAccounts() {
@@ -124,14 +127,20 @@ loadAccounts() {
       this.loaderService.hide(); // 🟢 إخفاء اللودنق بعد التحميل
     },
            error: (err) => {
-      console.error('Failed to load journals', err);
+      console.error('Failed to load accounts', err);
       this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: '  Internal Server Error Code 500'
+    this.loaderService.hide(); // إيقاف اللودنق عند الخطأ
+
+  this.translate.get(['TOAST.ERROR_SUMMARY','TOAST.ERROR_DETAIL_500']).subscribe(trans => {
+    this.messageService.add({
+      severity: 'error',
+      summary: trans['TOAST.ERROR_SUMMARY'],
+      detail: trans['TOAST.ERROR_DETAIL_500']
+    });
+
       });
     }
+    
   });
 }
 

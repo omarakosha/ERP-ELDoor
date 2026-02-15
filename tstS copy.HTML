@@ -626,3 +626,134 @@ selectParentAccount(account: Account) {
     link.click();
   }
 }
+
+
+
+
+
+
+/* ===============================
+   Toast Container
+================================ */
+.custom-toast {
+  direction: rtl; /* دعم RTL */
+}
+
+/* ===============================
+   Toast Message (Base)
+================================ */
+.custom-toast .p-toast-message {
+  position: relative;
+  background-color: #ffffff;
+  color: #374151;
+  border-radius: 10px;
+  padding: 14px 16px 14px 20px;
+  margin: 0 0 12px 0;
+  border: none;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Arial, sans-serif;
+}
+
+/* ===============================
+   Sidebar Indicator
+================================ */
+.custom-toast .p-toast-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;              /* RTL */
+  width: 6px;
+  height: 100%;
+  background-color: #ef4444;
+  border-radius: 0 10px 10px 0;
+}
+
+/* ===============================
+   Progress Bar (Timeout)
+================================ */
+.custom-toast .p-toast-message::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 6px;            /* بعد الشريط الجانبي */
+  height: 3px;
+  width: calc(100% - 6px);
+  background-color: rgba(0, 0, 0, 0.12);
+  animation: toastProgress 3s linear forwards;
+}
+
+@keyframes toastProgress {
+  from {
+    width: calc(100% - 6px);
+  }
+  to {
+    width: 0;
+  }
+}
+
+/* ===============================
+   Toast Types
+================================ */
+
+/* Error */
+.custom-toast .p-toast-message-error::before {
+  background-color: #ef4444;
+}
+
+/* Success */
+.custom-toast .p-toast-message-success::before {
+  background-color: #22c55e;
+}
+
+/* Info */
+.custom-toast .p-toast-message-info::before {
+  background-color: #3b82f6;
+}
+
+/* Warn */
+.custom-toast .p-toast-message-warn::before {
+  background-color: #f59e0b;
+}
+
+/* ===============================
+   Title & Message
+================================ */
+.custom-toast .p-toast-summary {
+  font-weight: 600;
+  font-size: 14px;
+  color: #111827;
+}
+
+.custom-toast .p-toast-detail {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* ===============================
+   Icon
+================================ */
+.custom-toast .p-toast-message-icon {
+  font-size: 18px;
+  margin-left: 6px;
+  color: inherit;
+}
+
+/* ===============================
+   Close Button
+================================ */
+.custom-toast .p-toast-icon-close {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #9ca3af;
+  transition: color 0.2s ease;
+}
+
+.custom-toast .p-toast-icon-close:hover {
+  color: #111827;
+}

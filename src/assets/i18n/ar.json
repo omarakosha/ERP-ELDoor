@@ -138,7 +138,18 @@
   "CUSTOMER": {
     "ADD": "إضافة عميل جديد",
     "EDIT": "تعديل بيانات العميل"
+  },
+   
+ "TOAST": {
+    "SUCCESS_SUMMARY": "تم بنجاح",
+    "SUCCESS_DETAIL": "تم حفظ البيانات بنجاح",
+    "ERROR_SUMMARY": "خطأ",
+    "ERROR_DETAIL": "حدث خطأ أثناء العملية",
+    "ERROR_DETAIL_500": "خطأ داخلي في الخادم - 500",
+    "INFO_SUMMARY": "معلومة",
+    "INFO_DETAIL": "يرجى التحقق من البيانات",
+    "WARN_SUMMARY": "تحذير",
+    "WARN_DETAIL": "احذر عند تنفيذ هذا الإجراء"
   }
-
 
 }

@@ -139,6 +139,18 @@
   "CUSTOMER": {
     "ADD": "Add New Customer",
     "EDIT": "Edit Customer"
+  },
+  
+   "TOAST": {
+    "SUCCESS_SUMMARY": "Success",
+    "SUCCESS_DETAIL": "Data saved successfully",
+    "ERROR_SUMMARY": "Error",
+    "ERROR_DETAIL": "Something went wrong",
+    "ERROR_DETAIL_500": "   Internal Server Error Code 500 ",
+    "INFO_SUMMARY": "Info",
+    "INFO_DETAIL": "Please check your input",
+    "WARN_SUMMARY": "Warning",
+    "WARN_DETAIL": "Be careful with this action"
   }
 
 

@@ -331,10 +331,15 @@ html[dir="rtl"] .p-breadcrumb-separator {
   transform: rotate(180deg);
 }
 
-html[dir="rtl"] .p-tree-separator {
-  transform: rotate(180deg);
+/* قلب الأسهم عند RTL */
+html[dir="rtl"] .p-tree-toggler {
+  transform: rotate(180deg); /* أو rotateY(180deg) حسب شكل السهم */
 }
 
+html[dir="rtl"] .p-tree-toggler::before {
+  content: '\e932'; /* رمز السهم الافتراضي من PrimeIcons */
+  transform: rotate(180deg);
+}
 
 /* Arrow base style */
 .p-breadcrumb-item + .p-breadcrumb-item::before {

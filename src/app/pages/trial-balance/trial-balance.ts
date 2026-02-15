@@ -12,6 +12,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { LoaderService } from '@/apiservice/loading.service';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -161,6 +162,7 @@ export class TrialBalanceComponent {
   constructor(
     private service: TrialBalanceService,
      private messageService: MessageService,
+           private translate: TranslateService,
      public loaderService: LoaderService) { }
 
 
@@ -184,15 +186,21 @@ export class TrialBalanceComponent {
         this.costCentersOptions = Array.from(costCentersSet).map(c => ({ name: c }));
           this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
       },
-         error: (err) => {
-      console.error('Failed to load journals', err);
+          error: (err) => {
+      console.error('Failed to load trial balance', err);
       this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: '  Internal Server Error Code 500'
+    this.loaderService.hide(); // إيقاف اللودنق عند الخطأ
+
+  this.translate.get(['TOAST.ERROR_SUMMARY','TOAST.ERROR_DETAIL_500']).subscribe(trans => {
+    this.messageService.add({
+      severity: 'error',
+      summary: trans['TOAST.ERROR_SUMMARY'],
+      detail: trans['TOAST.ERROR_DETAIL_500']
+    });
+
       });
     }
+
     });
   }
 

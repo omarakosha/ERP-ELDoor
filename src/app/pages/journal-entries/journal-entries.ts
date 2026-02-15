@@ -16,6 +16,7 @@ import { AccountsService, Account } from '../../apiservice/accounts.service';
 import { JournalDto, JournalService } from '@/apiservice/journal.service';
 import { EntitiesService, EntityRecord } from '@/apiservice/Entities.service';
 import { LoaderService } from '@/apiservice/loading.service';
+import { TranslateService } from '@ngx-translate/core';
 
 
 
@@ -135,6 +136,7 @@ hoveredRowIndex: number = -1;
     private confirmationService: ConfirmationService,
     private accountsService: AccountsService,
     private journalService: JournalService,
+     private translate: TranslateService,
      public loaderService: LoaderService
 
   ) {
@@ -180,15 +182,21 @@ loadJournals() {
 
       this.loaderService.hide(); // 🟢 إيقاف اللودنق بعد التحميل
     },
-    error: (err) => {
-      console.error('Failed to load journals', err);
-      this.loaderService.hide(); // 🟢 إيقاف اللودنق عند الخطأ
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: '  Internal Server Error Code 500'
-      });
-    }
+         error: (err) => {
+  console.error('Failed to load journals', err);
+  this.loaderService.hide(); // إيقاف اللودنق عند الخطأ
+
+  this.translate.get(['TOAST.ERROR_SUMMARY','TOAST.ERROR_DETAIL_500']).subscribe(trans => {
+    this.messageService.add({
+      severity: 'error',
+      summary: trans['TOAST.ERROR_SUMMARY'],
+      detail: trans['TOAST.ERROR_DETAIL_500']
+    });
+  });
+}
+
+
+
   });
 }
 
