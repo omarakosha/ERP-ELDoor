@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
 
 <div class="card-loader-wrapper" *ngIf="loaderService.loading$ | async">
   <div class="card-loader-ring"></div>
-  <img src="assets/icons/rqm.png" class="card-loader-img">
+  <img src="assets/icons/rqm.gif" class="card-loader-img">
 </div>
 
 

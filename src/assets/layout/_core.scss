@@ -270,21 +270,21 @@ img { max-width: 100%; height: auto; }
   
   /* الأنيميشن الجديد */
   animation: professional-pulse 2s infinite ease-in-out;
-  box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); /* لون ذهبي خفيف ليناسب شعارك */
+
 }
 
 @keyframes professional-pulse {
   0% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+
   }
   70% {
     transform: scale(1);
-    box-shadow: 0 0 0 15px rgba(212, 175, 55, 0);
+ 
   }
   100% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+ 
   }
 }
 /* =========================================================

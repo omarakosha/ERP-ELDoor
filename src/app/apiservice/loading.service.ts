@@ -15,7 +15,7 @@ export class LoaderService {
   private shownAt = 0;
 
   private readonly SHOW_DELAY = 300;     // ⏳ لا تُظهر اللودر إلا بعد 300ms
-  private readonly MIN_SHOW_TIME = 500;  // 👁️ أقل وقت للعرض بعد الظهور
+  private readonly MIN_SHOW_TIME = 9000;  // 👁️ أقل وقت للعرض بعد الظهور
 
   show() {
     this.counter++;
