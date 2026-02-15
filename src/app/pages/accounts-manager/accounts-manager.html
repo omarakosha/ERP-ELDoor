@@ -135,8 +135,21 @@
    
     <!-- Dialog Actions -->
     <div class="flex justify-end gap-3 mt-4">
-      <button pButton label="Cancel" class="p-button-secondary" (click)="cancelDialog()"></button>
-      <button pButton label="Save" class="p-button-success" (click)="saveAccount()"></button>
+      <button
+       pButton label="Cancel"
+       icon="pi pi-times-circle" 
+       class="p-button-danger"outlined 
+       (click)="cancelDialog()">
+      </button>
+
+      <button  
+        pButton label="Save" 
+       icon="pi pi-save"
+       class="p-button-success"outlined
+       (click)="saveAccount()" 
+       [loading]="loading"
+       [disabled]="loading">
+      </button>
     </div>
 
   </p-dialog>

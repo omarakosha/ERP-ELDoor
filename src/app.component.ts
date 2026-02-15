@@ -20,6 +20,8 @@ import { CommonModule } from '@angular/common';
 
 
 
+
+
   <!-- باقي محتوى الصفحة -->
   <router-outlet></router-outlet>
 </div>

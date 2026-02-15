@@ -553,6 +553,7 @@ loadJournals() {
       });
       return;
     }
+    this.loading = true; // 🟢 تشغيل لودينق الزر
 
     // تجهيز payload مطابق للـ JournalDto
     const journalPayload: JournalDto = {
@@ -612,8 +613,10 @@ loadJournals() {
       },
       error: (err) => {
         console.error('Failed to save journal', err);
+        
 
         let detailMsg = 'Failed to save entry';
+         this.loading = false; // 🔴 إيقاف اللودينق
 
         if (err?.error?.message) {
           detailMsg = err.error.message;
@@ -630,6 +633,7 @@ loadJournals() {
           summary: 'Error',
           detail: detailMsg
         });
+         this.loading = false; // 🔴 إيقاف اللودينق
       }
     });
   }

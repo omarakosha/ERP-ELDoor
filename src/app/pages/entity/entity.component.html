@@ -74,21 +74,25 @@
   </p-table>
 </div>
 
-
-  <p-dialog
+<p-dialog
   header="بيانات الحساب"
   [(visible)]="displayDialog"
   [modal]="true"
+  [closable]="false"
   [breakpoints]="{ '960px': '90vw', '640px': '95vw' }"
   [style]="{ width: '650px' }"
 >
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
 
-    <div>
-      <label>الاسم</label>
-      <input pInputText class="w-full" [(ngModel)]="model.name">
-    </div>
+<div>
+  <label>الاسم <span class="text-red-600" *ngIf="invalidFields.name">*</span></label>
+<input pInputText class="w-full"
+       [(ngModel)]="model.name"
+       [ngClass]="{'p-invalid': invalidFields.name}"
+       (ngModelChange)="invalidFields.name = !(model.name && model.name.toString().trim() !== '')" />
+
+</div>
 
     <div>
       <label>الكود</label>
@@ -96,7 +100,9 @@
     </div>
 
     <div>
-      <label>النوع</label>
+      <label>النوع 
+        <span class="text-red-600" *ngIf="submitted && invalidFields.entityType">*</span>
+      </label>
       <p-select
         [options]="types"
         [(ngModel)]="model.entityType"
@@ -104,17 +110,21 @@
         optionValue="value"
         class="w-full"
         placeholder="اختر النوع"
+        [ngClass]="{'p-invalid': submitted && invalidFields.entityType}"
         (onChange)="onTypeManualChange()">
       </p-select>
     </div>
 
     <div>
-      <label>الحساب المرتبط</label>
+      <label>الحساب المرتبط
+        <span class="text-red-600" *ngIf="submitted && invalidFields.accountId">*</span>
+      </label>
       <p-select
         [options]="filteredAccounts"
         [(ngModel)]="model.accountId"
         optionLabel="fullName"
         optionValue="id"
+        [ngClass]="{'p-invalid': submitted && invalidFields.accountId}"
         class="w-full"
         placeholder="اختر الحساب"
         (onChange)="onAccountChange()">
@@ -145,11 +155,24 @@
 
   <ng-template pTemplate="footer">
     <div class="flex justify-end gap-2 pt-3">
-      <button pButton label="حفظ" icon="pi pi-save" (click)="save()"outlined></button>
+      <button
+        pButton label="Cancel"
+        icon="pi pi-times-circle"
+        class="p-button-danger" outlined
+        (click)="cancelDialog()">
+      </button>
+
+      <button
+        pButton label="Save"
+        icon="pi pi-save"
+        class="p-button-success" outlined
+        (click)="save()"
+        [loading]="loading"
+        [disabled]="loading">
+      </button>
     </div>
   </ng-template>
 
 </p-dialog>
-
 
 </div>

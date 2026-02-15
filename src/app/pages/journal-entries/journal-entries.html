@@ -263,8 +263,14 @@
     <div class="flex-1 flex justify-end gap-2">
         <button pButton label="Cancel" icon="pi pi-times-circle" class="p-button-danger"outlined
             (click)="displayDialog=false"></button>
-        <button pButton label="Save" icon="pi pi-save" class="p-button-success"outlined
-            (click)="saveJournal()"></button>
+        <button
+          pButton label="Save"
+          icon="pi pi-save"
+          class="p-button-success"outlined
+           [loading]="loading"
+           [disabled]="loading"
+          (click)="saveJournal()">
+        </button>
     </div>
 
 </div>
@@ -284,7 +290,7 @@
         <div class="flex flex-col h-full">
 
             <!-- الهيدر ثابت -->
-            <div class="flex gap-2 mb-2 flex-shrink-0">
+            <div class="flex gap-2 mb-2 shrink-0">
                 <input type="text" pInputText [(ngModel)]="vendorFilter" placeholder="Search vendor..." class="flex-1"
                     (input)="updateFilteredVendors()">
                 <button pButton label="Add Vendor" icon="pi pi-plus" class="p-button-success"
@@ -330,7 +336,7 @@
             </div>
 
             <!-- الفوتر ثابت -->
-            <div class="flex-shrink-0 mt-2 border-t pt-2 
+            <div class="shrink-0 mt-2 border-t pt-2 
                 bg-white border-gray-200 
                 dark:bg-[#18181b] dark:border-gray-700">
                 <p-paginator [rows]="5" [totalRecords]="filteredVendorList.length || 0">
@@ -349,7 +355,7 @@
         <div class="flex flex-col h-full">
 
             <!-- الهيدر ثابت -->
-            <div class="mb-2 flex-shrink-0">
+            <div class="mb-2 shrink-0">
                 <input type="text" pInputText [(ngModel)]="accountFilter" placeholder="Search account..." class="w-full"
                     (input)="updateFilteredAccounts()">
             </div>
@@ -388,7 +394,7 @@
             </div>
 
             <!-- الفوتر ثابت -->
-            <div class="flex-shrink-0 mt-2 border-t pt-2 
+            <div class="shrink-0 mt-2 border-t pt-2 
             bg-white border-gray-200 
             dark:bg-[#18181b] dark:border-gray-700">
                 <p-paginator [rows]="5" [totalRecords]="filteredVendorList.length || 0">
@@ -409,7 +415,7 @@
         <div class="flex flex-col h-full">
 
             <!-- الهيدر ثابت -->
-            <div class="mb-2 flex-shrink-0">
+            <div class="mb-2 shrink-0">
                 <input type="text" pInputText [(ngModel)]="costCenterFilter" placeholder="Search cost center..."
                     class="w-full" (input)="filteredCostCenters()">
             </div>
@@ -448,7 +454,7 @@
             </div>
 
             <!-- الفوتر ثابت -->
-            <div class="flex-shrink-0 mt-2 border-t pt-2 
+            <div class="shrink-0 mt-2 border-t pt-2 
             bg-white border-gray-200 
             dark:bg-[#18181b] dark:border-gray-700">
                 <p-paginator [rows]="5" [totalRecords]="filteredCostCentersList.length || 0">
@@ -477,7 +483,7 @@
             </div>
 
             <!-- الفوتر ثابت -->
-            <div class="flex-shrink-0 mt-2 flex justify-end gap-2">
+            <div class="shrink-0 mt-2 flex justify-end gap-2">
                 <button pButton label="Cancel" class="p-button-secondary" (click)="cancelVendor()"></button>
                 <button pButton label="Save" class="p-button-success" (click)="saveVendor()"></button>
             </div>
