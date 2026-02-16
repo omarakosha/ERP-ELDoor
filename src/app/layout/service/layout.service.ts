@@ -6,10 +6,10 @@ export interface layoutConfig {
     primary?: string;
     surface?: string | undefined | null;
     darkTheme?: boolean;
+    themeMode?: 'light' | 'dark' | 'system';   // ⭐ جديد
     menuMode?: string;
     lang?: 'ar' | 'en';
 }
-
 
 interface LayoutState {
     staticMenuDesktopInactive?: boolean;
@@ -27,20 +27,19 @@ interface MenuChangeEvent {
 @Injectable({
     providedIn: 'root'
 })
-
 export class LayoutService {
-    
+
     private lastLang?: 'ar' | 'en';
 
-  private _config: layoutConfig = {
-    preset: 'Aura',
-    primary: 'emerald',
-    surface: null,
-    darkTheme: false,
-    menuMode: 'static',
-    lang: 'ar'
-};
-
+    private _config: layoutConfig = {
+        preset: 'Aura',
+        primary: 'emerald',
+        surface: null,
+        darkTheme: false,
+        themeMode: 'system',   // ⭐ افتراضي System
+        menuMode: 'static',
+        lang: 'ar'
+    };
 
     private _state: LayoutState = {
         staticMenuDesktopInactive: false,
@@ -63,17 +62,36 @@ export class LayoutService {
     configUpdate$ = this.configUpdate.asObservable();
     overlayOpen$ = this.overlayOpen.asObservable();
 
-    theme = computed(() => (this.layoutConfig().darkTheme ? 'light' : 'dark'));
-    isSidebarActive = computed(() => this.layoutState().overlayMenuActive || this.layoutState().staticMenuMobileActive);
     isDarkTheme = computed(() => this.layoutConfig().darkTheme);
-    getPrimary = computed(() => this.layoutConfig().primary);
-    getSurface = computed(() => this.layoutConfig().surface);
     isOverlay = computed(() => this.layoutConfig().menuMode === 'overlay');
 
     transitionComplete = signal<boolean>(false);
     private initialized = false;
 
     constructor() {
+
+        // ===== تحميل الإعداد المحفوظ =====
+        const savedTheme = localStorage.getItem('app-theme-mode') as 'light' | 'dark' | 'system' | null;
+
+        if (savedTheme) {
+            this.layoutConfig.update(c => ({
+                ...c,
+                themeMode: savedTheme
+            }));
+        }
+
+        this.applyTheme();
+
+        // ===== مراقبة تغيير النظام =====
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+        mediaQuery.addEventListener('change', () => {
+            if (this.layoutConfig().themeMode === 'system') {
+                this.applyTheme();
+            }
+        });
+
+        // ===== effects =====
         effect(() => {
             const config = this.layoutConfig();
             if (config) this.onConfigUpdate();
@@ -91,6 +109,43 @@ export class LayoutService {
         });
     }
 
+    // =========================================================
+    // 🎯 THEME LOGIC
+    // =========================================================
+
+    setThemeMode(mode: 'light' | 'dark' | 'system') {
+        localStorage.setItem('app-theme-mode', mode);
+
+        this.layoutConfig.update(c => ({
+            ...c,
+            themeMode: mode
+        }));
+
+        this.applyTheme();
+    }
+
+    private applyTheme() {
+
+        const config = this.layoutConfig();
+        let isDark = false;
+
+        if (config.themeMode === 'dark') {
+            isDark = true;
+        }
+        else if (config.themeMode === 'light') {
+            isDark = false;
+        }
+        else {
+            // system
+            isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+
+        this.layoutConfig.update(c => ({
+            ...c,
+            darkTheme: isDark
+        }));
+    }
+
     private handleDarkModeTransition(config: layoutConfig): void {
         if ((document as any).startViewTransition) {
             this.startViewTransition(config);
@@ -106,14 +161,13 @@ export class LayoutService {
         });
 
         transition.ready
-            .then(() => {
-                this.onTransitionEnd();
-            })
+            .then(() => this.onTransitionEnd())
             .catch(() => {});
     }
 
-    toggleDarkMode(config?: layoutConfig): void {
+    private toggleDarkMode(config?: layoutConfig): void {
         const _config = config || this.layoutConfig();
+
         if (_config.darkTheme) {
             document.documentElement.classList.add('app-dark');
         } else {
@@ -126,28 +180,34 @@ export class LayoutService {
         setTimeout(() => this.transitionComplete.set(false));
     }
 
+    // =========================================================
+    // 🎯 MENU
+    // =========================================================
+
     onMenuToggle() {
         if (this.isOverlay()) {
             this.layoutState.update(prev => ({
                 ...prev,
-                overlayMenuActive: !this.layoutState().overlayMenuActive
+                overlayMenuActive: !prev.overlayMenuActive
             }));
 
-            if (this.layoutState().overlayMenuActive) this.overlayOpen.next(null);
+            if (this.layoutState().overlayMenuActive)
+                this.overlayOpen.next(null);
         }
 
         if (this.isDesktop()) {
             this.layoutState.update(prev => ({
                 ...prev,
-                staticMenuDesktopInactive: !this.layoutState().staticMenuDesktopInactive
+                staticMenuDesktopInactive: !prev.staticMenuDesktopInactive
             }));
         } else {
             this.layoutState.update(prev => ({
                 ...prev,
-                staticMenuMobileActive: !this.layoutState().staticMenuMobileActive
+                staticMenuMobileActive: !prev.staticMenuMobileActive
             }));
 
-            if (this.layoutState().staticMenuMobileActive) this.overlayOpen.next(null);
+            if (this.layoutState().staticMenuMobileActive)
+                this.overlayOpen.next(null);
         }
     }
 
@@ -159,21 +219,25 @@ export class LayoutService {
         return !this.isDesktop();
     }
 
- onConfigUpdate() {
-    this._config = { ...this.layoutConfig() };
+    // =========================================================
+    // 🎯 LANGUAGE RTL
+    // =========================================================
 
-    const currentLang = this.layoutConfig().lang;
-    const isRtl = currentLang === 'ar';
+    onConfigUpdate() {
 
-    if (this.lastLang !== currentLang) {
-        document.documentElement.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
-        document.documentElement.classList.toggle('rtl', isRtl);
-        this.lastLang = currentLang;
+        const currentLang = this.layoutConfig().lang;
+        const isRtl = currentLang === 'ar';
+
+        if (this.lastLang !== currentLang) {
+            document.documentElement.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
+            document.documentElement.classList.toggle('rtl', isRtl);
+            this.lastLang = currentLang;
+        }
+
+        this.configUpdate.next(this.layoutConfig());
     }
 
-    this.configUpdate.next(this.layoutConfig());
-}
-
+    // =========================================================
 
     onMenuStateChange(event: MenuChangeEvent) {
         this.menuSource.next(event);
